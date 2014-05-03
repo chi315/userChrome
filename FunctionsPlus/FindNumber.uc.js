@@ -2,7 +2,9 @@
 (function () {
 	if ("gBrowser" in window && "getFindBar" in gBrowser) {
 		gBrowser.tabContainer.addEventListener("TabFindInitialized", function (event) {
-			var status = document.getAnonymousElementByAttribute(event.target._findBar, 'anonid', 'match-case-status');
+//			var status = document.getAnonymousElementByAttribute(event.target._findBar, 'anonid', 'match-case-status');
+			var searchbar = document.getElementById("searchbar");
+			var status = document.getAnonymousElementByAttribute(searchbar, "anonid", "search-go-button");
 			var sep = document.createElement("toolbarspacer");
 			var count = document.createElement("label");
 			count.hidden = true;
