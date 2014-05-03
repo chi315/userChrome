@@ -95,12 +95,14 @@
 		onScroll: function(event) {
 			if (event.detail > 0) {
 				if (searchbar.value == "") {return;}
-				gFindBar._findField.value = searchbar.value;gFindBar.open();gFindBar.toggleHighlight(1);
+//				gFindBar._findField.value = searchbar.value;gFindBar.open();gFindBar.toggleHighlight(1);
+				gFindBar._findField.value = searchbar.value;gFindBar.toggleHighlight(1);
 				gFindBar.onFindAgainCommand(false);
 			}
 			else {
 				if (searchbar.value == "") {return;}
-				gFindBar._findField.value = searchbar.value;gFindBar.open();gFindBar.toggleHighlight(1);
+//				gFindBar._findField.value = searchbar.value;gFindBar.open();gFindBar.toggleHighlight(1);
+				gFindBar._findField.value = searchbar.value;gFindBar.toggleHighlight(1);
 				gFindBar.onFindAgainCommand(true);
 			}
 			return;
@@ -109,11 +111,12 @@
 
 	var gWHTFindBtn = document.createElement("toolbarbutton");
 	gWHTFindBtn.setAttribute("id", "gWHTFind-button");
-	gWHTFindBtn.setAttribute("type", "button");
+	gWHTFindBtn.setAttribute("type", "checkbox");
 	gWHTFindBtn.setAttribute("class", "toolbarbutton-1");
-	gWHTFindBtn.setAttribute("tooltiptext", "左鍵：關閉WordHighlightToolbar\n向上滾動：尋找上一筆\n向下滾動：尋找下一筆");
+	gWHTFindBtn.setAttribute("tooltiptext", "左鍵：啟用 / 禁用Word Highlight Toolbar\n右鍵：關閉WordHighlightToolbar\n向上滾動：尋找上一筆\n向下滾動：尋找下一筆");
 	gWHTFindBtn.style.listStyleImage = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAANUlEQVQ4jWNgGBTg6dOi/6RgrAb8/19PFB7EBlAUBoMDFD0t+k8qxjCgngQ4SA2gKAwGDAAAM3SE/usVkKQAAAAASUVORK5CYII=)";
-	gWHTFindBtn.setAttribute("oncommand", 'gWHT.destroyToolbar();document.getElementById("searchbar").value="";');
+	gWHTFindBtn.setAttribute("oncommand", 'gWHT.GET_KEYWORD = !gWHT.GET_KEYWORD');
+	gWHTFindBtn.setAttribute('onclick', 'if (event.button == 2) {gWHT.destroyToolbar();document.getElementById("searchbar").value="";event.preventDefault();}');
 	gWHTFindBtn.setAttribute("onDOMMouseScroll", "gWHTFindScroll.onScroll(event);");
 	searchInput.appendChild(gWHTFindBtn);
 
