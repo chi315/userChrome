@@ -5,10 +5,10 @@
 //			var status = document.getAnonymousElementByAttribute(event.target._findBar, 'anonid', 'match-case-status');
 			var searchbar = document.getElementById("searchbar");
 			var status = document.getAnonymousElementByAttribute(searchbar, "anonid", "search-go-button");
-			var sep = document.createElement("toolbarspacer");
+//			var sep = document.createElement("toolbarspacer");
 			var count = document.createElement("label");
 			count.hidden = true;
-			status.parentNode.insertBefore(sep, status);
+//			status.parentNode.insertBefore(sep, status);
 			status.parentNode.insertBefore(count, status);
 			gFindBar._foundMatches = count;
 			eval("gFindBar._updateCaseSensitivity=" + gFindBar._updateCaseSensitivity.toString().slice(0, - 1) + "this._updateMatchesCount();}");
