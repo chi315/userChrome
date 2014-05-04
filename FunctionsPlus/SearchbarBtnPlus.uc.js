@@ -84,10 +84,10 @@
 
 	var findMatchCase = document.createElement("checkbox");
 	findMatchCase.id = "findMatchCase";
-	findMatchCase.setAttribute("tooltiptext", "左鍵：符合大小寫\n右鍵：關閉尋找欄\n向上滾動：尋找上一筆\n向下滾動：尋找下一筆");
+	findMatchCase.setAttribute("tooltiptext", "左鍵：符合大小寫\n右鍵：關閉高亮顯示及清除關鍵字\n向上滾動：尋找上一筆\n向下滾動：尋找下一筆");
 	findMatchCase.setAttribute("accesskey", "C");
 	findMatchCase.setAttribute("oncommand", 'gFindBar._setCaseSensitivity(this.checked);document.getElementById("searchbar").focus();');
-	findMatchCase.setAttribute('onclick', 'if (event.button == 2) {gFindBar.close();document.getElementById("searchbar").value="";event.preventDefault();}');
+	findMatchCase.setAttribute('onclick', 'if (event.button == 2) {gFindBar.toggleHighlight(0);document.getElementById("searchbar").value="";event.preventDefault();}');
 	findMatchCase.setAttribute("onDOMMouseScroll", "FindScroll.onScroll(event);");
 	searchInput.appendChild(findMatchCase);
 	
@@ -113,7 +113,7 @@
 	gWHTFindBtn.setAttribute("id", "gWHTFind-button");
 	gWHTFindBtn.setAttribute("type", "checkbox");
 	gWHTFindBtn.setAttribute("class", "toolbarbutton-1");
-	gWHTFindBtn.setAttribute("tooltiptext", "左鍵：啟用 / 禁用Word Highlight Toolbar\n右鍵：關閉WordHighlightToolbar\n向上滾動：尋找上一筆\n向下滾動：尋找下一筆");
+	gWHTFindBtn.setAttribute("tooltiptext", "左鍵：啟用 / 禁用Word Highlight Toolbar\n右鍵：關閉WordHighlightToolbar並清除關鍵字\n向上滾動：尋找上一筆\n向下滾動：尋找下一筆");
 	gWHTFindBtn.style.listStyleImage = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAANUlEQVQ4jWNgGBTg6dOi/6RgrAb8/19PFB7EBlAUBoMDFD0t+k8qxjCgngQ4SA2gKAwGDAAAM3SE/usVkKQAAAAASUVORK5CYII=)";
 	gWHTFindBtn.setAttribute("oncommand", 'gWHT.GET_KEYWORD = !gWHT.GET_KEYWORD');
 	gWHTFindBtn.setAttribute('onclick', 'if (event.button == 2) {gWHT.destroyToolbar();document.getElementById("searchbar").value="";event.preventDefault();}');
