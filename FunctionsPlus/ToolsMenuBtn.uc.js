@@ -1,0 +1,16 @@
+(function ToolsMenuButton() {
+
+	var newBtn = document.getElementById("TabsToolbar");
+	var ToolsMenuBtn = document.createElement("toolbarbutton");
+	ToolsMenuBtn.id = "ToolsMenu-button";
+	ToolsMenuBtn.setAttribute("label", "工具選單按鈕");
+	ToolsMenuBtn.setAttribute("class", "toolbarbutton-1 chromeclass-toolbar-additional");
+	ToolsMenuBtn.setAttribute("type", "menu");
+	ToolsMenuBtn.style.listStyleImage = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAD3klEQVQ4jZXUfUwUdBzH8funTedsS+dDgeBx3O9wejgUEmF5IJeUCqIgcICD7OBOGY+JmDzIGjrhWOmVrEhZisQUEHk48IHNRGRkESTxZNwDzzORkIdarvnuD5z3b/7x+fP7+u/7lkgkEklh8n4O7RBoVU6vtUM7BIXJ4UgkEonEkBJOY3Ea8x1GnncZ+afzzP/a8y4j8x1GTF+lYkgJR6JXy5i5m8P8bR1zTbHMmWIYbTzMd801pN4ZRNsyibZ1ivQfBrncfJWxBh1zphjmmmKZv61jpiUHvVqGRKtyYvaGjtm6GKYvqjFVZBF0vgVhvMuW8la2N47zYfMTvE1j+F3ppvxBJ52VqTyrDmW2LobZGzq0KqcFaKY2jj8rQjDrBSeOZ6LLS6fi22D2GY7i+H0v0poh3rwyyBpjO/ryVqzWm/Re+4hnlWHM1MbZoemqaCxn1PRrBCOpCsY+k2MzStlyrBDHz6/zxoWHLC75lWUF99n46XWmJ1uZGTHwtNaX6apoOzRVEUFvthfD8XKGkwVjuQLbSRf6Uv35Mi+R5QX3WJHbzOojJlbHl1FSVw2Tp3l804Wpigg7NFkWSr9egS1WMJQoGM0UTHwhIz8+BJF6Bcf0elbor7JU8w2L9xRR2XCBF0+LGWhYz2RZqB16UrqHbo0rlmiBLUHQHakg94N3UUaksySqhCWar1kUZGDR+3ks8k7i+XQZL6ayMJ3354/SYDv0uGQXP+2V8ShMYI0V/BigoDzKm1V+iTju/oRAbTzL1Rks3aTD2VPD3/0B/DukYKBi4fYVNHEukFshbnTvEgxGCH7XCGw6gSXdDdsxQdPHCoJC9rLMLZLcTB/+uu/AfPtb9J2SM3Eu0A6Nnw2gLV5J+zZBb7DArBGYDwhK1RsIU3jh7LKTlS7ByFy203NRxlSVAwOnpPyc4s742QA7NGJQMZC1kZtbXXng9xKLFFjjBDWhGzi81QvDzs2MHBdMFrgylCGnfp+CwaNKRgwqOzR82hfrCSVtB6TccpfTvk3QvUvwKExgjhJYY+UMJ8gZTZJj08r5LUzGLzFSrCeUDJ/2tUO2fB8s2Uq6UtZSqnqHmnWu3PMWdAQIuncL+kIEA6GChyFyqn1dKfF7m7ZDzliy3bGdfAnp1TLM+SosOR4MZLhx46Az+X4rKVjnwCX5WuqVMuo8XCjzcKLY0xHDe6uojF5DzxE3LDmbMOerFp62KC2Sa7kaLHk+WLI3Y87yoCfTndak9dQeFFyOduVSlIyqODl3Dq/jYYY7g1keWHI8seT5UJ0bSVFa5EKTCpP3k+Avfe2wJfhLX4XtPx/Q/Ma9gSuaAAAAAElFTkSuQmCC)";
+	ToolsMenuBtn.setAttribute("tooltiptext", "左鍵：工具選單");
+	newBtn.appendChild(ToolsMenuBtn);
+
+	var ToolsPopup = document.getElementById("menu_ToolsPopup");
+	var popup = ToolsMenuBtn.appendChild(document.createElement("menupopup"));
+	Array.slice(ToolsPopup.childNodes).forEach(function(aNode) popup.appendChild(aNode));
+})();
