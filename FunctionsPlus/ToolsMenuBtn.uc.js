@@ -11,6 +11,7 @@
 	newBtn.appendChild(ToolsMenuBtn);
 
 	var ToolsPopup = document.getElementById("menu_ToolsPopup");
-	var popup = ToolsMenuBtn.appendChild(document.createElement("menupopup"));
-	Array.slice(ToolsPopup.childNodes).forEach(function(aNode) popup.appendChild(aNode));
+//	var ToolsPopupClone = ToolsPopup.cloneNode( true );
+	ToolsMenuBtn.appendChild( ToolsPopup );
+//	ToolsMenuBtn.appendChild( ToolsPopupClone );
 })();
