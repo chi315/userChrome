@@ -17,6 +17,8 @@ if (location == "chrome://browser/content/browser.xul") {
 				elm.localName == "input" ||
 				elm.localName == "textarea" ||
 				elm.getAttribute("contenteditable") == "true") return;
+			var mod = e.ctrlKey || e.metaKey || e.altKey;
+			if (mod) return;
 			var c = String.fromCharCode(e.charCode);
 			if (/[^0-9a-zA-Z]/.test(c)) return;
 			var Bar = document.getElementById("searchbar"); // urlbar
