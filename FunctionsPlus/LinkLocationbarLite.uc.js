@@ -7,12 +7,12 @@
 	var additionBar = document.createElement('label');
 	additionBar.setAttribute('id','addtion-link');
 	additionBar.setAttribute('value','');
-	additionBar.setAttribute('crop','center');
-	additionBar.setAttribute('text-align','right');
+//	additionBar.setAttribute('crop','center');
+//	additionBar.setAttribute('text-align','right');
 	additionBar.style.color = 'green';
 	additionBar.style.margin = "0px 0px 0px 0px";
-
-	gURLBar.appendChild(additionBar);
+	urlbarIcons.appendChild(additionBar);
+//	urlbarIcons.insertBefore(additionBar, urlbarIcons.firstChild);
 
 	XULBrowserWindow.statusTextField.__defineGetter__('label', function() {
 		return this.getAttribute("label");
