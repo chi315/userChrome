@@ -11,7 +11,23 @@
 	newBtn.appendChild(ToolsMenuBtn);
 
 	var ToolsPopup = document.getElementById("menu_ToolsPopup");
-//	var ToolsPopupClone = ToolsPopup.cloneNode( true );
-	ToolsMenuBtn.appendChild( ToolsPopup );
-//	ToolsMenuBtn.appendChild( ToolsPopupClone );
+//	var ToolsPopupClone = ToolsPopup.cloneNode(true);
+	ToolsMenuBtn.appendChild(ToolsPopup);
+//	ToolsMenuBtn.appendChild(ToolsPopupClone);
+
+	var css = '\
+	#ToolsMenu-button:hover {\
+	list-style-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAD4UlEQVQ4jZXUf0zUdRzH8c9CB8RoO5Vk45TdfbnPITt0WQRZwwMP+aGcKKB3NCfq8cvTU85U/BGxZiQcw0VEdYYLEUySYJ7o4WxmB/PEsaYUoIkc/qg/Iufaqq01n/2B2/lf9cfrz9fjn/feLyGEEPWOQipWSmzLF/6vVKyU1DvWI4QQwrVzPR/sXIWreBENxZLGzZKj/5LGzZKGYomreNFMd+d6RLlJodmWwMntCXRVGuh2Gug8lM7hE61UeMewXZnG5nvEtv5Raj9voXN/Kt1OA12VBtq3J/CRLYFyk4KwLV9Ip13PxapEbtQY+KyhgtXuK8imKyR3DJB+/ieyL/1CSt9DjKdHaL86TH9zMb7qJVysSqTTrse2fOEM1OvQM3TIwES5jncO7KWsxsmpY2bWufai7hxF0zPFC6fvsKDJT3nHAJOT/QyftOJ/O5FexzPQBYfEvzuBcavk/i49D9/VEWjSkFxVj7qxl9mtNwl332BO3SBL9vfyeHqA3+67GGtWuOCQQchrV7i+XXKvRMc9h+RhtSTwnpaxXWl8WGNnbp2PqOpLRL/VR3RJO+6z3TB9hIkv5uK1K89AZbGM2uIIbJJM2SUP9kl+PqpwuCQPues0aqeHqPIuIq2fEr6mgS/PtfLk1xbGeuPxlsUGob4tam5aFO6+KQmUSkYseqqzXiVxg5OIIjcR1k8Iy3URllFDWMoO/nrczpNHB+k7lkbfFnUQOrcxmutrFW4XSCY3Sa6t0NNRlMJ8ox316t1k2kqYa9pD5NIyYl+x8uf4Cv6e0jPesYBzG6ODkMcSxflsLSOrJHc2SH60SgJlkrvOeAJVkgtb9eTmrWVOvIXqfcv4YzCG3/0qvjsYg8cS9cz581V418TgT5WMmiUTVsnERslxk4ECfRKx2hxe1JpRtOn80Kbw6EwMt2o1XC5aQG++Kgj1mCP5tlCFN1nLkPEpZpFMFkt68g1sey0JV87L3D8gma6LY2qPDs86PUMb5tFjjgxCZ7LDGSyI4OuseVxcrMOfKhlZJbldIJkokkxu0nGvVMeDHToCNh3fFyj4zdEMFkRwJjs8CHWZQvGZQ/HlhuFeqqInXsGXIhleIRlZLRnLk9zKl9zM09H9ehwfJ6noz5npdJlCZ6Byk8IpYziXM0O4mhNCtzGEasNs3tdE0RYXiydR4exLWtqXqGlePJ/axOdpe+M5fFkhXM4M4VR6+MzTNlRacJdl4DXNYiBDcC1T4MsQeIyCE8sELUmC5iTB8RTBV6mCb0wCf6ZgIEPgNc3CXZpBQ6VlZpPqHYWUpmn+86BtfZoSo4YjOwoRQoh/ALYuvZpf2hxRAAAAAElFTkSuQmCC")!important;\
+	}\
+	#ToolsMenu-button dropmarker {display:none;}\
+	'.replace(/[\r\n\t]/g, '');;
+	ToolsMenuBtn.style = addStyle(css);
+
+	function addStyle(css) {
+		var pi = document.createProcessingInstruction(
+			'xml-stylesheet',
+			'type="text/css" href="data:text/css;utf-8,' + encodeURIComponent(css) + '"'
+		);
+		return document.insertBefore(pi, document.documentElement);
+	}
 })();
