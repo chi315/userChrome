@@ -40,14 +40,14 @@
 		onScroll: function(event) {searchbar.selectEngine(event, (event.detail > 0));}
 	};
 
-	var findMatchCase = document.createElement("checkbox");
-	findMatchCase.id = "findMatchCase";
-	findMatchCase.setAttribute("tooltiptext", "左鍵：符合大小寫\n中鍵：尋找搜尋欄關鍵字\n　　　貼上就尋找\n右鍵：關閉尋找欄及高亮顯示並清除關鍵字\n向上滾動：尋找上一筆\n向下滾動：尋找下一筆");
-	findMatchCase.setAttribute("accesskey", "C");
-	findMatchCase.setAttribute("oncommand", 'gFindBar._setCaseSensitivity(this.checked);document.getElementById("searchbar").focus();');
-	findMatchCase.setAttribute('onclick', 'if (event.button == 2) {gFindBar.close();gFindBar.toggleHighlight(0);document.getElementById("searchbar").value="";event.preventDefault();}');
-	findMatchCase.setAttribute("onDOMMouseScroll", "FindScroll.onScroll(event);");
-	searchInput.appendChild(findMatchCase);
+	var findMatchCase = searchInput.appendChild($C("checkbox", {
+		id: "findMatchCase",
+		tooltiptext: "左鍵：符合大小寫\n中鍵：尋找搜尋欄關鍵字\n　　　貼上就尋找\n右鍵：關閉尋找欄及高亮顯示並清除關鍵字\n向上滾動：尋找上一筆\n向下滾動：尋找下一筆",
+		accesskey: "C",
+		oncommand: "gFindBar._setCaseSensitivity(this.checked); document.getElementById('searchbar').focus();",
+		onclick: "if (event.button == 2) {gFindBar.close(); gFindBar.toggleHighlight(0); document.getElementById('searchbar').value=''; event.preventDefault();}",
+		onDOMMouseScroll: "FindScroll.onScroll(event);",
+	}));
 
 	findMatchCase.addEventListener("click", function(event) {
 		if (event.button == 1) {
@@ -81,15 +81,16 @@
 		}
 	};
 
-	var gWHTFindBtn = document.createElement("toolbarbutton");
-	gWHTFindBtn.setAttribute("id", "gWHTFind-button");
-	gWHTFindBtn.setAttribute("type", "checkbox");
-	gWHTFindBtn.setAttribute("class", "toolbarbutton-1");
-	gWHTFindBtn.setAttribute("tooltiptext", "左鍵：啟用 / 禁用Word Highlight Toolbar\n右鍵：WordHighlightToolbar高亮搜尋欄關鍵字\n　　　貼上就WordHighlightToolbar高亮\n右鍵：關閉WordHighlightToolbar並清除關鍵字\n向上滾動：尋找上一筆\n向下滾動：尋找下一筆");
-	gWHTFindBtn.style.listStyleImage = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAANUlEQVQ4jWNgGBTg6dOi/6RgrAb8/19PFB7EBlAUBoMDFD0t+k8qxjCgngQ4SA2gKAwGDAAAM3SE/usVkKQAAAAASUVORK5CYII=)";
-	gWHTFindBtn.setAttribute("oncommand", 'gWHT.GET_KEYWORD = !gWHT.GET_KEYWORD');
-	gWHTFindBtn.setAttribute('onclick', 'if (event.button == 2) {gWHT.destroyToolbar();document.getElementById("searchbar").value="";event.preventDefault();}');
-	gWHTFindBtn.setAttribute("onDOMMouseScroll", "gWHTFindScroll.onScroll(event);");
+	var gWHTFindBtn = $C("toolbarbutton", {
+		id: "gWHTFind-button",
+		type: "checkbox",
+		class: "toolbarbutton-1",
+		tooltiptext: "左鍵：啟用 / 禁用Word Highlight Toolbar\n右鍵：WordHighlightToolbar高亮搜尋欄關鍵字\n　　　貼上就WordHighlightToolbar高亮\n右鍵：關閉WordHighlightToolbar並清除關鍵字\n向上滾動：尋找上一筆\n向下滾動：尋找下一筆",
+		style: "list-style-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAANUlEQVQ4jWNgGBTg6dOi/6RgrAb8/19PFB7EBlAUBoMDFD0t+k8qxjCgngQ4SA2gKAwGDAAAM3SE/usVkKQAAAAASUVORK5CYII=)",
+		oncommand: "gWHT.GET_KEYWORD = !gWHT.GET_KEYWORD",
+		onclick: "if (event.button == 2) {gWHT.destroyToolbar(); document.getElementById('searchbar').value=''; event.preventDefault();}",
+		onDOMMouseScroll: "gWHTFindScroll.onScroll(event);",
+	});
 	searchGoBtn.parentNode.insertBefore(gWHTFindBtn, searchGoBtn);
 
 	gWHTFindBtn.addEventListener("click", function(event) {
@@ -124,8 +125,8 @@
 
 	var SE = new Array();
 	SE[0] = 'https://duckduckgo.com/?q=!ge ';
-	SE[1] = 'https://translate.google.com.hk/?hl=zh-TW#auto/zh-TW/';
-	SE[2] = 'https://encrypted.google.com/search?q=site:';
+	SE[1] = 'https://duckduckgo.com/?q=!gt ';
+	SE[2] = 'https://duckduckgo.com/?q=!ge site:';
 	SE[3] = 'https://duckduckgo.com/?q=!img ';
 	SE[4] = 'https://duckduckgo.com/?q=!googlemaps ';
 	SE[5] = 'https://duckduckgo.com/?q=!bd ';
@@ -135,11 +136,12 @@
 	SE[9] = 'http://search.yahoo.co.jp/search?p=';
 	SE[10] = 'https://duckduckgo.com/?q=!ytw ';
 
-	var BaiduBtn = document.createElement("image");
-	BaiduBtn.setAttribute("id", "Baidu-button");
-	BaiduBtn.setAttribute("tooltiptext", "左鍵：百度\n中鍵：百度圖片\n右鍵：百度貼吧\n\n❖ 搜尋搜尋欄關鍵字\n❖ 搜尋選取文字\n❖ 貼上就搜尋\n❖ 新分頁前景");
-	BaiduBtn.style.listStyleImage = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABWUlEQVQ4jaWSy0sCURjF/XfuRugukha1CzeBCBKIFFFIBEGrCoRwE4EErlskoYW0EFy0iBAkCMFNBCGuKrqjNg6OgzOTjY+5nhbh3ehMrw/O8vud73E8hDL8Rx5CGf5ajoBCsQuvT0IubwIATk51xA/bsPkPAdFtBYQyLIXeUCpbYtybQtcd0Na+LHb2WiCUYTXaRC5vCsBdyXIG3D/0QCjD2qaCl9cB9g9UPFb66OgcuzEVmayBpmKjVLamAxJJTTg9PQ+mHm1+sQ5CGS4ujUlAJmuAUIaZOQkdnaNS7SMYlhGKyKjVh7B6I2EQi6uTAJsDV9fvqFT7YNIQsws10eAPNNDWODa2FHh9Eoq3H85faKk2/IHGRGCWV2RYvZH7Fzo6n9o8VmS9CcPkzoBUWv82umfnhjNgfEg3pdK6M8AwuUihP9DA0bGGRFJDMCyLYLmu8NsSgP/oExgMERjFwInkAAAAAElFTkSuQmCC)";
-	BaiduBtn.setAttribute('onclick', "BaiduFunctions.onClick(event);");
+	var BaiduBtn = $C("image", {
+		id: "Baidu-button",
+		tooltiptext: "左鍵：百度\n中鍵：百度圖片\n右鍵：百度貼吧\n\n❖ 搜尋搜尋欄關鍵字\n❖ 搜尋選取文字\n❖ 貼上就搜尋\n❖ 新分頁前景",
+		style: "list-style-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABWUlEQVQ4jaWSy0sCURjF/XfuRugukha1CzeBCBKIFFFIBEGrCoRwE4EErlskoYW0EFy0iBAkCMFNBCGuKrqjNg6OgzOTjY+5nhbh3ehMrw/O8vud73E8hDL8Rx5CGf5ajoBCsQuvT0IubwIATk51xA/bsPkPAdFtBYQyLIXeUCpbYtybQtcd0Na+LHb2WiCUYTXaRC5vCsBdyXIG3D/0QCjD2qaCl9cB9g9UPFb66OgcuzEVmayBpmKjVLamAxJJTTg9PQ+mHm1+sQ5CGS4ujUlAJmuAUIaZOQkdnaNS7SMYlhGKyKjVh7B6I2EQi6uTAJsDV9fvqFT7YNIQsws10eAPNNDWODa2FHh9Eoq3H85faKk2/IHGRGCWV2RYvZH7Fzo6n9o8VmS9CcPkzoBUWv82umfnhjNgfEg3pdK6M8AwuUihP9DA0bGGRFJDMCyLYLmu8NsSgP/oExgMERjFwInkAAAAAElFTkSuQmCC)",
+		onclick: "BaiduFunctions.onClick(event);",
+	});
 	searchGoBtn.parentNode.insertBefore(BaiduBtn, searchGoBtn);
 
 	BaiduFunctions = {
@@ -152,11 +154,11 @@
 				if (searchbar.value == "") {
 					if (selected) {var x = selected;}
 					else {var x = copied;}
-					gBrowser.selectedTab = gBrowser.addTab(SE[5] + encodeURIComponent(x));
+					$ST(SE[5] + encodeURIComponent(x));
 					return;
 				}
 				else {
-					gBrowser.selectedTab = gBrowser.addTab(SE[5] + encodeURIComponent(searchbar.value));
+					$ST(SE[5] + encodeURIComponent(searchbar.value));
 					searchbar.value = "";
 				}
 				return;
@@ -165,11 +167,11 @@
 				if (searchbar.value == "") {
 					if (selected) {var x = selected;}
 					else {var x = copied;}
-					gBrowser.selectedTab = gBrowser.addTab(SE[6] + encodeURIComponent(x));
+					$ST(SE[6] + encodeURIComponent(x));
 					return;
 				}
 				else {
-					gBrowser.selectedTab = gBrowser.addTab(SE[6] + encodeURIComponent(searchbar.value));
+					$ST(SE[6] + encodeURIComponent(searchbar.value));
 					searchbar.value = "";
 				}
 				return;
@@ -178,11 +180,11 @@
 				if (searchbar.value == "") {
 					if (selected) {var x = selected;}
 					else {var x = copied;}
-					gBrowser.selectedTab = gBrowser.addTab(SE[7] + encodeURIComponent(x));
+					$ST(SE[7] + encodeURIComponent(x));
 					return;
 				}
 				else {
-					gBrowser.selectedTab = gBrowser.addTab(SE[7] + encodeURIComponent(searchbar.value));
+					$ST(SE[7] + encodeURIComponent(searchbar.value));
 					searchbar.value = "";
 				}
 				return;
@@ -191,11 +193,12 @@
 		}
 	};
 
-	var YahooBtn = document.createElement("image");
-	YahooBtn.setAttribute("id", "Yahoo-button");
-	YahooBtn.setAttribute("tooltiptext", "左鍵：Yahoo! Hong Kong\n中鍵：Yahoo! JAPAN\n右鍵：Yahoo! Taiwan\n\n❖ 搜尋搜尋欄關鍵字\n❖ 搜尋選取文字\n❖ 貼上就搜尋\n❖ 新分頁前景");
-	YahooBtn.style.listStyleImage = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAADA0lEQVQ4jV2RS0xcZRiG3/l7zn9Ku4F127hyqUFnzthTGFJoGaZOmCmkHVqKMdq68EKRAGFahVKSUsCApoPdcDOOYoSZJk2KXVgSKaVNmhiN2jQYoxvZGRftmnlcIFPjl7z57pc3n8LqJKIuwupaC6vnnK8PDlRrqHIHtcpW1epqVbWGKl/R0P6Ius+G1fVgu6cTRZUlpo9o0BRx+ymHQ5PEzCgxM0qtuUKtuVL2D4cmaVCOBk0R0zhRZVGgS8T1GcdDN/nzt78BSDsFUs4Sze7XpNxFUs4Sx20RSvD7L3+R1k0aNUegSyjQMEkt0eZ8x4ev32NHTtu7nLKrnLKrtHt3y/GBN++RMasktUSgYRToMsnQIm1mjdfchzz64Q8Apt59RId3nw7vPhNv/ATA52Pf0+E8pM2s8WroKwJdRoEGnqRMkZPOCu3uOmfssyvOeOt07F5/5tt12t11TjorpEyBQANPdFAXN5vMPK3ON2Tst7R5d5gdfgxAfvxXPnnrZ0olmB1+TJu3QsbeocVZpsnMc1AXNxVVdqPJzJN2i7TaW5zwlsnsuc1/pVSCzJ7bnPCWabW3SLkFmsw8UWU3FFV2I26mSboLpG2BFq9Ia0WxzBtg7MyPtFbcoMUrkLYFku6XxM309gBf/ZsNJkfCmSdp8zR7edIVC5x+vri9fatE5rlF0hULNHt5kjZPwpmjwVzDV/+mIup/WmcmaHSuE3enSdgZjnkzJPfOAbC1VSK5d45j3iwJO0PcnabRuU6dmSCi/qfy1UdNaIR68zFHnBxH7TXiNkfcmypTiHtTxG2OozbHESdHvZmkJjSCrz4UUQ+BhqgxI8R2jVLnjFHvjtNckS9TaN79BfXuGHXOGLFdo9SYqwQaIqIeFFY3UV0g0ACBGSQwgxxyB0nsmyx/ILFvkkPOYDkfaJCoLhBWNwqrC1+9+OrDVx/RUC++6SX6P/imdzv3b52vXsLqQmF1so3za2GdP+frnQPVer/yBb1dtaN37BfVuf8lvXf2ZXU+2On7B+kzEw3V663qAAAAAElFTkSuQmCC)";
-	YahooBtn.setAttribute('onclick', "YahooFunctions.onClick(event);");
+	var YahooBtn = $C("image", {
+		id: "Yahoo-button",
+		tooltiptext: "左鍵：Yahoo! Hong Kong\n中鍵：Yahoo! JAPAN\n右鍵：Yahoo! Taiwan\n\n❖ 搜尋搜尋欄關鍵字\n❖ 搜尋選取文字\n❖ 貼上就搜尋\n❖ 新分頁前景",
+		style: "list-style-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAADA0lEQVQ4jV2RS0xcZRiG3/l7zn9Ku4F127hyqUFnzthTGFJoGaZOmCmkHVqKMdq68EKRAGFahVKSUsCApoPdcDOOYoSZJk2KXVgSKaVNmhiN2jQYoxvZGRftmnlcIFPjl7z57pc3n8LqJKIuwupaC6vnnK8PDlRrqHIHtcpW1epqVbWGKl/R0P6Ius+G1fVgu6cTRZUlpo9o0BRx+ymHQ5PEzCgxM0qtuUKtuVL2D4cmaVCOBk0R0zhRZVGgS8T1GcdDN/nzt78BSDsFUs4Sze7XpNxFUs4Sx20RSvD7L3+R1k0aNUegSyjQMEkt0eZ8x4ev32NHTtu7nLKrnLKrtHt3y/GBN++RMasktUSgYRToMsnQIm1mjdfchzz64Q8Apt59RId3nw7vPhNv/ATA52Pf0+E8pM2s8WroKwJdRoEGnqRMkZPOCu3uOmfssyvOeOt07F5/5tt12t11TjorpEyBQANPdFAXN5vMPK3ON2Tst7R5d5gdfgxAfvxXPnnrZ0olmB1+TJu3QsbeocVZpsnMc1AXNxVVdqPJzJN2i7TaW5zwlsnsuc1/pVSCzJ7bnPCWabW3SLkFmsw8UWU3FFV2I26mSboLpG2BFq9Ia0WxzBtg7MyPtFbcoMUrkLYFku6XxM309gBf/ZsNJkfCmSdp8zR7edIVC5x+vri9fatE5rlF0hULNHt5kjZPwpmjwVzDV/+mIup/WmcmaHSuE3enSdgZjnkzJPfOAbC1VSK5d45j3iwJO0PcnabRuU6dmSCi/qfy1UdNaIR68zFHnBxH7TXiNkfcmypTiHtTxG2OozbHESdHvZmkJjSCrz4UUQ+BhqgxI8R2jVLnjFHvjtNckS9TaN79BfXuGHXOGLFdo9SYqwQaIqIeFFY3UV0g0ACBGSQwgxxyB0nsmyx/ILFvkkPOYDkfaJCoLhBWNwqrC1+9+OrDVx/RUC++6SX6P/imdzv3b52vXsLqQmF1so3za2GdP+frnQPVer/yBb1dtaN37BfVuf8lvXf2ZXU+2On7B+kzEw3V663qAAAAAElFTkSuQmCC)",
+		onclick: "YahooFunctions.onClick(event);",
+	});
 	searchGoBtn.parentNode.insertBefore(YahooBtn, searchGoBtn);
 
 	YahooFunctions = {
@@ -208,11 +211,11 @@
 				if (searchbar.value == "") {
 					if (selected) {var x = selected;}
 					else {var x = copied;}
-					gBrowser.selectedTab = gBrowser.addTab(SE[8] + encodeURIComponent(x));
+					$ST(SE[8] + encodeURIComponent(x));
 					return;
 				}
 				else {
-					gBrowser.selectedTab = gBrowser.addTab(SE[8] + encodeURIComponent(searchbar.value));
+					$ST(SE[8] + encodeURIComponent(searchbar.value));
 					searchbar.value = "";
 				}
 				return;
@@ -221,11 +224,11 @@
 				if (searchbar.value == "") {
 					if (selected) {var x = selected;}
 					else {var x = copied;}
-					gBrowser.selectedTab = gBrowser.addTab(SE[9] + encodeURIComponent(x) + "&ei=UTF-8");
+					$ST(SE[9] + encodeURIComponent(x) + "&ei=UTF-8");
 					return;
 				}
 				else {
-					gBrowser.selectedTab = gBrowser.addTab(SE[9] + encodeURIComponent(searchbar.value) + "&ei=UTF-8");
+					$ST(SE[9] + encodeURIComponent(searchbar.value) + "&ei=UTF-8");
 					searchbar.value = "";
 				}
 				return;
@@ -234,11 +237,11 @@
 				if (searchbar.value == "") {
 					if (selected) {var x = selected;}
 					else {var x = copied;}
-					gBrowser.selectedTab = gBrowser.addTab(SE[10] + encodeURIComponent(x));
+					$ST(SE[10] + encodeURIComponent(x));
 					return;
 				}
 				else {
-					gBrowser.selectedTab = gBrowser.addTab(SE[10] + encodeURIComponent(searchbar.value));
+					$ST(SE[10] + encodeURIComponent(searchbar.value));
 					searchbar.value = "";
 				}
 				return;
@@ -247,12 +250,13 @@
 		}
 	};
 
-	var GoogleBtn = document.createElement("image");
-	GoogleBtn.setAttribute("id", "Google-button");
-	GoogleBtn.setAttribute("tooltiptext", "左鍵：Google 加密\n中鍵：Google 翻譯\n右鍵：Google 加密站內\n向上滾動：Google 地圖\n向下滾動：Google 圖片\n\n❖ 搜尋搜尋欄關鍵字\n❖ 搜尋選取文字\n❖ 貼上就搜尋\n❖ 新分頁前景");
-	GoogleBtn.style.listStyleImage = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABWUlEQVQ4jaXTPUvDQBgH8HyzkiCVdlBcFD+CDgUn0bU5rUMRS6mD4BuCVgfFKmitCl0s+FKhvoEgVvsyWKuRS9JLcvm7tcplSHW44e6e5/c8x91JAaKFZJXWFELRzZBVWgsQLST9JfknInlt9ExRJLMMqSOG67ID7gLb5xbG100h1hNIFyzM51gbu61wnN7Znl14Al+GC7LTas9nMi20bPgHPnUXmatOxbE1E89v3D8wd8DAbGBiw0R/XMfupY3RJcM/oBCKkUUDiUMGF/h1HN+AQiiC0xSa4aL04mBgVvcPTKZNbBYspHIMy3mGJnXx+s4xmBARAVg4Ybh4ctAb66wNJXSUGxx7RfEqBaDa5EgdMSEwmWXIlnwA+Qcb5QbHcLLTbjBGcfboILLq4yX2xXVsFSzUP1zcVzmOb2zsF21EVsRkhVD89zPVJTmqhWWV1rsGVFqRo1r4G6iM33AbQTj+AAAAAElFTkSuQmCC)";
-	GoogleBtn.setAttribute('onclick', "GoogleFunctions.onClick(event);");
-	GoogleBtn.setAttribute("onDOMMouseScroll", "GoogleFunctions.onScroll(event);");
+	var GoogleBtn = $C("image", {
+		id: "Google-button",
+		tooltiptext: "左鍵：Google 加密\n中鍵：Google 翻譯\n右鍵：Google 加密站內\n向上滾動：Google 地圖\n向下滾動：Google 圖片\n\n❖ 搜尋搜尋欄關鍵字\n❖ 搜尋選取文字\n❖ 貼上就搜尋\n❖ 新分頁前景",
+		style: "list-style-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABWUlEQVQ4jaXTPUvDQBgH8HyzkiCVdlBcFD+CDgUn0bU5rUMRS6mD4BuCVgfFKmitCl0s+FKhvoEgVvsyWKuRS9JLcvm7tcplSHW44e6e5/c8x91JAaKFZJXWFELRzZBVWgsQLST9JfknInlt9ExRJLMMqSOG67ID7gLb5xbG100h1hNIFyzM51gbu61wnN7Znl14Al+GC7LTas9nMi20bPgHPnUXmatOxbE1E89v3D8wd8DAbGBiw0R/XMfupY3RJcM/oBCKkUUDiUMGF/h1HN+AQiiC0xSa4aL04mBgVvcPTKZNbBYspHIMy3mGJnXx+s4xmBARAVg4Ybh4ctAb66wNJXSUGxx7RfEqBaDa5EgdMSEwmWXIlnwA+Qcb5QbHcLLTbjBGcfboILLq4yX2xXVsFSzUP1zcVzmOb2zsF21EVsRkhVD89zPVJTmqhWWV1rsGVFqRo1r4G6iM33AbQTj+AAAAAElFTkSuQmCC)",
+		onclick: "GoogleFunctions.onClick(event);",
+		onDOMMouseScroll: "GoogleFunctions.onScroll(event);",
+	});
 	searchGoBtn.parentNode.insertBefore(GoogleBtn, searchGoBtn);
 
 	GoogleFunctions = {
@@ -265,11 +269,11 @@
 				if (searchbar.value == "") {
 					if (selected) {var x = selected;}
 					else {var x = copied;}
-					gBrowser.selectedTab = gBrowser.addTab(SE[0] + encodeURIComponent(x));
+					$ST(SE[0] + encodeURIComponent(x));
 					return;
 				}
 				else {
-					gBrowser.selectedTab = gBrowser.addTab(SE[0] + encodeURIComponent(searchbar.value));
+					$ST(SE[0] + encodeURIComponent(searchbar.value));
 					searchbar.value = "";
 				}
 				return;
@@ -278,11 +282,11 @@
 				if (searchbar.value == "") {
 					if (selected) {var x = selected;}
 					else {var x = copied;}
-					gBrowser.selectedTab = gBrowser.addTab(SE[1] + encodeURIComponent(x));
+					$ST(SE[1] + encodeURIComponent(x));
 					return;
 				}
 				else {
-					gBrowser.selectedTab = gBrowser.addTab(SE[1] + encodeURIComponent(searchbar.value));
+					$ST(SE[1] + encodeURIComponent(searchbar.value));
 					searchbar.value = "";
 				}
 				return;
@@ -291,11 +295,11 @@
 				if (searchbar.value == "") {
 					if (selected) {var x = selected;}
 					else {var x = copied;}
-					gBrowser.selectedTab = gBrowser.addTab(SE[2] + content.location.host + " " + encodeURIComponent(x));
+					$ST(SE[2] + content.location.host + " " + encodeURIComponent(x));
 					return;
 				}
 				else {
-					gBrowser.selectedTab = gBrowser.addTab(SE[2] + content.location.host + " " + encodeURIComponent(searchbar.value));
+					$ST(SE[2] + content.location.host + " " + encodeURIComponent(searchbar.value));
 					searchbar.value = "";
 				}
 				return;
@@ -310,11 +314,11 @@
 				if (searchbar.value == "") {
 					if (selected) {var x = selected;}
 					else {var x = copied;}
-					gBrowser.selectedTab = gBrowser.addTab(SE[3] + encodeURIComponent(x));
+					$ST(SE[3] + encodeURIComponent(x));
 					return;
 				}
 				else {
-					gBrowser.selectedTab = gBrowser.addTab(SE[3] + encodeURIComponent(searchbar.value));
+					$ST(SE[3] + encodeURIComponent(searchbar.value));
 					searchbar.value = "";
 				}
 				return;
@@ -323,11 +327,11 @@
 				if (searchbar.value == "") {
 					if (selected) {var x = selected;}
 					else {var x = copied;}
-					gBrowser.selectedTab = gBrowser.addTab(SE[4] + encodeURIComponent(x));
+					$ST(SE[4] + encodeURIComponent(x));
 					return;
 				}
 				else {
-					gBrowser.selectedTab = gBrowser.addTab(SE[4] + encodeURIComponent(searchbar.value));
+					$ST(SE[4] + encodeURIComponent(searchbar.value));
 					searchbar.value = "";
 				}
 				return;
@@ -335,4 +339,12 @@
 			return;
 		}
 	};
+
+	function $(id, doc) (doc || document).getElementById(id);
+	function $ST(se) gBrowser.selectedTab = gBrowser.addTab(se);
+	function $C(name, attr) {
+		var el = document.createElement(name);
+		if (attr) Object.keys(attr).forEach(function(n) el.setAttribute(n, attr[n]));
+		return el;
+	}
 }());
