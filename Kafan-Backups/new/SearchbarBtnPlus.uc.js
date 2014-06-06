@@ -16,31 +16,22 @@
 
 	var searchPopup = document.getAnonymousElementByAttribute(searchbar, "anonid", "searchbar-popup");
 	searchPopup.setAttribute("onclick", "event.preventDefault(); event.stopPropagation();");
-
 	var searchGoBtn = document.getAnonymousElementByAttribute(searchbar, "anonid", "search-go-button");
 	var searchInput = document.getAnonymousElementByAttribute(searchbar, "anonid", "searchbar-textbox");
 
 	var searchbarEngineBtn = document.getAnonymousElementByAttribute(searchbar, "anonid", "searchbar-engine-button");
+	searchbarEngineBtn.setAttribute("onclick", "if (event.button == 2) {gBrowser.selectedTab = gBrowser.addTab(readFromClipboard()); event.preventDefault();}");
+	searchbarEngineBtn.setAttribute("ondblclick", "if (event.button == 0) {Reset.onClick(event); event.preventDefault();}");
 	searchbarEngineBtn.setAttribute("onDOMMouseScroll", "EngineScroll.onScroll(event);");
-	searchbarEngineBtn.setAttribute("tooltiptext","左鍵：搜尋選單\n雙擊左鍵：清除搜索欄關鍵字並重設至默認搜尋引擎\n中鍵：貼上就瀏覽 (新分頁前景)\n滾動：切換搜索引擎\n右鍵：貼上就瀏覽 / 搜尋 (新分頁前景)");
-	searchbarEngineBtn.addEventListener("click", function(event) {
-		if (event.button == 1) {
-			gBrowser.selectedTab = gBrowser.addTab(readFromClipboard());
-		}
-		else if (event.button == 2) {
-			(/^\s*(?:(?:(?:ht|f)tps?:\/\/)?(?:(?:\w+?)(?:\.(?:[\w-]+?))*(?:\.(?:[a-zA-Z]{2,5}))|(?:(?:\d+)(?:\.\d+){3}))(?::\d{2,5})?(?:\/\S*|$)|data:(text|image)\/[\u0025-\u007a]+)\s*$/.test(readFromClipboard()) && (gBrowser.selectedTab = gBrowser.addTab(readFromClipboard()))) || searchbar.doSearch(readFromClipboard(), 'tab');
-		}
-		event.preventDefault();
-	}, false);
-	searchbarEngineBtn.addEventListener('dblclick', function (event) {
-		if (event.button == 0) {
-			searchbar.currentEngine = searchbar.engines ? searchbar.engines[1] : searchbar._engines[1];
-			searchbar.value = "";
-		}
-		event.preventDefault();
-	}, false);
+	searchbarEngineBtn.setAttribute("tooltiptext","左鍵：搜尋選單\n雙擊左鍵：清除搜索欄關鍵字\n　　　　　重設至默認搜尋引擎\n滾動：切換搜索引擎\n右鍵：貼上就瀏覽 (新分頁前景)");
 	EngineScroll = {
 		onScroll: function(event) {searchbar.selectEngine(event, (event.detail > 0));}
+	};
+	Reset = {
+		onClick: function(event) {
+			searchbar.value = "";
+			searchbar.currentEngine = searchbar.engines ? searchbar.engines[1] : searchbar._engines[1];
+		}
 	};
 
 	var findMatchCase = searchInput.appendChild($C("checkbox", {
@@ -53,12 +44,14 @@
 
 	findMatchCase.addEventListener("click", function(event) {
 		if (event.button == 1) {
+			gFindBar.open();
+			gFindBar.toggleHighlight(1);
 			if (searchbar.value == "") {
-				gFindBar._findField.value = readFromClipboard(); gFindBar.open(); gFindBar.toggleHighlight(1);
+				gFindBar._findField.value = readFromClipboard();
 				searchbar.value = readFromClipboard();
 			}
 			else {
-				gFindBar._findField.value = searchbar.value; gFindBar.open(); gFindBar.toggleHighlight(1);
+				gFindBar._findField.value = searchbar.value;
 			}
 			return;
 		event.preventDefault();
@@ -69,14 +62,16 @@
 		onScroll: function(event) {
 			if (event.detail > 0) {
 				if (searchbar.value == "") {return;}
-				gFindBar._findField.value = searchbar.value; gFindBar.open(); gFindBar.toggleHighlight(1);
-//				gFindBar._findField.value = searchbar.value; gFindBar.toggleHighlight(1);
+				gFindBar.open();
+				gFindBar.toggleHighlight(1);
+				gFindBar._findField.value = searchbar.value;
 				gFindBar.onFindAgainCommand(false);
 			}
 			else {
 				if (searchbar.value == "") {return;}
-				gFindBar._findField.value = searchbar.value; gFindBar.open(); gFindBar.toggleHighlight(1);
-//				gFindBar._findField.value = searchbar.value; gFindBar.toggleHighlight(1);
+				gFindBar.open();
+				gFindBar.toggleHighlight(1);
+				gFindBar._findField.value = searchbar.value;
 				gFindBar.onFindAgainCommand(true);
 			}
 			return;
@@ -126,13 +121,22 @@
 
 	var SearchEngineBtn = searchGoBtn.parentNode.insertBefore($C("image", {
 		id: "SearchEngine-button",
-		tooltiptext: "選擇指定搜索引擎後即搜尋\n如搜索欄有關鍵字\n便搜尋搜索欄關鍵字\n否則貼上便搜尋 (新分頁前景)",
+		tooltiptext: "在選單上\n選擇指定搜索引擎後即搜尋\n如搜索欄有關鍵字\n便搜尋搜索欄關鍵字\n否則貼上便搜尋 (新分頁前景)\n\n在按鈕上\n左鍵：Google 加密\n中鍵：Google 翻譯\n右鍵：Google 加密站內\n向上滾動：百度圖片\n向下滾動：Google 圖片\n\n❖ 搜尋搜尋欄關鍵字\n❖ 搜尋選取文字\n❖ 貼上就搜尋\n❖ 新分頁前景",
 		style: "list-style-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACo0lEQVQ4jY3Mz2vTcBgG8FdnallK3VKW/mAuLLD1B8OlI23arW22NGWHUNMcwkAHybZT0a21uq60PWQDxzwNetCL9KJ40FvBg55E/wTR01BBEMSDB0Xc6vZ6Sike5r7wuTzf530AAMCyrPP1ev2apmlPFUV5eRpN0540m80CAJwD+9g0zcfhcBhDoRCGw+FThUIhjEQiaJpmCwAAGo2GHgwGcWJiomdqaupYFMWPkiS9TSaTP/r/bJFIBGu1mgT5fP4Ry7Jok2X51dbW1rSu6wOtVuuiZVkuwzBucRz3q7/HsiwqirIPkiR1GIZBhmFwfn7+tWVZg2tra9VMJvNZEISfuVzuRbPZDBaLxcLk5OSx3WUYBmVZboMoip1AIIDj4+Mn1WqVX11dvT06OoqBQKAnHo9/2tvbuyRJ0vP+fGFhoQ2pVKrj9XpxZmbmi67rA/F4/MDr9WI/mqZxeXn5uq7rN2ma7uXpdLoNyblkh6Io5DjuQNf1gWg0+o2iKPyXqqo3TNM0+7NUKtWGRCLRcbvdyLLs793dXU86nX7mdruxn9/v725sbEwtLi7u9+eJRKINsVisQ5IkkiSJ+Xx+u9FoXOY47p3L5UKSJNHn8x0pinIHAM4LgvDe7pIkiYIgtIHn+Y7T6USn04kjIyNHhmGsWJY1aBjGVVVVV0qlUtCyrAsAAOvr69Msy361+70Bh8OBNpIkT3ief6Oqam1paakoy/IDnuc/lMvlJABAuVzm/H7/ocPhwFgs1oZMJvOQIAj8n7Gxse+bm5tzOzs7MZ/Pd0gQBIqieA8qlUrW5XKdnGXE4/F0aZruEgSBw8PDfyqVShQAADRN2x4aGjo+ywhBEEhRVLdQKJSg/9VqtVg2m707Ozt7/zS5XG67Xq9fse/+AnDURgQylYErAAAAAElFTkSuQmCC)",
-		onmouseover: "document.getAnonymousElementByAttribute(document.querySelector('#searchbar').searchButton, 'anonid', 'searchbar-popup').openPopupAtScreen(event.screenX, event.screenY, true); SearchEnginePopup.onClick(event);",
+		onclick: "SearchEngine.onClick(event);",
+		onmouseover: "document.getAnonymousElementByAttribute(document.querySelector('#searchbar').searchButton, 'anonid', 'searchbar-popup').openPopupAtScreen(event.screenX, event.screenY, true); SearchEngine.popupClick(event);",
+		onDOMMouseScroll: "SearchEngine.onScroll(event);",
 	}), searchGoBtn);
 
-	SearchEnginePopup = {
-		onClick: function(event) {
+	var SE = new Array();
+	SE[0] = 'https://duckduckgo.com/?q=!ge ';
+	SE[1] = 'https://duckduckgo.com/?q=!gt ';
+	SE[2] = 'https://duckduckgo.com/?q=!ge site:';
+	SE[3] = 'https://duckduckgo.com/?q=!img ';
+	SE[4] = 'http://image.baidu.com/i?&cl=2&ie=utf-8&oe=utf-8&word=';
+
+	SearchEngine = {
+		popupClick: function(event) {
 			var EngineSearch = function() {
 				searchPopup.removeEventListener("command", EngineSearch, false);
 				searchPopup.removeEventListener("popuphidden", closeES, false)
@@ -154,24 +158,6 @@
 			searchPopup.addEventListener("command", EngineSearch, false)
 			searchPopup.addEventListener("popuphidden", closeES, false)
 		},
-	};
-
-	var SE = new Array();
-	SE[0] = 'https://duckduckgo.com/?q=!ge ';
-	SE[1] = 'https://duckduckgo.com/?q=!gt ';
-	SE[2] = 'https://duckduckgo.com/?q=!ge site:';
-	SE[3] = 'https://duckduckgo.com/?q=!img ';
-	SE[4] = 'http://image.baidu.com/i?&cl=2&ie=utf-8&oe=utf-8&word=';
-
-	var SearchBtn = searchGoBtn.parentNode.insertBefore($C("image", {
-		id: "Search-button",
-		tooltiptext: "左鍵：Google 加密\n中鍵：Google 翻譯\n右鍵：Google 加密站內\n向上滾動：百度圖片\n向下滾動：Google 圖片\n\n❖ 搜尋搜尋欄關鍵字\n❖ 搜尋選取文字\n❖ 貼上就搜尋\n❖ 新分頁前景",
-		style: "list-style-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABWUlEQVQ4jaXTPUvDQBgH8HyzkiCVdlBcFD+CDgUn0bU5rUMRS6mD4BuCVgfFKmitCl0s+FKhvoEgVvsyWKuRS9JLcvm7tcplSHW44e6e5/c8x91JAaKFZJXWFELRzZBVWgsQLST9JfknInlt9ExRJLMMqSOG67ID7gLb5xbG100h1hNIFyzM51gbu61wnN7Znl14Al+GC7LTas9nMi20bPgHPnUXmatOxbE1E89v3D8wd8DAbGBiw0R/XMfupY3RJcM/oBCKkUUDiUMGF/h1HN+AQiiC0xSa4aL04mBgVvcPTKZNbBYspHIMy3mGJnXx+s4xmBARAVg4Ybh4ctAb66wNJXSUGxx7RfEqBaDa5EgdMSEwmWXIlnwA+Qcb5QbHcLLTbjBGcfboILLq4yX2xXVsFSzUP1zcVzmOb2zsF21EVsRkhVD89zPVJTmqhWWV1rsGVFqRo1r4G6iM33AbQTj+AAAAAElFTkSuQmCC)",
-		onclick: "GoogleFunctions.onClick(event);",
-		onDOMMouseScroll: "GoogleFunctions.onScroll(event);",
-	}), searchGoBtn);
-
-	GoogleFunctions = {
 		onClick: function(event) {
 			var selected = getBrowserSelection();
 			var copied = readFromClipboard();
