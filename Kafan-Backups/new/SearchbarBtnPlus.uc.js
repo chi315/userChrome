@@ -142,7 +142,7 @@
 				} else {
 					var text = searchbar.value;
 				}
-				searchbar.doSearch(readFromClipboard(), 'tab');
+				searchbar.doSearch(text, 'tab');
 				return;
 				searchPopup.querySelectorAll("#" + selectedEngine.id)[0].click();
 				}, 10, searchPopup.querySelector("*[selected=true]"))
