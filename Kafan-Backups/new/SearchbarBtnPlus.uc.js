@@ -142,8 +142,7 @@
 				} else {
 					var text = searchbar.value;
 				}
-				gBrowser.selectedTab = gBrowser.addTab();
-				BrowserSearch.loadSearch(text, false);
+				searchbar.doSearch(readFromClipboard(), 'tab');
 				return;
 				searchPopup.querySelectorAll("#" + selectedEngine.id)[0].click();
 				}, 10, searchPopup.querySelector("*[selected=true]"))
