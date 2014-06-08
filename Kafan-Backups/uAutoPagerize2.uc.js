@@ -92,6 +92,7 @@ var SITEINFO_IMPORT_URLS = ORIGINAL_SITEINFO ? [
 
 // Super_preloaderPlus 地址
 var SITEINFO_CN_IMPORT_URL = "https://greasyfork.org/scripts/293-super-preloaderplus-one/code/Super_preloaderPlus_one.user.js";
+// var SITEINFO_CN_IMPORT_URL = "https://github.com/ywzhaiqi/userscript/raw/master/Super_preloaderPlus/super_preloaderplus_one.user.js";
 
 var COLOR = {
     on: '#0f0',
@@ -413,14 +414,7 @@ var ns = window.uAutoPagerize = {
 
         ns.INCLUDE = INCLUDE;
 
-        // 從 prefs 載入 EXCLUDE
-        try{
-            let str = ns.prefs.getCharPref("EXCLUDE");
-            ns.EXCLUDE = str.split(",");
-        }catch(e){}
-        if(!ns.EXCLUDE){
-            ns.EXCLUDE = EXCLUDE;
-        }
+        ns.loadExclude();
 
         ns.addListener();
         ns.loadSetting();
@@ -455,7 +449,7 @@ var ns = window.uAutoPagerize = {
             } catch (e) {}
         }, ns);
 
-        ns.prefs.setCharPref("EXCLUDE", ns.EXCLUDE.join(","));
+        ns.saveExclude();
 
         ns.IMMEDIATELY_PAGER_NUM = $("uAutoPagerize-immedialate-pages").value;
     },
@@ -479,6 +473,7 @@ var ns = window.uAutoPagerize = {
         gBrowser.mTabContainer.addEventListener('TabClose', this, false);
         window.addEventListener('uAutoPagerize_destroy', this, false);
         window.addEventListener('unload', this, false);
+        ns.prefs.addObserver('', this, false);
     },
     removeListener: function() {
         gBrowser.mPanelContainer.removeEventListener('DOMContentLoaded', this, true);
@@ -486,6 +481,7 @@ var ns = window.uAutoPagerize = {
         gBrowser.mTabContainer.removeEventListener('TabClose', this, false);
         window.removeEventListener('uAutoPagerize_destroy', this, false);
         window.removeEventListener('unload', this, false);
+        ns.prefs.removeObserver('', this, false);
     },
     handleEvent: function(event) {
         switch(event.type) {
@@ -514,6 +510,29 @@ var ns = window.uAutoPagerize = {
                 break;
         }
     },
+    observe: function(aSubject, aTopic, aData){
+        if (aTopic == 'nsPref:changed') {
+            switch(aData) {
+                case 'EXCLUDE':
+                    ns.loadExclude();
+                    break;
+            }
+        }
+    },
+    loadExclude: function() {
+        // 從 prefs 載入 EXCLUDE
+                    try {
+                        let str = ns.prefs.getCharPref("EXCLUDE");
+            ns.EXCLUDE = str.split(/,| |[\n\r]+/);
+                    } catch(e) {}
+        
+        if(!ns.EXCLUDE){
+            ns.EXCLUDE = EXCLUDE;
+            }
+    },
+    saveExclude: function() {  // 保存到 about:config 中
+        ns.prefs.setCharPref("EXCLUDE", ns.EXCLUDE.join("\r\n"));
+    },
     loadSetting: function(isAlert) {
         var data = loadText(this.file);
         if (!data) return false;
@@ -531,7 +550,9 @@ var ns = window.uAutoPagerize = {
 		try {
 			Cu.evalInSandbox(data, sandbox, '1.8');
 		} catch (e) {
-			return log('load error.', e);
+            log('load error.', e);
+            alerts('配置文件錯誤', e);
+            return;
 		}
         sandbox.MY_SITEINFO = this.convertSiteInfos(sandbox.MY_SITEINFO);
 
@@ -849,6 +870,7 @@ var ns = window.uAutoPagerize = {
         }
 
         $('uAutoPagerize-popup').hidePopup();
+        ns.saveExclude();
     },
     resetSITEINFO: function() {
         if (confirm('reset SITEINFO?'))
@@ -2182,7 +2204,7 @@ function getRalativePageStr(lastUrl, currentUrl, nextUrl) {
             lasturl_info = handleInfo(lasturlarray.pop());
             if (url_info != lasturl_info) {
                 if (/[0-9]+/.test(url_info) && (url_info == "2" || /[0-9]+/.test(lasturl_info)))
-                    return [parseInt(lasturl_info) || 1, parseInt(url_info)];
+                    return [(parseInt(lasturl_info) || 1), parseInt(url_info)];
             }
         }
         return [0, 0];
@@ -2445,7 +2467,7 @@ function getCacheCallback_CN(res, url) {
         return getCacheErrorCallback(url);
     }
 
-    var matches = res.responseText.match(/(\/\/高優先級規則,第一個是教程[\s\S]+)\/\/分頁導航的6個圖標/i);
+    var matches = res.responseText.match(/(\/\/高优先级规则,第一个是教程[\s\S]+)\/\/分页导航的6个图标/i);
 
     if(!matches){
         if(!matches){
