@@ -25,7 +25,7 @@
 
 			var css = '\
 				#Trigger-Zone:not(:hover) {opacity: 0.2!important;}\
-				#Trigger-Zone toolbarbutton:active {margin-top:-1px!important;}\
+				#Trigger-Zone toolbarbutton:active {margin-top: -1px!important; padding-bottom: 3px!important;}\
 				'.replace(/[\r\n\t]/g, '');;
 			this.icon.style = addStyle(css);
 		}
