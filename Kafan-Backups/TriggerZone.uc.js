@@ -5,7 +5,7 @@
 				id: "Trigger-Zone",
 				class: "toolbar",
 				tooltiptext: "觸發區域",
-				style: "position: fixed; right: 16px; bottom: 16px; background: -moz-linear-gradient(top, rgb(252, 252, 252) 0%, rgb(245, 245, 245) 33%, rgb(245, 245, 245) 100%); opacity: 0.9; min-width: auto; max-width: 118px; border: 2px solid rgb(144,144,144); border-radius: 5px;",
+				style: "position: fixed; right: 16px; bottom: 16px; background: -moz-linear-gradient(top, rgb(252, 252, 252) 0%, rgb(245, 245, 245) 33%, rgb(245, 245, 245) 100%); min-width: auto; max-width: 94px; border: 2px solid rgb(144,144,144); border-radius: 5px;",
 			}));
 
 			for (let i = 0, Btn; Btn = mBtns[i]; i++) {
@@ -23,7 +23,8 @@
 			}
 
 			var css = '\
-				#Trigger-Zone:not(:hover) {opacity: 0.2!important;}\
+				#Trigger-Zone {opacity: 0.2!important; -moz-transition: opacity 0.3s ease-out!important;}\
+				#Trigger-Zone:hover {opacity: 1!important; -moz-transition: opacity 0.2s ease-in!important;}\
 				#Trigger-Zone toolbarbutton:active {margin-top: -1px!important; padding-bottom: 3px!important;}\
 				'.replace(/[\r\n\t]/g, '');;
 			this.icon.style = addStyle(css);
