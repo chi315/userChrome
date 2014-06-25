@@ -1,5 +1,5 @@
 (function() {
-	var BMBtn = document.getElementById("bookmarks-menu-button");
+	var BMBtn = $("urlbar-icons").appendChild($("bookmarks-menu-button"));
 	var StarBtn = document.getAnonymousElementByAttribute(BMBtn, "anonid", "button");
 	StarBtn.setAttribute("tooltiptext","左鍵：將本頁加入書籤\n中鍵：將本頁加入書籤並彈出書籤編輯面板\n右鍵：刪除此書籤\n向上滾動：將本頁加入書籤\n向下滾動：將本頁加入書籤選單");
 	StarBtn.setAttribute("onDOMMouseScroll", "\
@@ -25,4 +25,6 @@
 	
 	// 展開資料夾和標籤
 	eval("StarUI._doShowEditBookmarkPanel=" + StarUI._doShowEditBookmarkPanel.toString().replace(/}$/, "gEditItemOverlay.toggleFolderTreeVisibility();gEditItemOverlay.toggleTagsSelector();document.getElementById('editBMPanel_folderTree').style.cssText = 'min-height:222px!important'; $&"));
+	
+	function $(id) document.getElementById(id);
 })();
