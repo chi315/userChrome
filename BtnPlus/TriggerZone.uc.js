@@ -28,7 +28,7 @@
 				#Trigger-Zone toolbarbutton {-moz-appearance: none!important; border: none!important;}\
 				#Trigger-Zone toolbarbutton:active {margin-top: -1px!important; padding-bottom: 3px!important;}\
 				#Trigger-Zone:not(:hover) toolbarbutton {visibility: collapse!important;}\
-				#Trigger-Zone:not(:hover) {max-width: 24px!important; max-height: 24px!important; background: #3B3B3B!important; border: 2px solid #3B3B3B!important;}\
+				#Trigger-Zone:not(:hover) {max-width: 24px!important; max-height: 24px!important; background: #3B3B3B!important; border: 2px solid #FFF!important;}\
 				'.replace(/[\r\n\t]/g, '');;
 			this.icon.style = addStyle(css);
 		}
@@ -64,7 +64,7 @@
 			image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAADB0lEQVQ4jX2TX0hUeRTHv/fe373eae69c++MeUed5ro2pUO6RY6SFawoK1ZjFPUgpajVZrVIjP3BjMkRy9FozU0ogkoy20JQkowyrenfbn/sIQiWXtqeNojdh6KSMpjTQ2RZ1vf1fD/nHA7fA0yhiu3F9l8iufM2tcwNhg5llu7szghEenzaVN5JysmBuLjUDBaWmedLNjifrqjTXpc3q2M1Ha5n27uThyODKWWRGORv8QnJmWjwzuFfeLJ5+iHAU3Yx4sW/Il55gFHtcYV2n0scax5x7o/EoHxFqyY2GqncmJEqkOERyPDyTxItfse8JcLa6nZxuO6UTuEBNzVdco03XWW7AHATsOxAut3FPVKSeFJNnlSTH1fdQuXH+rYeV+6ePutZ65CfWkcsCl9mT6P3xNyJBqKCTaKCuKTxJOsc2Qzusc2AFwBCxzRnuNcX3Xc+6/mh63nU8VcGNd9kFL0t/tk6KpUBAMeL6BIURt6KGtIWFRCTcRuA+nFA3Qkz2HDG92/Htfn02x03NV4RqOIAe1jeDh8ASJwiDczcvINKLjygWS1nSQz8fAuYdCghb7nZG+pyU3hIomXbRJKTbHcBhwHH4dOGv/PkcNHIQwr0jlLa/kHStxz531bWtvqzQzFOcvan52tUsF4mOVEjMMcwgGnQrv+91H/x/g1/3924dTRG05v6SN3w+xs5WH8SBbWeD7zDEOzuUcHuJqaaJExLIiS42j7UYjEmdQ9lGZ2D/zij/aTX/0Hqus6XCSsjJRP7O6xVgjbjFdM8xNRU4pXk/8CcCyflQGzqqRW3Hn6TUHOEpPKDxIJ77rHZhfWSkdYi6tYTUbdI1C0SdCvO21PaAAiTkxRqt/GV0b1Y2fiaK20krriBhMUbScpaRnJ6Psne+SSkZI3zLt9xQHNOHeaCKhmFm6uxoPoB8qrecoEK4n5cRcgoegdv4BFMfwhwfvepOAB2qFY+3DlhpOR2ISm7C3paBEz5CYD9e/CnJmlVMrLXGJhdmojMIhfScxzweGwA+C/N7wF1/PIEbN4/SAAAAABJRU5ErkJggg==",
 			onmouseover: "UCL.rebuild(); USL.rebuild(); ucjsMouseGestures.reload(true); addMenu.rebuild(true); uAutoPagerize.loadSetting(true); uAutoPagerize.loadSetting_CN(); refererChanger.reload(true); KeyChanger.makeKeyset(true);",
 			oncommand: "Services.appinfo.invalidateCachesOnRestart() || Application.restart();",
-			onDOMMouseScroll: "ZoomScroll.onScroll(event);",
+			onDOMMouseScroll: "if (event.detail > 0) {FullZoom.reduce();} else {FullZoom.enlarge();} return;",
 		},
 		{
 			id: "NextPage-button",
@@ -81,7 +81,7 @@
 			id: "ScrollBottom-button",
 			tooltiptext: "滾動到頁面底部",
 			image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABdklEQVQ4jZXQsUrDQBjA8Qy6CXawoBGTejVt04uSy6VSLkXrpQnk0pYSE6U4+Q4Obt1c+xRujk7uLg6+gge+gOKo8DmYQTCW5oP/9t2Pu1OUgomyrJqm58/Z2RSysymk6flzlGXVot3CESLRk+RUJkkKP51KIRK9BCD00Wgix+MJjMcTGI0mUghRDhAilnE8hDgeghBxOYBzrgdBJMMwgjCMIAgiyTkvB/ATX/p8AD4fAD/xywGMMb1/3Jf94z7kScZYOcBjnux5Peh5PfCYVw4ghOjdw67sHnYhTxJCFgO0QTeoTa8c25m5jjN3KX3rUBc61AWX0jfXceaO7cwoodcY480/AMZ4jezbt+TAhsWRO4rQeuEtTNPULRM/7rcxFGW18ZNlWfWFT2m1WsxsNl9MowW/azear6ZhHC31iXsIXeyh+ruB6pD3YSB0udThfFZqmjZDO9rn7o72VdO0G0VRVssASq1SqWjq9r22pT6oqrrx3943l4GSr2rZzqIAAAAASUVORK5CYII=",
-			oncommand: "content.scrollTo(0, 10000000000);",
+			oncommand: "content.scrollTo(0, 1e10);",
 		},
 		{
 			tooltiptext: "",
