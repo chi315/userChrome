@@ -121,7 +121,7 @@
 
 	var SearchEngineBtn = searchGoBtn.parentNode.insertBefore($C("image", {
 		id: "SearchEngine-button",
-		tooltiptext: "在選單上\n選擇指定搜索引擎後即搜尋\n如搜索欄有關鍵字\n便搜尋搜索欄關鍵字\n否則貼上就搜尋 (新分頁前景)\n\n在按鈕上\n左鍵：Google 加密\n中鍵：Google 翻譯\n右鍵：Google 加密站內\n向上滾動：百度圖片\n向下滾動：Google 圖片\n\n❖ 搜尋搜索欄關鍵字\n❖ 搜尋選取文字\n❖ 貼上就搜尋\n❖ 新分頁前景",
+		tooltiptext: "在選單上\n選擇指定搜索引擎後即搜尋 (新分頁前景)\n❖ 若搜索欄有關鍵字，便搜尋搜索欄關鍵字\n❖ 若搜索欄沒有關鍵字並選取了文字，便搜尋選取文字\n❖ 否則便貼上就搜尋\n\n在按鈕上\n左鍵：Google 加密\n中鍵：Google 翻譯\n右鍵：Google 加密站內\n向上滾動：百度圖片\n向下滾動：Google 圖片\n\n❖ 搜尋搜索欄關鍵字\n❖ 搜尋選取文字\n❖ 貼上就搜尋\n❖ 新分頁前景",
 		style: "list-style-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACo0lEQVQ4jY3Mz2vTcBgG8FdnallK3VKW/mAuLLD1B8OlI23arW22NGWHUNMcwkAHybZT0a21uq60PWQDxzwNetCL9KJ40FvBg55E/wTR01BBEMSDB0Xc6vZ6Sike5r7wuTzf530AAMCyrPP1ev2apmlPFUV5eRpN0540m80CAJwD+9g0zcfhcBhDoRCGw+FThUIhjEQiaJpmCwAAGo2GHgwGcWJiomdqaupYFMWPkiS9TSaTP/r/bJFIBGu1mgT5fP4Ry7Jok2X51dbW1rSu6wOtVuuiZVkuwzBucRz3q7/HsiwqirIPkiR1GIZBhmFwfn7+tWVZg2tra9VMJvNZEISfuVzuRbPZDBaLxcLk5OSx3WUYBmVZboMoip1AIIDj4+Mn1WqVX11dvT06OoqBQKAnHo9/2tvbuyRJ0vP+fGFhoQ2pVKrj9XpxZmbmi67rA/F4/MDr9WI/mqZxeXn5uq7rN2ma7uXpdLoNyblkh6Io5DjuQNf1gWg0+o2iKPyXqqo3TNM0+7NUKtWGRCLRcbvdyLLs793dXU86nX7mdruxn9/v725sbEwtLi7u9+eJRKINsVisQ5IkkiSJ+Xx+u9FoXOY47p3L5UKSJNHn8x0pinIHAM4LgvDe7pIkiYIgtIHn+Y7T6USn04kjIyNHhmGsWJY1aBjGVVVVV0qlUtCyrAsAAOvr69Msy361+70Bh8OBNpIkT3ief6Oqam1paakoy/IDnuc/lMvlJABAuVzm/H7/ocPhwFgs1oZMJvOQIAj8n7Gxse+bm5tzOzs7MZ/Pd0gQBIqieA8qlUrW5XKdnGXE4/F0aZruEgSBw8PDfyqVShQAADRN2x4aGjo+ywhBEEhRVLdQKJSg/9VqtVg2m707Ozt7/zS5XG67Xq9fse/+AnDURgQylYErAAAAAElFTkSuQmCC)",
 		onclick: "SearchEngine.onClick(event);",
 		onmouseover: "document.getAnonymousElementByAttribute(document.querySelector('#searchbar').searchButton, 'anonid', 'searchbar-popup').openPopupAtScreen(event.screenX, event.screenY, true); SearchEngine.popupClick(event);",
@@ -140,15 +140,18 @@
 			var EngineSearch = function() {
 				searchPopup.removeEventListener("command", EngineSearch, false);
 				searchPopup.removeEventListener("popuphidden", closeES, false)
-				setTimeout(function(selectedEngine) {
-				if (searchbar.value == "") {
-					var text = readFromClipboard();
-				} else {
+				var selected = getBrowserSelection();
+				if (!searchbar.value == "") {
 					var text = searchbar.value;
+					searchbar.value = "";
 				}
-				searchbar.doSearch(text, 'tab');
-				return;
-				searchPopup.querySelectorAll("#" + selectedEngine.id)[0].click();
+				else {
+					if (selected) {var text = selected;}
+					else {var text = readFromClipboard();}
+				}
+				setTimeout(function(selectedEngine) {
+					searchbar.doSearch(text, 'tab');
+					searchPopup.querySelectorAll("#" + selectedEngine.id)[0].click();
 				}, 10, searchPopup.querySelector("*[selected=true]"))
 			}
 			var closeES = function() {
@@ -161,84 +164,47 @@
 		onClick: function(event) {
 			var selected = getBrowserSelection();
 			var copied = readFromClipboard();
+			if (!searchbar.value == "") {
+				var x = searchbar.value;
+				searchbar.value = "";
+			}
+			else {
+				if (selected) {var x = selected;}
+				else {var x = copied;}
+			}
 			event.preventDefault();
 			switch(event.button) {
 				case 0:
-				if (searchbar.value == "") {
-					if (selected) {var x = selected;}
-					else {var x = copied;}
 					$ST(SE[0] + encodeURIComponent(x));
-					return;
-				}
-				else {
-					$ST(SE[0] + encodeURIComponent(searchbar.value));
-					searchbar.value = "";
-				}
-				return;
 				break;
 				case 1:
-				if (searchbar.value == "") {
-					if (selected) {var x = selected;}
-					else {var x = copied;}
 					$ST(SE[1] + encodeURIComponent(x));
-					return;
-				}
-				else {
-					$ST(SE[1] + encodeURIComponent(searchbar.value));
-					searchbar.value = "";
-				}
-				return;
 				break;
 				case 2:
-				if (searchbar.value == "") {
-					if (selected) {var x = selected;}
-					else {var x = copied;}
 					$ST(SE[2] + content.location.host + " " + encodeURIComponent(x));
-					return;
-				}
-				else {
-					$ST(SE[2] + content.location.host + " " + encodeURIComponent(searchbar.value));
-					searchbar.value = "";
-				}
-				return;
 				break;
 			}
 		},
 		onScroll: function(event) {
 			var selected = getBrowserSelection();
 			var copied = readFromClipboard();
-			if (event.detail > 0) {
-				if (searchbar.value == "") {
-					if (selected) {var x = selected;}
-					else {var x = copied;}
-					$ST(SE[3] + encodeURIComponent(x));
-					return;
-				}
-				else {
-					$ST(SE[3] + encodeURIComponent(searchbar.value));
-					searchbar.value = "";
-				}
-				return;
+			if (!searchbar.value == "") {
+				var x = searchbar.value;
+				searchbar.value = "";
 			}
 			else {
-				if (searchbar.value == "") {
-					if (selected) {var x = selected;}
-					else {var x = copied;}
-					$ST(SE[4] + encodeURIComponent(x));
-					return;
-				}
-				else {
-					$ST(SE[4] + encodeURIComponent(searchbar.value));
-					searchbar.value = "";
-				}
-				return;
+				if (selected) {var x = selected;}
+				else {var x = copied;}
+			}
+			if (event.detail > 0) {
+				$ST(SE[3] + encodeURIComponent(x));
+			}
+			else {
+				$ST(SE[4] + encodeURIComponent(x));
 			}
 			return;
 		}
 	};
-	gBrowser.addEventListener("mouseover", function(event) {
-		document.getAnonymousElementByAttribute(document.querySelector('#searchbar').searchButton, 'anonid', 'searchbar-popup').hidePopup();
-	}, false);
 
 	function $(id, doc) (doc || document).getElementById(id);
 	function $ST(se) gBrowser.selectedTab = gBrowser.addTab(se);
