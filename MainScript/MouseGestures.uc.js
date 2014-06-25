@@ -73,7 +73,7 @@ var ucjsMouseGestures = {
 	getMouseGesturesFile: function() {
 		var aFile = Services.dirsvc.get("UChrm", Ci.nsILocalFile);
 //		aFile.appendRelativePath("lib");
-		aFile.appendRelativePath("_mouseGestures.js");
+		aFile.appendRelativePath("local\\_mouseGestures.js");
 		if (!aFile.exists() || !aFile.isFile()) return null;
 		delete this.file;
 		return this.file = aFile;
@@ -230,7 +230,7 @@ var ucjsMouseGestures = {
 			dChain += direction;
 			this._directionChain += direction;
 			var gesture = this.GESTURES[dChain];
-			XULBrowserWindow.statusTextField.label = "手勢: " + dChain + (gesture ? ' (' + gesture.name + ')' : '');
+			XULBrowserWindow.statusTextField.label = "手勢: " + dChain + (gesture ? ' (' + gesture.name + ')' : '') + " ";
 		}
 		this._lastX = x;
 		this._lastY = y;
@@ -244,7 +244,7 @@ var ucjsMouseGestures = {
 				XULBrowserWindow.statusTextField.label = "";
 			}
 		} catch (e) {
-			XULBrowserWindow.statusTextField.label = '手勢未定義或函數定義錯誤: ' + dChain;
+			XULBrowserWindow.statusTextField.label = '手勢未定義或函數定義錯誤: ' + dChain + " ";
 		}
 		this._directionChain = "";
 		this.eraseTrail();
