@@ -145,7 +145,7 @@ window.addMenu = {
             aFile.initWithPath(this.prefs.getCharPref("FILE_PATH"));
         } catch (e) {
             aFile = Services.dirsvc.get("UChrm", Ci.nsILocalFile);
-            aFile.appendRelativePath("_addmenu.js");
+            aFile.appendRelativePath("local\\_addmenu.js");
         }
         delete this.FILE;
         return this.FILE = aFile;
@@ -205,7 +205,7 @@ window.addMenu = {
         ins = $("devToolsSeparator");
         ins.parentNode.insertBefore($C("menuitem", {
             id: "addMenu-rebuild",
-            label: "addMenu 配置",
+            label: "addMenuPlus",
             tooltiptext: "左鍵：重新載入配置\r\n右鍵：打開文件編輯",
             oncommand: "setTimeout(function(){ addMenu.rebuild(true); }, 10);",
             onclick: "if (event.button == 2) { event.preventDefault(); addMenu.edit(addMenu.FILE); }",
@@ -256,10 +256,12 @@ window.addMenu = {
 
         if (keyword) {
             let kw = keyword + (text? " " + (text = this.convertText(text)) : "");
-            let newurl = getShortcutOrURI(kw);
+            let loc = getShortcutOrURI(kw);
+            let newurl = loc[0];
+            let postData = loc[1].value;
             if (newurl == kw && text)
                 return this.log(U("未找到關鍵字: ") + keyword);
-            this.openCommand(event, newurl, where);
+            this.openCommand(event, newurl, where, postData);
         }
         else if (url)
             this.openCommand(event, this.convertText(url), where);
@@ -268,7 +270,7 @@ window.addMenu = {
         else if (text)
             this.copy(this.convertText(text));
     },
-    openCommand: function(event, url, where) {
+    openCommand: function(event, url, where, postData) {
         var uri;
         try {
             uri = Services.io.newURI(url, null, null);
@@ -278,7 +280,7 @@ window.addMenu = {
         if (uri.scheme === "javascript")
             loadURI(url);
         else if (where)
-            openUILinkIn(uri.spec, where);
+            openUILinkIn(uri.spec, where, false, postData || null);
         else if (event.button == 1)
             openNewTabWith(uri.spec);
         else openUILink(uri.spec, event);
@@ -286,8 +288,21 @@ window.addMenu = {
     exec: function(path, arg){
         var file    = Cc['@mozilla.org/file/local;1'].createInstance(Ci.nsILocalFile);
         var process = Cc['@mozilla.org/process/util;1'].createInstance(Ci.nsIProcess);
+        var UI = Cc["@mozilla.org/intl/scriptableunicodeconverter"].createInstance(Ci.nsIScriptableUnicodeConverter);
+        UI.charset = window.navigator.platform.toLowerCase().indexOf("win") >= 0? "GBK": "UTF-8";
         try {
-            var a = (typeof arg == 'string' || arg instanceof String) ? arg.split(/\s+/) : [arg];
+            var a;
+            if (typeof arg == 'string' || arg instanceof String) {
+                a = arg.split(/\s+/)
+            } else if (Array.isArray(arg)) {
+                a = arg;
+            } else {
+                a = [arg];
+            }
+            // 轉換每個參數的編碼
+            a.forEach(function(str, i){
+                a[i] = UI.ConvertFromUnicode(str);
+            });
             file.initWithPath(path);
 
             if (!file.exists()) {
@@ -534,26 +549,31 @@ window.addMenu = {
             // clone menuitem and set attribute
             if(obj.id && (menuitem = $(obj.id))){
                 let dupMenuitem;
-                if(obj.clone == false){
-                    dupMenuitem = menuitem;
-                }else{
+                let isDupMenu = (obj.clone != false);
+                if (isDupMenu) {
                     dupMenuitem = menuitem.cloneNode(true);
                     dupMenuitem.classList.add("addMenu");
 
                     menuitem.classList.add("addMenuR");
+                }else{
+                    dupMenuitem = menuitem;
+                    dupMenuitem.classList.add("addMenu");
+                    dupMenuitem.classList.add("addMenuNot");
                 }
 
                 for (let [key, val] in Iterator(obj)) {
-                    if (typeof val == "function")
+                    if (typeof val == "function") {
                         obj[key] = val = "(" + val.toSource() + ").call(this, event);";
+                    }
                     dupMenuitem.setAttribute(key, val);
                 }
 
                 // 沒有插入位置的默認放在原來那個菜單的後面
-                if(!obj.insertAfter && !obj.insertBefore && !obj.position){
+                if(isDupMenu && !obj.insertAfter && !obj.insertBefore && !obj.position){
                     obj.insertAfter = obj.id;
                 }
-                insertMenuItem(obj, dupMenuitem, true);
+                let noMove = !isDupMenu;
+                insertMenuItem(obj, dupMenuitem, noMove);
 
                 continue;
             }
@@ -578,13 +598,19 @@ window.addMenu = {
                     insertPoint.parentNode.appendChild(menuitem);
                 return;
             }
+            if (!noMove) {
             insertPoint.parentNode.insertBefore(menuitem, insertPoint);
+            }
         }
     },
 
     removeMenuitem: function() {
-        $$('menu.addMenu').forEach(function(e) e.parentNode.removeChild(e) );
-        $$('.addMenu').forEach(function(e) e.parentNode.removeChild(e) );
+        var remove = function(e) {
+            if (e.classList.contains('addMenuNot')) return;
+            e.parentNode.removeChild(e);
+        };
+        $$('menu.addMenu').forEach(remove);
+        $$('.addMenu').forEach(remove);
         $$('.addMenuR').forEach(function(e) { e.classList.remove('addMenuR');} );
     },
 
@@ -617,7 +643,7 @@ window.addMenu = {
             }
         }
 
-        let url = obj.keyword ? getShortcutOrURI(obj.keyword) : obj.url ? obj.url.replace(this.regexp, "") : "";
+        let url = obj.keyword ? getShortcutOrURI(obj.keyword)[0] : obj.url ? obj.url.replace(this.regexp, "") : "";
         if (!url) return;
 
         let uri, iconURI;
@@ -798,7 +824,7 @@ window.addMenu = {
             var UI = Cc["@mozilla.org/intl/scriptableunicodeconverter"].createInstance(Ci.nsIScriptableUnicodeConverter);
             UI.charset = window.navigator.platform.toLowerCase().indexOf("win") >= 0? "GBK": "UTF-8";
             var path = UI.ConvertFromUnicode(aFile.path);
-            this.exec(editor, path);
+            this.exec(editor, [path]);
         } catch (e) {}
     },
     copy: function(aText) {
@@ -893,7 +919,7 @@ function getShortcutOrURI(aURL, aPostDataRef, aMayInheritPrincipal) {
   if (engine) {
     var submission = engine.getSubmission(param);
     aPostDataRef.value = submission.postData;
-    return submission.uri.spec;
+    return [submission.uri.spec, aPostDataRef];
   }
 
   [shortcutURL, aPostDataRef.value] =
@@ -944,7 +970,7 @@ function getShortcutOrURI(aURL, aPostDataRef, aMayInheritPrincipal) {
     // the original URL.
     aPostDataRef.value = null;
 
-    return aURL;
+    return [aURL, aPostDataRef];
   }
 
   // This URL came from a bookmark, so it's safe to let it inherit the current
@@ -952,7 +978,7 @@ function getShortcutOrURI(aURL, aPostDataRef, aMayInheritPrincipal) {
   if (aMayInheritPrincipal)
     aMayInheritPrincipal.value = true;
 
-  return shortcutURL;
+  return [shortcutURL, aPostDataRef];
 }
 
 
@@ -993,7 +1019,7 @@ function getShortcutOrURI(aURL, aPostDataRef, aMayInheritPrincipal) {
 .addMenu.copy,\
 menuitem.addMenu[text]:not([url]):not([keyword]):not([exec])\
 {\
-  list-style-image: url("chrome://browser/skin/appmenu-icons.png");\
+  list-style-image: url(data:image/png;base64,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);\
   -moz-image-region: rect(0pt, 32px, 16px, 16px);\
 }\
 \
