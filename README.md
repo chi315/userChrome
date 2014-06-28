@@ -1,6 +1,34 @@
+UC 腳本整合帖
+==========
+<b>UC 腳本參考和下載網址</b>
+<ol>
+<li><a href="http://bbs.kafan.cn/thread-1340501-1-1.html" target="_blank">卡飯論壇 - Firefox 資源下載專帖（2012.07.28）</a><br></li>
+<li><a href="https://g.mozest.com/thread-26773-1-1" target="_blank">Mozilla 社區 - UC 腳本集合帖（2010.11.26 更新）</a><br></li>
+<li><a href="https://j.mozest.com/zh-CN/" target="_blank">Mozilla 社區 - 原創腳本區</a><br></li>
+<li><a href="http://wiki.nothing.sh/page/userChrome.js%CD%D1%A5%B9%A5%AF%A5%EA%A5%D7%A5%C8#vfb09d65" target="_blank">wiki@nothing - userChrome 腳本（日文）</a><br></li>
+<li><a href="http://u6.getuploader.com/script/" target="_blank">Firefox 腳本上傳區（日文）</a><br></li>
+<li><a href="https://github.com/ardiman/userChrome.js" target="_blank">ardiman (德國人收集)</a><br></li>
+</ol>
+<b>以下為腳本原創或修改作者</b>
+<ol>
+<li><a href="https://github.com/alice0775/userChrome.js" target="_blank">alice0775</a><br></li>
+<li><a href="https://github.com/Griever/userChromeJS" target="_blank">Griever</a><br></li>
+<li><a href="https://github.com/ywzhaiqi/userChromeJS" target="_blank">ywzhaiqi</a><br></li>
+<li><a href="https://github.com/lastdream2013/userChrome" target="_blank">lastdream2013</a><br></li>
+<li><a href="https://github.com/feiruo/userChromeJS" target="_blank">feiruo</a><br></li>
+<li><a href="https://github.com/defpt/userChromeJs" target="_blank">defpt</a><br></li>
+<li><a href="http://pan.baidu.com/share/home?uk=2467242534#category/type=0" target="_blank">黒儀大螃蟹</a><br></li>
+<li><a href="https://bitbucket.org/zbinlin" target="_blank">zbinlin</a><br></li>
+<li>紫云飛</li>
+<a href="http://www.cnblogs.com/ziyunfei/archive/2011/11/25/2263756.html" target="_blank">UserChromeJS腳本</a><br>
+<a href="http://www.cnblogs.com/ziyunfei/archive/2012/02/05/2338725.html" target="_blank">uc腳本轉擴展</a><br>
+<a href="http://www.cnblogs.com/ziyunfei/archive/2011/12/15/2289504.html" target="_blank">鼠標手勢UserChromeJS腳本在線生成器</a><br>
+<a href="http://www.cnblogs.com/ziyunfei/archive/2011/12/20/2293928.html" target="_blank">鼠標拖拽UserChromeJS腳本在線生成器</a><br>
+</ol>
+
 我的帖子
 ==========
-卡飯論壇
+<b>卡飯論壇</b>
 <ol>
 <li><a href="http://bbs.kafan.cn/thread-1739599-1-1.html" target="_blank">代替AppMenu - Btn取代法(可與AppMenuPlus使用)/選單取代法(複製/移動功能到其他選單)</a><br></li>
 <li><a href="http://bbs.kafan.cn/thread-1739617-1-1.html" target="_blank">[修改發佈] autoFocusSearchbar.uc.js & SearchbarBtnPlus.uc.js</a><br></li>
@@ -16,7 +44,7 @@
 <li><a href="http://bbs.kafan.cn/thread-1743975-1-1.html" target="_blank">代碼 - 修改about:config中的特定值</a><br></li>
 </ol>
 ==========
-Mozilla 社區
+<b>Mozilla 社區</b>
 <ol>
 <li><a href="http://g.mozest.com/thread-44436-1-1" target="_blank">_addmenu.js配置 - 自用功能 [13/5更新 - 新增反轉輸入]</a><br></li>
 <li><a href="http://g.mozest.com/thread-43774-1-1" target="_blank">StarBtnPlus.uc.js (5合1) (For Fx30.0) [2014.06.25 & 16:56:26更新]</a><br></li>
@@ -28,9 +56,9 @@ Mozilla 社區
 <li><a href="http://g.mozest.com/thread-43730-1-1" target="_blank">動漫之家漫畫網(178漫畫網) - 看漫畫模式CSS</a><br></li>
 </ol>
 ==========
-Addons (Now Used)<br>
-Commonly Used (Default: enabled)
+<b>Addons (Now Used)</b><br>
 <ol>
+Commonly Used (Default: enabled)
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/adblock-plus/" target="_blank">Adblock Plus</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/betterprivacy/" target="_blank">BetterPrivacy</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/clipple/" target="_blank">Clipple</a><br></li>
@@ -40,8 +68,8 @@ Commonly Used (Default: enabled)
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/zoom-panel/" target="_blank">快速縮放</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/%E6%96%B0%E5%90%8C%E6%96%87%E5%A0%82-new-tong-wen-tang/" target="_blank">新同文堂</a><br></li>
 </ol>
-Non-Commonly Used (Using when needed, Default: disabled)
 <ol>
+Non-Commonly Used (Using when needed, Default: disabled)
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/about-addons-memory/" target="_blank">about:addons-memory</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/add-to-search-bar/" target="_blank">Add to Search Bar</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/dom-inspector-6622/" target="_blank">DOM Inspector</a><br></li>
@@ -53,10 +81,11 @@ Non-Commonly Used (Using when needed, Default: disabled)
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/super-drag/?src=userprofile" target="_blank">Super Drag</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/unblock-youku/" target="_blank">Unblock Youku</a><br></li>
 </ol>
-Addons (Recently Used)
+<b>Addons (Recently Used)</b>
 <ol>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/adblock-plus-pop-up-addon/" target="_blank">Adblock Plus Pop-up Addon</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/all-in-one-sidebar/" target="_blank">All-in-One Sidebar</a><br></li>
+<li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/autopager/" target="_blank">AutoPager</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/azid-amazon-zoom-image-downloa/" target="_blank">azid - Amazon Zoom Image Downloader</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/extended-copy-menu-fix-vers/" target="_blank">Extended Copy Menu (fix version)</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/fastestfox-browse-faster/" target="_blank">FastestFox - Browse Faster</a><br></li>
@@ -65,15 +94,18 @@ Addons (Recently Used)
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/greasemonkey/" target="_blank">Greasemonkey</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/imagehost-grabber/" target="_blank">ImageHost Grabber</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/image-toolbar/" target="_blank">Image Toolbar</a><br></li>
+<li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/menu-editor/" target="_blank">Menu Editor</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/organize-search-engines/" target="_blank">Organize Search Engines</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/prevnextarrows/" target="_blank">PrevNextArrows</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/righttoclick/" target="_blank">RightToClick</a><br></li>
+<li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/roomy-bookmarks-toolbar/" target="_blank">Roomy Bookmarks Toolbar</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/stylish/" target="_blank">Stylish</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/tab-mix-plus/" target="_blank">Tab Mix Plus</a><br></li>
+<li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/tab-utilities/" target="_blank">Tab Utilities</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/toolbar-buttons/" target="_blank">Toolbar Buttons</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/invert-input/" target="_blank">反轉輸入</a><br></li>
 </ol>
-Recommended Used By Others
+<b>Recommended Used By Others</b>
 <ol>
 <li><a href="http://www.admuncher.com/download.shtml" target="_blank">Ad Muncher</a><br></li>
 <li><a href="http://baike.baidu.com/view/1800356.htm" target="_blank">Ad Muncher</a><br></li>
