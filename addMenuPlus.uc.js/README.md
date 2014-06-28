@@ -5,8 +5,8 @@
 另外，有些功能需下載以下檔案並放到chrome資料夾內才能使用，包括：<br>
 截圖：<a href="http://g.mozest.com/attachment.php?aid=30568&k=e1d2830f15b6c45f80adf52639cd46bd&t=1403967622&fid=75&sid=5d46Px3xQ6Eni8tTMz4dCCirYDWhCqI%2FmzaUh8SmZj46kiU">WebScreenShotMod.uc.zip</a><br>
 反轉輸入：<a href="http://g.mozest.com/attachment.php?aid=30789&k=3fdb521d46218c9439182930904df8a1&t=1403967378&fid=75&sid=2dbe933%2Bo8G42tL%2BgTVGOqZMnakcsAnjmdlqC72jQHavOzw">InvertInput.uc.zip</a><br>
-以下兩個功能不搬運(已不用)：
-<a href="https://g.mozest.com/viewthread.php?tid=44436&page=1#pid311779" target="_blank">About 選單</a>
+以下兩個功能不搬運(已不用)：<br>
+<a href="https://g.mozest.com/viewthread.php?tid=44436&page=1#pid311779" target="_blank">About 選單</a><br>
 <a href="https://g.mozest.com/viewthread.php?tid=44436&page=1#pid312179" target="_blank">附加元件選單</a>
 
 <h3>addMenuPlus的使用方法</h3>
