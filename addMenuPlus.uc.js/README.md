@@ -25,8 +25,7 @@
 <li><a href="http://bbs.kafan.cn/thread-1682712-1-1.html">creek560 的 addmenuPlus 配置</a></li>
 </ul>
 
-以下為測試示例
-==========
+<h3>以下為測試示例</h3>
 <code><pre>var FBMenu = PageMenu({
 	label:"最常瀏覽網頁選單",
 	tooltiptext: "左鍵：新分頁前景\n中鍵：此分頁\n右鍵：新分頁背景",
