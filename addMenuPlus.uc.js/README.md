@@ -26,7 +26,7 @@
 </ul>
 
 <h3>以下為測試示例</h3>
-<code><pre>var FBMenu = PageMenu({
+<pre><code>var FBMenu = PageMenu({
 	label:"最常瀏覽網頁選單",
 	tooltiptext: "左鍵：新分頁前景\n中鍵：此分頁\n右鍵：新分頁背景",
 	insertBefore:"context-undo",
