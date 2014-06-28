@@ -150,3 +150,72 @@ OR
 		}
 	},
 },</code></pre>
+<pre><code>{
+	label: "URL數字",
+	tooltiptext: "左鍵：URL中的數字遞增\n右鍵：URL中的數字遞減",
+	onclick: function(e) {
+		switch(e.button) {
+			case 0:
+				loadURI(content.location.href.replace(/(\d+)(?=\D*$)/, function($0) {return +$0 + 1}));
+			break;
+			case 2:
+				loadURI(content.location.href.replace(/(\d+)(?=\D*$)/, function($0) {return +$0 - 1 > 0 ? +$0 - 1 : 0;}));
+			break;
+		}
+	},
+},</code></pre>
+<pre><code>{
+	label: "上 / 下一頁",
+	tooltiptext: "左鍵：跟蹤下一鏈接\n右鍵：跟蹤上一鏈接",
+	onclick: function(e) {
+		switch(e.button) {
+			case 0:
+				var document = window._content.document;
+				var links = document.links;
+				for(i = 0; i < links.length; i++) {
+				if ((links[i].text == '下一頁') ||(links[i].text == '下一页') ||(links[i].text == '下一页>')||(links[i].text == '下一页 »') ||(links[i].text == '下一页>>') || (links[i].text == '[下一页]') || (links[i].text == '【下一页】') ||(links[i].text == 'Next') || (links[i].text == 'next') || (links[i].text == '››') || (links[i].text == '>')) document.location = links[i].href;
+				}
+			break;
+			case 2:
+				var document = window._content.document;
+				var links = document.links;
+				for(i = 0; i < links.length; i++) {
+				if ((links[i].text == '上一頁') ||(links[i].text == '上一页') ||(links[i].text == '<上一页')||(links[i].text == '« 上一页') ||(links[i].text == '<<上一页') || (links[i].text == '[上一页]') || (links[i].text == '【上一页】') ||(links[i].text == 'Previous') || (links[i].text == 'Prev') ||(links[i].text == 'previous') || (links[i].text == 'prev') || (links[i].text == '‹‹') || (links[i].text == '<')) document.location = links[i].href;
+				}
+			break;
+		}
+	},
+},</code></pre>
+<pre><code>{
+	label: "上 / 下一頁",
+	tooltiptext: "左鍵：跟蹤下一鏈接\n右鍵：跟蹤上一鏈接",
+	onclick: function(e) {
+		switch(e.button) {
+			case 0:
+				var document = window._content.document;
+				var links = document.links;
+				for(i = 0; i < links.length; i++) {
+				if(/^([^\d^\w.]*(下一页|下一頁|next)[^\d^\w]*|\s*(»|>+|›+)\s*)$/i.test(links[i].text))
+				document.location = links[i].href;
+				}
+			break;
+			case 2:
+				var document = window._content.document;
+				var links = document.links;
+				for(i = 0; i < links.length; i++) {
+				if(/^([^\d^\w.]*(上一頁|上一页|previous|prev)[^\d^\w]*|\s*(«|<+|‹+)\s*)$/i.test(links[i].text))
+				document.location = links[i].href;
+				}
+			break;
+		}
+	},
+},</code></pre>
+<pre><code>{
+	label: "搜尋鏈結文本",
+	url: "https://encrypted.google.com/search?q=%LINK_TEXT%",
+},</code></pre>
+<pre><code>{
+	label: "翻譯鏈結文本",
+	image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABs0lEQVQ4jY2SP4viQBiHX0UQWz/AXb+VX8Iu/YqFhdhcd5BKEOTKC9jJFYrFgo3FIjYiCRauhTCQDMp4bJFklzCuLJLOWNj8rpDMJt7u7Q08xQzze953/hAR0el4QJLw8KR4fXkE/Wtch01zjP6gmxLsd9uPJafjAf1BF82WjmZLR61eRa1eVfNmS4cMxP8JksGk6FPB6XjAii1Qq1fBBYMMBL79+InvDIrbB0CzIpSmQHF0RnF0vkiTFxZX7A+6MOzwU0FxdEZKYJpj1fp1eO5KzF0JzYreF/iekzr77QMUhh2q1zDsUIULPQl6fXkEFww53cWKLWCaY3DBVMuaFWHuSsT7fM/5W5DTXYUMBGQgUJoCpelFst9tcc84DDuE7znQrAiFnrwIkuGY/W6rBIYdQgYC7RmHZkXwPQf3jL8JiCglISLKVCaqzfhZfc9RcMFwc/eMfGd9EWQbS+R0F9nGEtnGEpnKBJnKJFWxPNygPNygPePggqE942nBdTjG9xyUhxvVcqEnsWILrNjiTfCRJN9ZI99Zp8LxWsy73ztTmYCI6ObuGV/7Tym+/PqtICL6A7F/dNYyWabFAAAAAElFTkSuQmCC",
+	url: "http://translate.google.com.hk/?hl=zh-TW#auto/zh-TW/%LINK_TEXT%",
+},</code></pre>
