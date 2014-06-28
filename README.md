@@ -2,7 +2,7 @@
 ==========
 <a href="http://bbs.kafan.cn/thread-1739599-1-1.html">代替AppMenu - Btn取代法(可与AppMenuPlus使用)/选单取代法(复制/移动功能到其他选单)</a><br>
 <a href="http://bbs.kafan.cn/thread-1739617-1-1.html">[修改发布] autoFocusSearchbar.uc.js & SearchbarBtnPlus.uc.js</a><br>
-<a href="http://bbs.kafan.cn/thread-1741525-1-1.html">SearchbarBtnPlus.uc.js [再次修改版] (2014.06.25 & 11:10:31更新)</a><br>
+<a href="http://bbs.kafan.cn/thread-1741525-1-1.html">SearchbarBtnPlus.uc.js (再次修改版) (2014.06.25 & 11:10:31更新)</a><br>
 <a href="http://bbs.kafan.cn/thread-1749331-1-1.html">autoSearchPopup.uc.js</a><br>
 <a href="http://bbs.kafan.cn/thread-1739635-1-1.html">[修改发布] AnotherBrowserBtn.uc.js & TriggerBtn.uc.js (触发按钮) - 懒人专用</a><br>
 <a href="http://bbs.kafan.cn/thread-1748650-1-1.html">TriggerZone.uc.js [2014.06.21 & 16:10:40更新]</a><br>
