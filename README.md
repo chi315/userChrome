@@ -16,3 +16,8 @@
 <li><a href="http://bbs.kafan.cn/thread-1743975-1-1.html">代码 - 修改about:config中的特定值</a><br></li>
 </ol>
 ==========
+Mozilla 社区
+<ol>
+<li><a href="http://g.mozest.com/thread-44436-1-1">_addmenu.js配置 - 自用功能 [13/5更新 - 新增反转输入]</a><br></li>
+<li><a href="http://g.mozest.com/thread-43774-1-1">StarBtnPlus.uc.js (5合1) (For Fx30.0) [2014.06.25 & 16:56:26更新]</a><br></li>
+</ol>
