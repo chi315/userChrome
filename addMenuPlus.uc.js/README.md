@@ -51,3 +51,33 @@ FBMenu([
 		LINK: ""
 	},
 ]);</code></pre>
+請自行修改path路徑……<br>
+若需下載圖片，請自行修改第5行……<br>
+<pre><code>var uri = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService).newURI(gContextMenu.imageURL, null, null)</code></pre>
+若需下載媒體，請自行修改第5行……<br>
+<pre><code>var uri = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService).newURI(gContextMenu.mediaURL, null, null)</code></pre>
+<pre><code>{
+	label: "下載鏈結到指定位置 (不彈窗)",
+	tooltiptext: "左鍵：E:\n中鍵：G:\n右鍵：D:",
+	onclick: function(e) {
+		var uri = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService).newURI(gContextMenu.linkURL, null, null)
+		switch(e.button) {
+			case 0:
+				var path = "E:\\";
+			break;
+			case 1:
+				var path = "G:\\";
+			break;
+			case 2:
+				var path = "D:\\";
+			break;
+		}
+		var file = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+		file.initWithPath(path);
+		file.append(getDefaultFileName(null, uri));
+		internalSave(null, null, null, null, null, null, null, {
+			file: file,
+			uri: uri
+		}, null, internalSave.length === 12 ? document : true, internalSave.length === 12 ? true : null, null);
+	},
+},</code></pre>
