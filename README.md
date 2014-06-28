@@ -22,6 +22,8 @@ Mozilla 社區
 <li><a href="http://g.mozest.com/thread-43774-1-1">StarBtnPlus.uc.js (5合1) (For Fx30.0) [2014.06.25 & 16:56:26更新]</a><br></li>
 <li><a href="http://g.mozest.com/thread-44687-1-1">LinkLocationbarLite.uc.js (For Fx29.0) 修復顯示更多按鈕問題</a><br></li>
 <li><a href="http://g.mozest.com/thread-44453-1-1">拖曳或手勢功能 (13/5更新 - 新增反轉輸入)</a><br></li>
-<li><a href="http://g.mozest.com/thread-44382-1-1">擴展/插件相關uc腳本</a><br></li>
+<li><a href="http://g.mozest.com/thread-44382-1-1">扩展/插件相关uc脚本</a><br></li>
 <li><a href="http://g.mozest.com/thread-43981-1-1">FindInUrlbar.uc.js (For Fx29.01)</a><br></li>
+<li><a href="http://g.mozest.com/thread-43737-1-1">何不把侧边栏作为第2视窗和全萤幕模式?</a><br></li>
+<li><a href="http://g.mozest.com/thread-43730-1-1">动漫之家漫画网(178漫画网) - 看漫画模式CSS</a><br></li>
 </ol>
