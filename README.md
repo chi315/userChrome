@@ -96,6 +96,6 @@ Recommended Used By Others
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/ui-eraser/" target="_blank">UI Eraser</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/firefox-4-ui-fixer/" target="_blank">UI Fixer</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/update-scanner/" target="_blank">Update Scanner</a><br></li>
-<li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/user-agent-switcher/" target="_blank">User Agent Switcher</a><br></li>
+<li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/user-agent-overrider/" target="_blank">User Agent Overrider</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/yet-another-smooth-scrolling/?src=api" target="_blank">Yet Another Smooth Scrolling</a><br></li>
 </ol>
