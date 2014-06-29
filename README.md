@@ -25,20 +25,20 @@ UC 腳本整合帖
 <a href="http://www.cnblogs.com/ziyunfei/archive/2011/12/15/2289504.html" target="_blank">鼠標手勢UserChromeJS腳本在線生成器</a><br>
 <a href="http://www.cnblogs.com/ziyunfei/archive/2011/12/20/2293928.html" target="_blank">鼠標拖拽UserChromeJS腳本在線生成器</a><br>
 </ol>
-
+==========
 我的帖子
 ==========
 <b>卡飯論壇</b>
 <ol>
-<li><a href="http://bbs.kafan.cn/thread-1739599-1-1.html" target="_blank">代替AppMenu - Btn取代法(可與AppMenuPlus使用)/選單取代法(複製/移動功能到其他選單)</a><br></li>
-<li><a href="http://bbs.kafan.cn/thread-1739617-1-1.html" target="_blank">[修改發佈] autoFocusSearchbar.uc.js & SearchbarBtnPlus.uc.js</a><br></li>
-<li><a href="http://bbs.kafan.cn/thread-1741525-1-1.html" target="_blank">SearchbarBtnPlus.uc.js (再次修改版) (2014.06.25 & 11:10:31更新)</a><br></li>
+<li><a href="http://bbs.kafan.cn/thread-1739599-1-1.html" target="_blank">代替AppMenu - Btn取代法(可與AddMenuPlus使用)/選單取代法(複製/移動功能到其他選單)</a><br></li>
+<li><a href="http://bbs.kafan.cn/thread-1739617-1-1.html" target="_blank">[修改發佈] autoFocusSearchbar.uc.js</a><br></li>
+<li><a href="http://bbs.kafan.cn/thread-1741525-1-1.html" target="_blank">[再次修改版] SearchbarBtnPlus.uc.js</a><br></li>
 <li><a href="http://bbs.kafan.cn/thread-1749331-1-1.html" target="_blank">autoSearchPopup.uc.js</a><br></li>
 <li><a href="http://bbs.kafan.cn/thread-1739635-1-1.html" target="_blank">[修改發佈] AnotherBrowserBtn.uc.js & TriggerBtn.uc.js (觸發按鈕) - 懶人專用</a><br></li>
-<li><a href="http://bbs.kafan.cn/thread-1748650-1-1.html" target="_blank">TriggerZone.uc.js [2014.06.21 & 16:10:40更新]</a><br></li>
+<li><a href="http://bbs.kafan.cn/thread-1748650-1-1.html" target="_blank">TriggerZone.uc.js</a><br></li>
 <li><a href="http://bbs.kafan.cn/thread-1739999-1-1.html" target="_blank">AllTabsBtnPlus.uc.js & 復原分頁選單相關uc腳本</a><br></li>
 <li><a href="http://bbs.kafan.cn/thread-1747400-1-1.html" target="_blank">ShowDateAndTime.uc.js - 顯示現時日期和時間</a><br></li>
-<li><a href="http://bbs.kafan.cn/thread-1739649-1-1.html" target="_blank">_addmenu.js - 快速回覆修改版 & 標點符號選單 (2014.06.16 & 12:30:43)</a><br></li>
+<li><a href="http://bbs.kafan.cn/thread-1739649-1-1.html" target="_blank">_addmenu.js - 快速回覆修改版 & 標點符號選單</a><br></li>
 <li><a href="http://bbs.kafan.cn/thread-1750226-1-1.html" target="_blank">_addmenu.js - 搜索選單</a><br></li>
 <li><a href="http://bbs.kafan.cn/thread-1743344-1-1.html" target="_blank">簡單的不可移動按鈕教程</a><br></li>
 <li><a href="http://bbs.kafan.cn/thread-1743975-1-1.html" target="_blank">代碼 - 修改about:config中的特定值</a><br></li>
@@ -46,12 +46,13 @@ UC 腳本整合帖
 ==========
 <b>Mozilla 社區</b>
 <ol>
-<li><a href="http://g.mozest.com/thread-44436-1-1" target="_blank">_addmenu.js配置 - 自用功能 [13/5更新 - 新增反轉輸入]</a><br></li>
-<li><a href="http://g.mozest.com/thread-43774-1-1" target="_blank">StarBtnPlus.uc.js (5合1) (For Fx30.0) [2014.06.25 & 16:56:26更新]</a><br></li>
-<li><a href="http://g.mozest.com/thread-44687-1-1" target="_blank">LinkLocationbarLite.uc.js (For Fx29.0) 修復顯示更多按鈕問題</a><br></li>
-<li><a href="http://g.mozest.com/thread-44453-1-1" target="_blank">拖曳或手勢功能 (13/5更新 - 新增反轉輸入)</a><br></li>
+<li><a href="http://g.mozest.com/thread-41396-1-1" target="_blank">個人整合帖</a><br></li>
+<li><a href="http://g.mozest.com/thread-44436-1-1" target="_blank">_addmenu.js配置 - 自用功能</a><br></li>
+<li><a href="http://g.mozest.com/thread-43774-1-1" target="_blank">StarBtnPlus.uc.js (5合1) (For Fx 29+) [25/6]</a><br></li>
+<li><a href="http://g.mozest.com/thread-44687-1-1" target="_blank">LinkLocationbarLite.uc.js (For Fx29+) 修復顯示更多按鈕問題</a><br></li>
+<li><a href="http://g.mozest.com/thread-44453-1-1" target="_blank">拖曳或手勢功能</a><br></li>
 <li><a href="http://g.mozest.com/thread-44382-1-1" target="_blank">擴展/插件相關uc腳本</a><br></li>
-<li><a href="http://g.mozest.com/thread-43981-1-1" target="_blank">FindInUrlbar.uc.js (For Fx29.01)</a><br></li>
+<li><a href="http://g.mozest.com/thread-43981-1-1" target="_blank">FindInUrlbar.uc.js</a><br></li>
 <li><a href="http://g.mozest.com/thread-43737-1-1" target="_blank">何不把側邊欄作為第2視窗和全螢幕模式?</a><br></li>
 <li><a href="http://g.mozest.com/thread-43730-1-1" target="_blank">動漫之家漫畫網(178漫畫網) - 看漫畫模式CSS</a><br></li>
 </ol>
@@ -117,6 +118,7 @@ Non-Commonly Used (Using when needed, Default: disabled)
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/find-and-replace-for-firefox/" target="_blank">Find and Replace for FireFox</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/karma-blocker/" target="_blank">Karma Blocker</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/mason/" target="_blank">Mason</a><br></li>
+<li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/pentadactyl/" target="_blank">Pentadactyl</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-CN/firefox/addon/referrer-control/" target="_blank">Referrer Control</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/rext/ target="_blank">Regular Expressions Tester</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/right-links/?src=search target="_blank">Right Links</a><br></li>
@@ -129,5 +131,6 @@ Non-Commonly Used (Using when needed, Default: disabled)
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/firefox-4-ui-fixer/" target="_blank">UI Fixer</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/update-scanner/" target="_blank">Update Scanner</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/user-agent-overrider/" target="_blank">User Agent Overrider</a><br></li>
+<li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/vimperator/" target="_blank">Vimperator</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/yet-another-smooth-scrolling/?src=api" target="_blank">Yet Another Smooth Scrolling</a><br></li>
 </ol>
