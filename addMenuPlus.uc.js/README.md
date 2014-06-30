@@ -29,6 +29,38 @@
 </ul>
 
 <h3>以下為測試示例</h3>
+<pre><code>{
+	id: "Zoom-Setting",
+	label: "頁面縮放",
+	image: "chrome://zoompanel/skin/zoompanel.png",
+	tooltiptext: "點擊：頁面重置\n向上滾動：頁面放大\n向下滾動：頁面縮小",
+	oncommand: function() {
+		function $(id) document.getElementById(id);
+		FullZoom.reset();
+		setTimeout (function() {
+			FullZoom.enlarge();
+			$('Zoom-Setting').label = '頁面縮放：' + $('zoom-reset-button').label;
+		}, 250);
+	},
+	onDOMMouseScroll: function() {
+		function $(id) document.getElementById(id);
+		if (event.detail > 0) {FullZoom.reduce();}
+		else {FullZoom.enlarge();}
+		$('Zoom-Setting').label = '頁面縮放：' + $('zoom-reset-button').label;
+		return;
+	},
+},</code></pre>
+使用頁面縮放這代碼，<br>
+1. 需點擊 PanelUI-menu-button 1次才能看到效果，或者<br>
+2. 需在chrome資料夾內新建uc腳本，加入以下代碼，並重新啟動後才能看到效果<br>
+<pre><code>
+(function() {
+	setTimeout (function() {
+		$('PanelUI-menu-button').click();
+		setTimeout (function() {$('PanelUI-menu-button').click();}, 500);
+	}, 500);
+})();
+</code></pre>
 <pre><code>var FBMenu = PageMenu({
 	label:"最常瀏覽網頁選單",
 	tooltiptext: "左鍵：新分頁前景\n中鍵：此分頁\n右鍵：新分頁背景",
