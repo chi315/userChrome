@@ -7,9 +7,11 @@
 // ==/UserScript==
 /*
 按鈕圖標
-左鍵：顯示附加元件側邊欄
+左鍵：附加元件及插件選單
 中鍵：清除startupCache並重新啟動瀏覽器
 右鍵：打開附加組件管理員
+向上滾動：顯示附加元件側邊欄
+向下滾動：啟用/停用DOM Inspector & Element Inspector(重新啟動瀏覽器)
 
 擴展
 左鍵：啟用/禁用擴展
@@ -41,7 +43,7 @@ var EOM = {
 	SHOW_USERDISABLED:          true, // 無効のアドオンを表示するか
 	SHOW_APPDISABLED:           false, // 互換性のないアドオンを表示するか
 	AUTO_RESTART:               false, // アドオンの有効/無効時に自動で再起動するか(再起動不要アドオンは除外される)
-	ICON_URL:                   'chrome://mozapps/skin/extensions/extensionGeneric-16.png', //extensionGeneric-16.pngを使う場合は10行目から13行目のcssは不要
+	ICON_URL:                   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAWklEQVQ4jWNgoANYyMDA8J+BgWEuuQb8R8JkgTNQzaeI1TAVzVZcuJ0YJxPCg8iA+VCB00Roqofqsaeqs+dAJfeT6wKqugaXjfXkGkCsHByg2wTzqz0Ol1EGAF7Adz+tGmdUAAAAAElFTkSuQmCC',
 
 	sort: {
 		enabled: 0,
@@ -118,7 +120,7 @@ var EOM = {
 					df.appendChild(sep);
 				prevType = type;
 				menuIcon = addon.iconURL
-						|| type == 'extension' && this.ICON_URL || ''
+						|| type == 'extension' && 'chrome://mozapps/skin/extensions/extensionGeneric-16.png'
 						|| type == 'plugin' && 'chrome://mozapps/skin/plugins/pluginGeneric-16.png';
 				mi = document.createElement('menuitem');
 				mi.setAttribute('label', _this.SHOW_VERSION ? addon.name += ' ' + '[' + addon.version + ']' : addon.name);
@@ -143,9 +145,6 @@ var EOM = {
 	},
 
 	iconClick: function(e) {
-//		var ctrl = e.ctrlKey,
-//			shift = e.shiftKey,
-//			alt = e.altKey;
 		switch (e.button) {
 		case 1:
 			Services.appinfo.invalidateCachesOnRestart() || Application.restart();
@@ -160,12 +159,15 @@ var EOM = {
 	onScroll: function(event) {
 		if (event.detail > 0) {
 			var { AddonManager } = Components.utils.import("resource://gre/modules/AddonManager.jsm", {});
-			AddonManager.getAddonByID('inspector@mozilla.org', function(addon) {
+			var AddonIDs = [
+				'inspector@mozilla.org',
+				'InspectElement@zbinlin',
+				]
+			for(n=0; n<AddonIDs.length; n++) {
+			AddonManager.getAddonByID(AddonIDs[n], function(addon) {
 				addon.userDisabled = addon.userDisabled ? false : true;
 			});
-			AddonManager.getAddonByID('InspectElement@zbinlin', function(addon) {
-				addon.userDisabled = addon.userDisabled ? false : true;
-			});
+			}
 			Application.restart();
 		}
 		else {
