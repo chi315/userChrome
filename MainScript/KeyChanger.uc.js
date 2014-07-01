@@ -15,7 +15,7 @@
 var KeyChanger = {
 	get file() {
 		var aFile = Services.dirsvc.get("UChrm", Ci.nsILocalFile);
-		aFile.appendRelativePath("_keychanger.js");
+		aFile.appendRelativePath("local\\_keychanger.js");
 		delete this.file;
 		return this.file = aFile;
 	},
@@ -193,24 +193,19 @@ var KeyChanger = {
 		if (!editor)
 			return this.log("エディタのパスが未設定です。\n view_source.editor.path を設定してください");
 
-		try {
-			var UI = Cc["@mozilla.org/intl/scriptableunicodeconverter"].createInstance(Ci.nsIScriptableUnicodeConverter);
-			UI.charset = window.navigator.platform.toLowerCase().indexOf("win") >= 0? "Shift_JIS": "UTF-8";
-			var path = UI.ConvertFromUnicode(aFile.path);
-			this.exec(editor, path);
-		} catch (e) {}
-	},
-	exec: function(path, arg){
 		var file    = Cc['@mozilla.org/file/local;1'].createInstance(Ci.nsILocalFile);
 		var process = Cc['@mozilla.org/process/util;1'].createInstance(Ci.nsIProcess);
+		var UI = Cc["@mozilla.org/intl/scriptableunicodeconverter"].createInstance(Ci.nsIScriptableUnicodeConverter);
+		UI.charset = window.navigator.platform.toLowerCase().indexOf("win") >= 0? "gbk": "UTF-8";
+
 		try {
-			var a = (typeof arg == 'string' || arg instanceof String) ? arg.split(/\s+/) : [arg];
-			file.initWithPath(path);
+			var path = UI.ConvertFromUnicode(aFile.path);
+			var args = [path]
+
+			file.initWithPath(editor);
 			process.init(file);
-			process.run(false, a, a.length);
-		} catch(e) {
-			this.log(e);
-		}
+			process.run(false, args, args.length);
+		} catch (e) {}
 	},
 	log: function() {
 		Services.console.logStringMessage("[KeyChanger] " + Array.slice(arguments));
