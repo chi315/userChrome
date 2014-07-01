@@ -5,9 +5,10 @@
 // @include         chrome://browser/content/browser.xul
 // @author          harv.c
 // @homepage        http://haoutil.tk
-// @version         1.5.1
+// @version         1.5.4.25
 // @updateUrl       https://j.mozest.com/zh-CN/ucscript/script/92.meta.js
 // @downloadUrl     https://j.mozest.com/zh-CN/ucscript/script/92.uc.js
+// @updateURL     https://j.mozest.com/ucscript/script/92.meta.js
 // ==/UserScript==
 (function() {
     // YoukuAntiADs, request observer
@@ -16,7 +17,7 @@
         SITES: {
             'youku_loader': {
                 'player': 'https://haoutil.googlecode.com/svn/trunk/player/testmod/loader.swf',
-                're': /http:\/\/static\.youku\.com(\/v[\d\.]+)?\/v\/swf\/loader\.swf/i
+                're': /http:\/\/static\.youku\.com(\/v[\d\.]+)?\/v\/swf\/loaders?\.swf/i
             },
             'youku_player': {
                 'player': 'https://haoutil.googlecode.com/svn/trunk/player/testmod/player.swf',
@@ -50,7 +51,7 @@
             },
             'letv': {
                 'player': 'https://haoutil.googlecode.com/svn/trunk/player/testmod/letv.swf',
-                're': /http:\/\/.*letv[\w]*\.com\/(hz|.*\/(?!(Live|seed))(S[\w]{2,3})?[\w]{4})Player[^\.]*\.swf/i
+                're': /http:\/\/.*letv[\w]*\.com\/(hz|.*\/(?!(Live|seed))(S[\w]{2,3})?(?!Live)[\w]{4})Player[^\.]*\.swf/i
             },
             'letvskin': {
                 'player': 'http://player.letvcdn.com/p/201403/05/1456/newplayer/1/SLetvPlayer.swf',
