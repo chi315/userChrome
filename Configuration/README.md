@@ -29,6 +29,78 @@ _addmenu頁面內的檔案不是_addmenu.js (addMenuPlus.uc.js 配置)，純粹�
 </ul>
 
 <h3>以下為測試示例</h3>
+<pre><code>
+var PreSuffixMenu = PageMenu({
+	label:"PreSuffixMenu",
+	tooltiptext: "左鍵：新分頁前景\n中鍵：此分頁\n右鍵：新分頁背景",
+	insertBefore:"context-undo",
+	onclick: function(event) {
+		var p1 = event.target.getAttribute('prefix');
+		var s1 = event.target.getAttribute('suffix');
+		var focused = document.commandDispatcher.focusedElement,
+			searchbar = document.getElementById('searchbar'),
+			selected = addMenu.convertText("%s");
+		if (selected) {
+			var txt = selected;
+		}
+		else {
+			if (focused) {
+				var txt = focused.value;
+			}
+			else {
+				if (!searchbar.value == "") {
+					var txt = searchbar.value;
+				}
+				else {
+					var txt = document.getElementById('urlbar').value;
+				}
+			}
+		}
+		switch(event.button) {
+			case 0:
+				gBrowser.selectedTab = gBrowser.addTab(p1 + txt + s1);
+			break;
+			case 1:
+				loadURI(p1 + txt + s1);
+			break;
+			case 2:
+				gBrowser.addTab(p1 + txt + s1);
+			break;
+		}
+	}
+});
+PreSuffixMenu([
+	{
+		label: ".com",
+		prefix: "www.",
+		suffix: ".com"
+	},
+	{
+		label: ".net",
+		prefix: "www.",
+		suffix: ".net"
+	},
+	{
+		label: ".nl",
+		prefix: "www.",
+		suffix: ".nl"
+	},
+	{
+		label: ".org",
+		prefix: "www.",
+		suffix: ".org"
+	},
+	{
+		label: ".htm",
+		prefix: "www.",
+		suffix: ".htm"
+	},
+	{
+		label: ".html",
+		prefix: "www.",
+		suffix: ".html"
+	},
+]);</pre></code>
 <pre><code>{
 	id: "Zoom-Setting",
 	label: "頁面縮放",
