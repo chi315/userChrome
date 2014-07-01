@@ -113,16 +113,16 @@ Non-Commonly Used (Using when needed, Default: disabled)
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/alertbox/" target="_blank">AlertBox</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/all-about-location-bar/?src=api target="_blank">All About Location Bar</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-CN/firefox/addon/bloody-vikings/?src=hp-dl-featured" target="_blank">Bloody Vikings!</a><br></li>
-<li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/classicthemerestorer/ target="_blank">Classic Theme Restorer (Customize Australis)</a><br></li>
+<li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/classicthemerestorer/" target="_blank">Classic Theme Restorer (Customize Australis)</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/donottrackplus/" target="_blank">DoNotTrackMe: Online Privacy Protection</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/find-and-replace-for-firefox/" target="_blank">Find and Replace for FireFox</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/karma-blocker/" target="_blank">Karma Blocker</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/mason/" target="_blank">Mason</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/pentadactyl/" target="_blank">Pentadactyl</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-CN/firefox/addon/referrer-control/" target="_blank">Referrer Control</a><br></li>
-<li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/rext/ target="_blank">Regular Expressions Tester</a><br></li>
-<li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/right-links/?src=search target="_blank">Right Links</a><br></li>
-<li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/s3menu-wizard/ target="_blank">S3.Menu Wizard</a><br></li>
+<li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/rext/" target="_blank">Regular Expressions Tester</a><br></li>
+<li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/right-links/" target="_blank">Right Links</a><br></li>
+<li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/s3menu-wizard/" target="_blank">S3.Menu Wizard</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/sitedelta/" target="_blank">SiteDelta</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/sqlite-manager/" target="_blank">SQLite Manager</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-CN/firefox/addon/stylish-custom/" target="_blank">Stylish-Custom</a><br></li>
