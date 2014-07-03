@@ -20,8 +20,8 @@ _addmenu頁面內的檔案不是_addmenu.js (addMenuPlus.uc.js 配置)，純粹�
 <ul>
 <li><a href="https://github.com/ywzhaiqi/userChromeJS/blob/master/addmenuPlus/_addmenu.js" target="_blank">_addmenu.js</a></li>
 <li><a href="https://github.com/ywzhaiqi/userChromeJS/blob/master/addmenuPlus/_addmenu%E7%A4%BA%E4%BE%8B%E5%90%88%E9%9B%86.js" target="_blank">_addmenu示例合集.js</a></li>
-<li><a href="https://github.com/Drager-oos/userChrome/raw/master/Configuration/_addmenu/Now%20Used.js" target="_blank">Now Used.js</a><br></li>
-<li><a href="https://github.com/Drager-oos/userChrome/raw/master/Configuration/_addmenu/Recently%20Used%20(For%20Backups).js" target="_blank">Recently Used (For Backups).js</a><br></li>
+<li><a href="https://github.com/Drager-oos/userChrome/blob/master/Configuration/_addmenu/Now%20Used.js" target="_blank">Now Used.js</a><br></li>
+<li><a href="https://github.com/Drager-oos/userChrome/blob/master/Configuration/_addmenu/Recently%20Used%20(For%20Backups).js" target="_blank">Recently Used (For Backups).js</a><br></li>
 <li><a href="http://g.mozest.com/viewthread.php?tid=44436&amp;highlight=" target="_blank">_addmenu.js配置 - 自用功能</a></li>
 <li><a href="https://github.com/defpt/userChromeJs/tree/master/addMenuPlus" target="_blank">defpt 的 addMenuPlus 配置</a></li>
 <li><a href="http://bbs.kafan.cn/thread-1677811-1-1.html" target="_blank">bobdylan520 的 addMenuPlus 配置</a></li>
