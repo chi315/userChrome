@@ -99,15 +99,15 @@ window.UCL = {
 		return win;
 	},
 	init: function() {
-		var navBar = document.getElementById("TabsToolbar"); //status-bar  urlbar-icons addon-bar alltabs-button TabsToolbar go-button tabs-closebutton alltabs-button
+		var navBar = document.getElementById("TabsToolbar"); //urlbar-icons status-bar searchbar devToolsSeparator
 		if (!navBar) return;
 	
-		var menubtn = document.createElement("toolbarbutton");
+		var menubtn = document.createElement("toolbarbutton"); //menu
 		menubtn.id = "usercssloader_menubtn";
 		menubtn.setAttribute("label", "UC-Stylish-Loader");
-		menubtn.setAttribute("tooltiptext", "CSS-Stylish\u7BA1\u7406\u5668");//CSS-Stylish管理器
-		menubtn.setAttribute("type", "menu");// 下拉菜單,若需要右鍵菜單請替換為"context", "_child"  
-		menubtn.setAttribute("class", "toolbarbutton-1");//toolbarbutton-1 chromeclass-toolbar-additional
+		menubtn.setAttribute("tooltiptext", "CSS-Stylish管理器");
+		menubtn.setAttribute("type", "menu"); //下拉菜單,若需要右鍵菜單請替換為"context", "_child"  
+		menubtn.setAttribute("class", "toolbarbutton-1"); //menu-iconic
 	//	menubtn.setAttribute("removable", "true");
 		menubtn.setAttribute("image","data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAARklEQVQ4jWNgYGD4TyFm+L/uaBJezMDA8H+vgyEGHk4GEIPxGnBhdikKZmBg+P/vEyscjxrASjglEmPAvBMPMPBwMoASDADElRSk+LLlQAAAAABJRU5ErkJggg=="); 
 
@@ -116,44 +116,39 @@ window.UCL = {
 
 		var xml_menubtn = '\
 				<menupopup id="usercssloader_menubtn_popup">\
-					<menuitem label="打開CSS文件夾"\
+					<menuitem label="打開 CSS 文件夾"\
 				          accesskey="O"\
 						  class="menuitem-iconic"\
 				          oncommand="UCL.openFolder();" />\
+					<menuitem label="編輯 userChrome.css"\
+							  hidden="false"\
+							  class="menuitem-iconic"\
+							  oncommand="UCL.editUserCSS(\'userChrome.css\')" />\
+					<menuitem label="編輯 userContent.css"\
+							  hidden="false"\
+							  oncommand="UCL.editUserCSS(\'userContent.css\')" />\
 					<menuitem label="重新加載選中的css樣式"\
 				          accesskey="R"\
 						  class="menuitem-iconic"\
 				          acceltext="Alt + R"\
 						  oncommand="UCL.rebuild();" />\
+					<menuseparator />\
+					<menuitem label="新建用戶css樣式(外部編輯器)"\
+							  accesskey="N"\
+							  class="menuitem-iconic"\
+							  oncommand="UCL.create();" />\
+					<menuitem label="新建瀏覽器(Chrome)樣式"\
+							  id="usercssloader-test-chrome"\
+							  accesskey="C"\
+							  oncommand="UCL.styleTest(window);" />\
+					<menuitem label="新建當前網頁(Web)樣式"\
+							  id="usercssloader-test-content"\
+							  accesskey="W"\
+							  oncommand="UCL.styleTest();" />\
 					<menuitem label="在userstyles.org檢索當前網頁樣式"\
 				          accesskey="S"\
 						  class="menuitem-iconic"\
 				          oncommand="UCL.searchStyle();" />\
-					<menuseparator />\
-					<menu label="新建與編輯css樣式..." id="usercssloader-write-edit-css" class="menu-iconic">\
-						<menupopup id="usercssloader_menubtn_submenupopup">\
-							<menuitem label="新建用戶css樣式(外部編輯器)"\
-							          accesskey="N"\
-									  class="menuitem-iconic"\
-							          oncommand="UCL.create();" />\
-							<menuitem label="新建瀏覽器(Chrome)樣式"\
-							          id="usercssloader-test-chrome"\
-							          accesskey="C"\
-							          oncommand="UCL.styleTest(window);" />\
-							<menuitem label="新建當前網頁(Web)樣式"\
-							          id="usercssloader-test-content"\
-							          accesskey="W"\
-							          oncommand="UCL.styleTest();" />\
-							<menuseparator />\
-							<menuitem label="編輯userChrome.css文件"\
-							          hidden="false"\
-									  class="menuitem-iconic"\
-							          oncommand="UCL.editUserCSS(\'userChrome.css\')" />\
-							<menuitem label="編輯userContent.css文件"\
-							          hidden="false"\
-							          oncommand="UCL.editUserCSS(\'userContent.css\')" />\
-						</menupopup>\
-					</menu>\
 					<menu label=".uc.css" accesskey="U" hidden="'+ !UCL.USE_UC +'">\
 						<menupopup id="usercssloader_menubtn_ucmenupopup">\
 							<menuitem label="Rebuild(.uc.js)"\
@@ -227,7 +222,7 @@ window.UCL = {
 			this.rebuildMenu(leafName);
 		}
 		if (this.initialized)
-			XULBrowserWindow.statusTextField.label = "\u91CD\u65B0\u52A0\u8F7Dcss\u6210\u529F";//重新加載CSS成功//Rebuild しました
+			XULBrowserWindow.statusTextField.label = "\u91CD\u65B0\u52A0\u8F09css\u6210\u529F ";//重新加載CSS成功//Rebuild しました
 	},
 	loadCSS: function(aFile) {
 		var CSS = this.readCSS[aFile.leafName];
@@ -495,17 +490,17 @@ CSSTester.prototype = {
 							<td colspan="4"><textarea id="textarea"></textarea></td>\
 						</tr>\
 						<tr height="40">\
-							<td><input type="button" value="Preview" /></td>\
-							<td><input type="button" value="Save" /></td>\
+							<td><input type="button" value="預覽" /></td>\
+							<td><input type="button" value="儲存" /></td>\
 							<td width="80%"><span class="log"></span></td>\
-							<td><input type="button" value="Close" /></td>\
+							<td><input type="button" value="關閉" /></td>\
 						</tr>\
 					</table>\
 				';
 				this.textbox = doc.querySelector("textarea");
-				this.previewButton = doc.querySelector('input[value="Preview"]');
-				this.saveButton = doc.querySelector('input[value="Save"]');
-				this.closeButton = doc.querySelector('input[value="Close"]');
+				this.previewButton = doc.querySelector('input[value="預覽"]');
+				this.saveButton = doc.querySelector('input[value="儲存"]');
+				this.closeButton = doc.querySelector('input[value="關閉"]');
 				this.logField = doc.querySelector('.log');
 
 				var code = "@namespace url(" + this.doc.documentElement.namespaceURI + ");\n";
