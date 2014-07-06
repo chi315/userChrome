@@ -4,13 +4,16 @@
 // @namespace      http://d.hatena.ne.jp/Griever/
 // @include        main
 // @compatibility  Firefox 5.0
-// @charset        UTF-8
-// @license        MIT License  
+// @license        MIT License
+// @version        0.1.8.2
+// @note           2014/2/26 Mod by  dannylee修改可切換圖標和菜單模式
+// @note           0.1.8.2 Firefox 22 用の修正
+// @note           0.1.8.2 require が機能していないのを修正
 // @note           modified by lastdream2013: add switch: reload page on disable/enable script 2013.05.12
 // @note           modified by lastdream2013: add GM_notification API 2013.05.05 
 // @note           modified by lastdream2013: fix compatibility for firefox23a1 2013.04.23  
 // @note           by dannylee edited 2013.4.9
-// @note           0.1.8.2 
+// @note           0.1.8.1 Save Script が機能していないのを修正
 // @note           0.1.8.0 Remove E4X
 // @note           0.1.8.0 @match, @unmatch に超テキトーに対応
 // @note           0.1.8.0 .tld を Scriptish を參考にテキトーに改善
@@ -60,6 +63,10 @@ if (window.USL) {
 
 var USL = {};
 
+//dannylee
+USL.UIPREF = "showtoolbutton";
+USL.ShowToolButton = true;
+
 // Class
 USL.PrefManager = function (str) {
 	var root = 'UserScriptLoader.';
@@ -98,6 +105,13 @@ USL.PrefManager.prototype = {
 		} catch(e) { }
 	},
 	listValues: function() this.pref.getChildList("", {}),
+	//dannylee
+	hasValue: function(name){
+	  if (this.pref.prefHasUserValue(name))
+	    return true;
+	  else
+	  	return false;
+	}
 };
 
 USL.ScriptEntry = function (aFile) {
@@ -116,7 +130,10 @@ USL.ScriptEntry.prototype = {
 		this.disabled = false;
 		this.requireSrc = "";
 		this.resources = {};
-
+    //add by dannylee
+    this.version = "version" in this.metadata ? this.metadata["version"][0] : "未定義";
+    this.downloadURL = "downloadurl" in this.metadata ? this.metadata["downloadurl"][0] : null;
+    //end by dannylee
 		this.run_at = "run-at" in this.metadata ? this.metadata["run-at"][0] : "document-end";
 		this.name = "name" in this.metadata ? this.metadata.name[0] : this.leafName;
 		if (this.metadata.delay) {
@@ -208,6 +225,7 @@ USL.ScriptEntry.prototype = {
 		return "";
 	},
 	isURLMatching: function(url) {
+		//if (this.disabled) return false;
 		if (this.excludeRegExp.test(url)) return false;
 		
 		var tldurl = this.excludeTLD || this.includeTLD ? this.makeTLDURL(url) : "";
@@ -523,12 +541,12 @@ var DISABLED = true;
 USL.__defineGetter__("disabled", function() DISABLED);
 USL.__defineSetter__("disabled", function(bool){
 	if (bool) {
-		this.icon.setAttribute("state", "disable");
-		this.icon.setAttribute("tooltiptext", "UserScriptLoader已禁用");
+		this.icon.setAttribute("image", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAI6SURBVDhPhZPfS1NhGMe9E7yw6KaVYcNOa65tLjMda9VhxRoLz5aUghcZuygZtkVIDRl+xxARGUNkRMSIiOhihITEEBGRERFjSIzDkCHSRX9I5/voRstgBx7eX9/v533e93lPR0ebb9RnP62pzpER54WJ/r4z8XZ6WX945+qJkOq8q6muuG/YCrtyFlaziXGrLeDICMMMt7OvYYTL2ovAdduUQ+mJK4rS+V9QSB14SuOjsAp1yAKPS4F3UIHfY5MYsvWi32w632LWPI5LoRvOCUYiOolyaQ16ZQMf3ixKFmw55jzXG1r6BHTfd+VVakYTccNc293C3s9tFNfyRrsj/VplExUDQh319AlgbjqI/OJjPI+EZSeKV3NprKymsV/7jtzrBaOfakKoo54+AcwbtOWX41hKRsGd69UdxBIxWAYt+FWvNPv1aknWl5IzyM1Pgj4B3LvpiBPwNps8BOgldJu60XWqC78Pqs3+vv5NsqCOAPoEcPliz0DY55Lz7R0BssspZDNpAaxkF5Axxg1ApfQF1NMngEBA6WTZ9HIRW18/Ihzwwe8eRkQLIjY+hidjGoJeNx4E/dgufpJ74kU2S0lAowKJF9NYL+TlGLzAg9oPabn7+uc85majUqkWAEmjqmsqNRuRLFgunpWXyYtjK2U0jqeXN0Ad9S2P6fCHccVZosK7jKRZ290UE1vdgBbeZ6TU1FF/7CnzKOo1y+2g1/6MKf4bnOc6de1+qJOG4JwR5r+CY84f+/4AS9dVtRJZF3sAAAAASUVORK5CYII=");
+		this.icon.setAttribute("tooltiptext", "油猴腳本管理器（鼠標右鍵開OR關）已禁用");
 		gBrowser.mPanelContainer.removeEventListener(USL.eventName, this, false);
 	} else {
-		this.icon.setAttribute("state", "enable");
-		this.icon.setAttribute("tooltiptext", "UserScriptLoader已啟用");
+		this.icon.setAttribute("image", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIzSURBVDhPhVNNSFRRFD5LdxqtSxkj4gUZg4TmT0/HqGhhZTsXU5laiGhUDP5OpRlBNeZPY5HdMjKTcnBRRptp51KthaBOd4yidi1n+XXOeY06GMyFw7n3nO/73nn3nEuUZXVXUVGvS231BygW8JHNhtd8VxXlMynCZlsOEY7tIbgFauGsAkIMuwQx/mqaiNp9hGulFD9RSLbGR7n/FWLyghAjdTvQXEwIHiQ0+AlXD3tW56jgkQxyTwXV9lRSTOx1+36kFvuAlQdYeFGvVYiXs8Qln8YKT4U6Azl/xlv9Clby6iCQeAR8ewI7d109ElGOD3G+X3GCF54KDF/yY3bgJExTIYMiCjZT52EmGoH1VzBvmnh/gYUec/6h4gQvPE+gtQyToTLM9VUCayOAfQq3zUVeeR7wY2Zzb41WJri34QCEpwIXK3ZaEZiPnvJKTz4H7SXQLgJ+fdzcr09oFfPR0yogPBU47qNgZ3UOUku3NwTM6GWY0Xbg9yeY6BWYkRb+nZcqkFoagOCFpwKhGsqVtmHlPga7zuDL+5vA90ku/x3wc5Zths9T+PrhFoa6z2pH5CI3WikC6Q4k471oOFqEoLMb/SUOxkod3GXf6OSjmePJzze0UxkCosQDFI91FLP6PW0XEmN6mbDP2Ma9DsgFc5WCE3zGMP17MFZatDx9zmvn2rBHEs+zsTzNreW8vA/Bbxtl+RUe3zuhclpNv4WtXuKaZ1y2B1XAgBI2d4vJWeLb1l8Iw62jtqs6OwAAAABJRU5ErkJggg==");
+		this.icon.setAttribute("tooltiptext", "油猴腳本管理器（鼠標右鍵開OR關）已啟用");
 		gBrowser.mPanelContainer.addEventListener(USL.eventName, this, false);
 	}
 	return DISABLED = bool;
@@ -583,70 +601,80 @@ USL.getFocusedWindow = function () {
 	var win = document.commandDispatcher.focusedWindow;
 	return (!win || win == window) ? content : win;
 };
-//urlbar-icons  TabsToolbar  addon-bar PlacesToolbar
+//urlbar-icons PlacesToolbar
 USL.init = function(){
 	  USL.isready = false;
 	   var overlay = '\
-		<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" \
-			xmlns:html="http://www.w3.org/1999/xhtml"> \
-		 <toolbarpalette id="TabsToolbar">\
-			<toolbarbutton id="UserScriptLoader-icon" label="UserScriptLoader" \
-					class="toolbarbutton-1 chromeclass-toolbar-additional" type="menu" \
-					onclick="USL.iconClick(event);" \
-					tooltiptext="油猴腳本管理器（鼠標右鍵開 | 關)" >\
-		<menupopup id="UserScriptLoader-popup" \
-		           onpopupshowing="USL.onPopupShowing(event);"\
-		           onpopuphidden="USL.onPopupHidden(event);"\
-		           onclick="USL.menuClick(event);">\
-			<menuseparator id="UserScriptLoader-menuseparator"/>\
-			<menu label="用戶腳本命令"\
-			      id="UserScriptLoader-register-menu">\
-				<menupopup id="UserScriptLoader-register-popup"/>\
-			</menu>\
-			<menu label="管理菜單" id="UserScriptLoader-submenu">\
-				<menupopup id="UserScriptLoader-submenu-popup">\
-					<menuitem label="刪除系統pref預加載"\
-					          oncommand="USL.deleteStorage(\'pref\');" />\
-					<menuseparator/>\
-					<menuitem label="隱藏未觸發腳本"\
-					          id="UserScriptLoader-hide-exclude"\
-					          type="checkbox"\
-					          checked="' + USL.HIDE_EXCLUDE + '"\
-					          oncommand="USL.HIDE_EXCLUDE = !USL.HIDE_EXCLUDE;" />\
-					<menuitem label="打開腳本目錄"\
-					          id="UserScriptLoader-openFolderMenu"\
-					          oncommand="USL.openFolder();" />\
-					<menuitem label="重載腳本"\
-					          oncommand="USL.rebuild(); BrowserReloadSkipCache();" />\
-					<menuitem label="緩存腳本"\
-					          id="UserScriptLoader-cache-script"\
-					          type="checkbox"\
-					          checked="' + USL.CACHE_SCRIPT + '"\
-					          oncommand="USL.CACHE_SCRIPT = !USL.CACHE_SCRIPT;" />\
-					<menuitem label="切換到調試模式"\
-					          id="UserScriptLoader-debug-mode"\
-					          type="checkbox"\
-					          checked="' + USL.DEBUG + '"\
-					          oncommand="USL.DEBUG = !USL.DEBUG;" />\
-					<menuitem label="允許腳本彈窗通知"\
-					          id="UserScriptLoader-allow-notify"\
-					          type="checkbox"\
-					          checked="' + USL.ALLOW_NOTIFY + '"\
-					          oncommand="USL.ALLOW_NOTIFY = !USL.ALLOW_NOTIFY;" />\
-					<menuitem label="啟動/禁用腳本時自動刷新頁面"\
-					          id="UserScriptLoader-auto-reload-page"\
-					          type="checkbox"\
-					          checked="' + USL.AUTO_RELOAD_PAGE + '"\
-					          oncommand="USL.AUTO_RELOAD_PAGE = !USL.AUTO_RELOAD_PAGE;" />\
-				</menupopup>\
-			</menu>\
-		      <menuseparator/>\
-		       <menuitem label="為本站搜索腳本"\
-		                id="UserScriptLoader-find-script"\
-				   oncommand="USL.findscripts();" />\
-			<menuitem label="保存當前頁面的腳本"\
-			          id="UserScriptLoader-saveMenu"\
-			          oncommand="USL.saveScript();"/>\
+        <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" \
+                 xmlns:html="http://www.w3.org/1999/xhtml"> \
+            <toolbarpalette id="TabsToolbar">\
+                 <toolbarbutton id="UserScriptLoader-icon" label="UserScriptLoader" \
+                               class="toolbarbutton-1" type="menu" \
+                               onclick="USL.iconClick(event);"  removable="true" \
+                               image="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIzSURBVDhPhVNNSFRRFD5LdxqtSxkj4gUZg4TmT0/HqGhhZTsXU5laiGhUDP5OpRlBNeZPY5HdMjKTcnBRRptp51KthaBOd4yidi1n+XXOeY06GMyFw7n3nO/73nn3nEuUZXVXUVGvS231BygW8JHNhtd8VxXlMynCZlsOEY7tIbgFauGsAkIMuwQx/mqaiNp9hGulFD9RSLbGR7n/FWLyghAjdTvQXEwIHiQ0+AlXD3tW56jgkQxyTwXV9lRSTOx1+36kFvuAlQdYeFGvVYiXs8Qln8YKT4U6Azl/xlv9Clby6iCQeAR8ewI7d109ElGOD3G+X3GCF54KDF/yY3bgJExTIYMiCjZT52EmGoH1VzBvmnh/gYUec/6h4gQvPE+gtQyToTLM9VUCayOAfQq3zUVeeR7wY2Zzb41WJri34QCEpwIXK3ZaEZiPnvJKTz4H7SXQLgJ+fdzcr09oFfPR0yogPBU47qNgZ3UOUku3NwTM6GWY0Xbg9yeY6BWYkRb+nZcqkFoagOCFpwKhGsqVtmHlPga7zuDL+5vA90ku/x3wc5Zths9T+PrhFoa6z2pH5CI3WikC6Q4k471oOFqEoLMb/SUOxkod3GXf6OSjmePJzze0UxkCosQDFI91FLP6PW0XEmN6mbDP2Ma9DsgFc5WCE3zGMP17MFZatDx9zmvn2rBHEs+zsTzNreW8vA/Bbxtl+RUe3zuhclpNv4WtXuKaZ1y2B1XAgBI2d4vJWeLb1l8Iw62jtqs6OwAAAABJRU5ErkJggg==" \
+                               tooltiptext="油猴腳本管理器（鼠標右鍵開OR關）" >\
+                   <menupopup id="UserScriptLoader-popup" \
+              		           onpopupshowing="USL.onPopupShowing(event);"\
+              		           onpopuphidden="USL.onPopupHidden(event);"\
+              		           onclick="USL.menuClick(event);">\
+              			<menuseparator id="UserScriptLoader-menuseparator"/>\
+              			<menu label="用戶腳本命令"\
+              			      id="UserScriptLoader-register-menu"\
+              			      accesskey="C">\
+              				<menupopup id="UserScriptLoader-register-popup"/>\
+              			</menu>\
+              			<menu label="管理菜單" id="UserScriptLoader-submenu">\
+              				<menupopup id="UserScriptLoader-submenu-popup">\
+              					<menuitem label="刪除系統pref預加載"\
+              					          oncommand="USL.deleteStorage(\'pref\');" />\
+              					<menuseparator/>\
+              					<menuitem label="隱藏未觸發腳本"\
+              					          id="UserScriptLoader-hide-exclude"\
+              					          accesskey="N"\
+              					          type="checkbox"\
+              					          checked="' + USL.HIDE_EXCLUDE + '"\
+              					          oncommand="USL.HIDE_EXCLUDE = !USL.HIDE_EXCLUDE;" />\
+              					<menuitem label="緩存腳本"\
+              					          id="UserScriptLoader-cache-script"\
+              					          accesskey="C"\
+              					          type="checkbox"\
+              					          checked="' + USL.CACHE_SCRIPT + '"\
+              					          oncommand="USL.CACHE_SCRIPT = !USL.CACHE_SCRIPT;" />\
+              					<menuitem label="切換到調試模式"\
+              					          id="UserScriptLoader-debug-mode"\
+              					          accesskey="D"\
+              					          type="checkbox"\
+              					          checked="' + USL.DEBUG + '"\
+              					          oncommand="USL.DEBUG = !USL.DEBUG;" />\
+								<menuitem label="允許腳本彈窗通知"\
+										  id="UserScriptLoader-allow-notify"\
+										  type="checkbox"\
+										  checked="' + USL.ALLOW_NOTIFY + '"\
+										  oncommand="USL.ALLOW_NOTIFY = !USL.ALLOW_NOTIFY;" />\
+								<menuitem label="啟動/禁用腳本時自動刷新頁面"\
+										  id="UserScriptLoader-auto-reload-page"\
+										  type="checkbox"\
+										  checked="' + USL.AUTO_RELOAD_PAGE + '"\
+										  oncommand="USL.AUTO_RELOAD_PAGE = !USL.AUTO_RELOAD_PAGE;" />\
+              				</menupopup>\
+              			</menu>\
+						<menuitem label="打開腳本目錄"\
+								  id="UserScriptLoader-openFolderMenu"\
+								  accesskey="O"\
+								  oncommand="USL.openFolder();" />\
+						<menuitem label="重載腳本"\
+								  accesskey="R"\
+								  oncommand="USL.rebuild(); BrowserReloadSkipCache();" />\
+						<menuitem label="為本站搜索腳本"\
+								  id="UserScriptLoader-find-script"\
+								  oncommand="USL.findscripts();" />\
+              			<menuitem label="保存當前頁面的腳本"\
+              			          id="UserScriptLoader-saveMenu"\
+              			          accesskey="S"\
+              			          oncommand="USL.saveScript();"/>\
+              			<menuitem id="showScripttoolsbutton"\
+              			          label="油猴腳本版顯示為按鈕"\
+              			          oncommand="USL.toggleUI(1);" />\
               		</menupopup>\
                  </toolbarbutton>\
             </toolbarpalette>\
@@ -654,6 +682,21 @@ USL.init = function(){
   overlay = "data:application/vnd.mozilla.xul+xml;charset=utf-8," + encodeURI(overlay);
   window.userChrome_js.loadOverlay(overlay, USL);
 	USL.style = addStyle(css);
+	
+	  //dannylee
+    var menuitem = document.createElement("menu");
+		menuitem.setAttribute("id", "UserScriptLoader_Tools_Menu");
+		menuitem.setAttribute("label", "油猴腳本管理器腳本版");
+		menuitem.setAttribute("class", "menu-iconic");
+    menuitem.setAttribute("image", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIzSURBVDhPhVNNSFRRFD5LdxqtSxkj4gUZg4TmT0/HqGhhZTsXU5laiGhUDP5OpRlBNeZPY5HdMjKTcnBRRptp51KthaBOd4yidi1n+XXOeY06GMyFw7n3nO/73nn3nEuUZXVXUVGvS231BygW8JHNhtd8VxXlMynCZlsOEY7tIbgFauGsAkIMuwQx/mqaiNp9hGulFD9RSLbGR7n/FWLyghAjdTvQXEwIHiQ0+AlXD3tW56jgkQxyTwXV9lRSTOx1+36kFvuAlQdYeFGvVYiXs8Qln8YKT4U6Azl/xlv9Clby6iCQeAR8ewI7d109ElGOD3G+X3GCF54KDF/yY3bgJExTIYMiCjZT52EmGoH1VzBvmnh/gYUec/6h4gQvPE+gtQyToTLM9VUCayOAfQq3zUVeeR7wY2Zzb41WJri34QCEpwIXK3ZaEZiPnvJKTz4H7SXQLgJ+fdzcr09oFfPR0yogPBU47qNgZ3UOUku3NwTM6GWY0Xbg9yeY6BWYkRb+nZcqkFoagOCFpwKhGsqVtmHlPga7zuDL+5vA90ku/x3wc5Zths9T+PrhFoa6z2pH5CI3WikC6Q4k471oOFqEoLMb/SUOxkod3GXf6OSjmePJzze0UxkCosQDFI91FLP6PW0XEmN6mbDP2Ma9DsgFc5WCE3zGMP17MFZatDx9zmvn2rBHEs+zsTzNreW8vA/Bbxtl+RUe3zuhclpNv4WtXuKaZ1y2B1XAgBI2d4vJWeLb1l8Iw62jtqs6OwAAAABJRU5ErkJggg==");
+		var ins = document.getElementById("menu_ToolsPopup");
+		ins.insertBefore(menuitem, document.getElementById("menu_preferences"));
+    
+    //dannylee
+    if (!this.pref.hasValue(this.UIPREF)) {
+       this.pref.setValue(this.UIPREF, true);
+    }
+    this.ShowToolButton = this.pref.getValue(this.UIPREF);
 };
 
 USL.loadconfig = function () {
@@ -717,18 +760,41 @@ USL.handleEvent = function (event) {
 };
 
 USL.observe = function (subject, topic, data) {
+	if (topic == "xul-overlay-merged") {
+		if (!USL.isready) {
+		  USL.isready = true;
+		  USL.loadconfig();
+		 //dannylee
+		  document.getElementById("showScripttoolsbutton").setAttribute("label", (this.ShowToolButton ? "油猴腳本版顯示為菜單" : "油猴腳本版顯示為按鈕"));
+		  USL.toggleUI(0);
+		  Application.console.log("UserScriptLoader界面加載完畢！");
+		}
+	}
 	if (topic === "content-document-global-created") {
 		var doc = subject.document;
 		var evt = doc.createEvent("Events");
 		evt.initEvent(USL.eventName, true, false);
 		doc.dispatchEvent(evt);
 	}
-	if (topic == "xul-overlay-merged") {
-		if (!USL.isready) {
-		  USL.isready = true;
-		  USL.loadconfig();
-		}
-	}
+};
+
+//dannylee
+USL.toggleUI = function(tag){
+      if (tag > 0) {
+        USL.pref.setValue(USL.UIPREF, !USL.pref.getValue(USL.UIPREF));
+        USL.ShowToolButton = USL.pref.getValue(USL.UIPREF);
+      }
+      window.setTimeout(function() { 
+        document.getElementById("UserScriptLoader_Tools_Menu").hidden = USL.ShowToolButton;
+        document.getElementById("UserScriptLoader-icon").hidden = !USL.ShowToolButton;
+        if (!USL.ShowToolButton) {
+          document.getElementById("UserScriptLoader_Tools_Menu").appendChild(document.getElementById("UserScriptLoader-popup"));
+          document.getElementById("showScripttoolsbutton").setAttribute("label", "油猴腳本版顯示為按鈕");
+        } else{
+          document.getElementById("UserScriptLoader-icon").appendChild(document.getElementById("UserScriptLoader-popup"));
+          document.getElementById("showScripttoolsbutton").setAttribute("label", "油猴腳本版顯示為菜單");
+        }
+      }, 10);
 };
 
 USL.createMenuitem = function () {
@@ -741,7 +807,8 @@ USL.createMenuitem = function () {
 	}
 	USL.readScripts.forEach(function(script){
 		let m = document.createElement('menuitem');
-		m.setAttribute('label', script.name);
+		m.setAttribute('label', script.name + ' (' + script.version + ')');
+		m.setAttribute('tooltiptext', '左鍵啟用/禁用，中鍵下載鏈接，右鍵編輯');
 		m.setAttribute("class", "UserScriptLoader-item");
 		m.setAttribute('checked', !script.disabled);
 		m.setAttribute('type', 'checkbox');
@@ -872,6 +939,7 @@ USL.onPopupShowing = function(event) {
 				menuitem.style.fontWeight = index_run !== -1 ? "bold" : "";
 				menuitem.hidden = USL.HIDE_EXCLUDE && index_match === -1;
 			});
+			//USL.saveMenu.hidden = win.document.contentType.indexOf("javascript") === -1;
 			USL.saveMenu.hidden = !(/\.user\.js$/.test(win.document.location.href) && /javascript|plain/.test(win.document.contentType));
 			b:if (win.USL_registerCommands) {
 				for (let n in win.USL_registerCommands) {
@@ -920,13 +988,15 @@ USL.menuClick = function(event){
 	var menuitem = event.target;
 	if (event.button == 0 || menuitem.getAttribute('type') != 'checkbox')
 		return;
-
-	event.preventDefault();
-	event.stopPropagation();
-	if (event.button == 1) {
-		menuitem.doCommand();
-		menuitem.setAttribute('checked', menuitem.getAttribute('checked') == 'true'? 'false' : 'true');
+	if (event.button == 1) {//edited by dannylee
+		//menuitem.doCommand();
+		//menuitem.setAttribute('checked', menuitem.getAttribute('checked') == 'true'? 'false' : 'true');
+		//Application.console.log("downloadURL:" + menuitem.script.downloadURL);
+		if (menuitem.script && menuitem.script.downloadURL != null)
+		  openLinkIn(menuitem.script.downloadURL,  "tab", {});	
 	} else if (event.button == 2 && USL.EDITOR && menuitem.script) {
+		event.preventDefault();
+		event.stopPropagation();
 		USL.edit(menuitem.script.path);
 	}
 };
@@ -1255,9 +1325,7 @@ function addStyle(css) {
 
 
 })('\
-/* http://www.famfamfam.com/lab/icons/silk/preview.php */\
 #UserScriptLoader-icon {\
-	list-style-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAALEgAACxIB0t1+/AAAACx0RVh0Q3JlYXRpb24gVGltZQBTdW4gMzAgTWFyIDIwMDggMTc6MjI6NDcgLTA1MDDUnvhKAAAAB3RJTUUH2AQGETEsCzNv6AAAAk9JREFUOE9lU09Ik3EYfo91mtFhY2NtKxexQGOMMJU5sojoYGU3g1UyNUQ0Kvpjukozgmqm1iyyr4zMpBweyvCybh7NOgjq+mYUdeu449P7vl+bW/7g4ff+eZ6Hl9/7feT3+8nn85HH4yG3201Op5PsdnsB8QhVMjpPVlDqwHYyi3t6igt5sMDDSDDM9r2EQ+WEiFcRL+bpcTgcJfgnhKCpoiBEwy7ChWpKHy4nk3ObcDcYsGhBhInGLWgNEaJ7CM1BwvlqC40BNavL8/X0hKmhp45SvYzXXbuR+9wHLN/HwosmnUJuyaUufeEJX3Rq0F2/+c9YR1DJKl4ZBDKPgG9PYM5e1BuZJNeHuN+vPOGLTg2G24KYGTgCo2UHkxJKNiZPwxiPAWuvYLxp4fgMGz3m/gPlCV90lkFHDSYu1WC2LwysjgDmU0Q6IyirLQN+TK/HpqGTCe9tvB6iU4NYeKspBvPJo9bo2eegnQRyE/Dr43q8Nq5TzCePqYHo1IDXEr26fxNyi7cKBsbDs4wu4PccjOQ5GCPtbPBSDXKLAxC+6NSAH8Uma8PyPQx2H8eX9zeA7xM8/jvg5wxjmvNJfP1wE0PXTuhG5CHliy0Y5DeQTfei+WAlooFt6K8KYHRfAHf4jgU8aOV69tN15ZUYSMCFdOpKiN3v6rqQGdXHhPmMMWZtQB6YpxSe8P83kB/GlBUtTZ2y1rk6bInk5m9jaYpXy33hCb9g4HK5FFy0tYXo9uVaWuFYxyyG1KXPsS2vKTEoKnoZVYxIEST3buQS/QUCx7vn2Dh8TQAAAABJRU5ErkJggg==");\
   -moz-appearance: none !important;\
   border-style: none !important;\
   border-radius: 0 !important;\
@@ -1271,12 +1339,15 @@ function addStyle(css) {
   min-height: 18px !important;\
 }\
 #UserScriptLoader-icon > .toolbarbutton-icon {\
-	max-width: 18px !important;\
+    max-width: 18px !important;\
     padding: 0 !important;\
     margin: 0 !important;\
 }\
-#UserScriptLoader-icon dropmarker{display: none !important;}\
-#UserScriptLoader-icon[state="disable"] {\
-	list-style-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAALEgAACxIB0t1+/AAAACx0RVh0Q3JlYXRpb24gVGltZQBTdW4gMzAgTWFyIDIwMDggMTc6MjI6NTAgLTA1MDDdk8ZaAAAAB3RJTUUH2AQWER4YaIL0rwAAAldJREFUOE+FU99Lk2EY3d0uBItuMowUWWyYSx3D0EzNgUqjLS0a1MViFyXZtqDCIY2zGAoic2ZGUUpB1MUIjaLUNC1XGWyz0v1quiSo/6PnefxmM/rxwOF93+c757wP7+FT/a+sTVU7CQdq95fZyst2uZX2v4sE2witBHdzjQ4VmmLoSosYjQrl76UIwaBbc0JU6/agra7CrtcUu+msVuhbi0TnWGhvb0KTUYuDVRocMuxFa90+gbG8hM1KFPpGHW2o1FoaK20MT9cpRBbGEY9O4cHtPpmC1wSduc/fc1zWiUGHydDtc1qFzKREbBqpj6/w5fM8JsfHaH2N9Kc5JGMvEV2YEB7zWScGPZ1mjPadwUVHO900LeThm35cv+FHNvkeI7d6MTR8DWkyZBPmMZ91YgCnBQPdJ9Hv7UJqaRaZ5TdweVzQGrT4lolu7ldXFmSyfu8FjOA0WCcG5ga9mw3uDF4Vwmo8jMKiQhTsKMD39eXN/VriHU03j7tBrxiwTgwolsr25mpEwxNIKwaDAz4EA378WF/BULAXATrnDGLhJ2A+68SAHkXNscUjk5h9/hDH2kxoqa2Bw2qGy3YcZzssMNfX4oS5BXMvHklC/JAi5mKDXAKeS514GhqVKbLJRXxNfUA2tYi1+Fs8ezyGnivnhbfFgIsadt9lh0yRjM1IEvyYGXo4XjnSJD1wPDIF5jFfkW4UNfiHcXNEoXsBiTO5NCOp8Jqg+EL3AxIh85ivSH8VNdWHjVrTkXq9k/YyZj64z99p/+f/IK+2E3YTSvPAZ+7/VirVTyD9VsdYQ1AqAAAAAElFTkSuQmCC");\
+#UserScriptLoader-icon:not([disabled="true"]):hover,\
+#UserScriptLoader-icon:not([disabled="true"])[type="menu-button"]:hover,\
+#UserScriptLoader-icon:not([disabled="true"])[open="true"],\
+#UserScriptLoader-icon:not([disabled="true"])[type="menu-button"][open="true"] {\
+    background-image: -moz-linear-gradient(rgba(242, 245, 249, 0.95), rgba(220, 223, 225, 0.67) 49%, rgba(198, 204, 208, 0.65) 51%, rgba(194, 197, 201, 0.3)) !important;\
 }\
-');
+#UserScriptLoader-icon dropmarker{display: none !important;}\
+'.replace(/[\r\n\t]/g, ''));
