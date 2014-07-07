@@ -36,43 +36,47 @@
 
 	var findMatchCase = searchInput.appendChild($C("checkbox", {
 		id: "findMatchCase",
-		tooltiptext: "左鍵：符合大小寫\n中鍵：尋找搜索欄關鍵字\n　　　貼上就尋找\n右鍵：關閉尋找欄及高亮顯示並清除關鍵字\n向上滾動：尋找上一筆\n向下滾動：尋找下一筆",
+		tooltiptext: "左鍵：符合大小寫\n中鍵：貼上到尋找欄和搜索欄\n右鍵：關閉尋找欄及高亮顯示並清除關鍵字\n向上滾動：尋找上一筆\n向下滾動：尋找下一筆",
 		oncommand: "gFindBar._setCaseSensitivity(this.checked); document.getElementById('searchbar').focus();",
-		onclick: "if (event.button == 2) {gFindBar.close(); gFindBar.toggleHighlight(0); document.getElementById('searchbar').value=''; event.preventDefault();}",
 		onDOMMouseScroll: "FindScroll.onScroll(event);",
 	}));
 
 	findMatchCase.addEventListener("click", function(event) {
 		if (event.button == 1) {
-			gFindBar.open();
-			gFindBar.toggleHighlight(1);
+			gFindBar._findField.value = readFromClipboard();
+			searchbar.value = readFromClipboard();
+		}
+		else if (event.button == 2) {
+			gFindBar.close();
+			gFindBar.toggleHighlight(0);
+			gFindBar.getElement('highlight').setAttribute("checked", "false");
+//			gFindBar.getElement('highlight').setAttribute("checkState", "0");
+			gFindBar._findField.value = '';
+			$('searchbar').value = '';
+			gFindBar._foundMatches.hidden = true;
+			gFindBar._foundMatches.value = '';
+		}
+		event.preventDefault();
+	}, false);
+
+	FindScroll = {
+		onScroll: function(event) {
 			if (searchbar.value == "") {
 				gFindBar._findField.value = readFromClipboard();
 				searchbar.value = readFromClipboard();
 			}
 			else {
-				gFindBar._findField.value = searchbar.value;
-			}
-			return;
-		event.preventDefault();
-		}
-	}, false);
-
-	FindScroll = {
-		onScroll: function(event) {
-			if (event.detail > 0) {
-				if (searchbar.value == "") {return;}
-				gFindBar.open();
+//				gFindBar.open();
 				gFindBar.toggleHighlight(1);
+				gFindBar.getElement('highlight').setAttribute("checked", "true");
+//				gFindBar.getElement('highlight').setAttribute("checkState", "1");
 				gFindBar._findField.value = searchbar.value;
-				gFindBar.onFindAgainCommand(false);
-			}
-			else {
-				if (searchbar.value == "") {return;}
-				gFindBar.open();
-				gFindBar.toggleHighlight(1);
-				gFindBar._findField.value = searchbar.value;
-				gFindBar.onFindAgainCommand(true);
+				if (event.detail > 0) {
+					gFindBar.onFindAgainCommand(false);
+				}
+				else {
+					gFindBar.onFindAgainCommand(true);
+				}
 			}
 			return;
 		}
