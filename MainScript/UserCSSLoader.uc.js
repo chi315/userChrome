@@ -1,27 +1,14 @@
 // ==UserScript==
 // @name			UserCSSLoader
-// @description		類似Stylish的CSS樣式管理器，簡體中文圖形界面
-// @note			Stylish みたいなもの
+// @description		類似Stylish的CSS樣式管理器 (Stylish みたいなもの)
 // @namespace		http://d.hatena.ne.jp/Griever/
 // @author			Griever
-// @note			==forked by iwo - Mozest.com==
-// @note			CSS-Stylish管理器_火狐橙菜單+可拖動按鈕版20130126，version 0.0.4.2，適用於Fx21+
-// @note			轉載請註明以下出處！
-// @note			腳本主頁@Mozest論壇 http://g.mozest.com/thread-43097-1-1
-// @note			=============================================================
-// @note			Thanks "build draggable Fx button" by 風飄零@a936468
-// @note			thread http://blog.bitcp.com/archives/452
-// @note			CSS-Stylish管理器_火狐橙菜單+擴展欄按鈕版20130112，version 0.0.4.1，適用於Fx20+
 // @include			main
 // @license			MIT License
 // @compatibility	Firefox 4
 // @charset			UTF-8
-// @version			0.0.4.2
-// @note			0.0.4.1
-// @note			version  0.0.4
+// @version			0.0.4
 // @note			0.0.4 Remove E4X
-// @note			version 0.0.3.1
-// @note			2012-9-1添加擴展欄按鈕
 // @note			CSSEntry クラスを作った
 // @note			スタイルのテスト機能を作り直した
 // @note			ファイルが削除された場合 rebuild 時に CSS を解除しメニューを消すようにした
@@ -31,14 +18,16 @@
 /****** 使用方法 ******
 
 在菜單「CSS-Stylish管理」菜單中：
-左鍵點擊各CSS項目，切換各項目的「應用與否」；
-中鍵點擊各CSS項目，也是切換各項目的「應用與否」，但不退出菜單，即可連續操作;
-右鍵點擊各CSS項目，則是調用編輯器對其進行編輯；
+左鍵點擊各 CSS 項目，切換各項目的「應用與否」；
+中鍵點擊各 CSS 項目，也是切換各項目的「應用與否」，但不退出菜單，即可連續操作;
+右鍵點擊各 CSS 項目，則是調用編輯器對其進行編輯；
 
-在about:config裡修改 "view_source.editor.path" 以指定編輯器
-在about:config裡修改"UserCSSLoader.FOLDER" 指定存放文件夾
+在 about:config 裡修改 "view_source.editor.path" 以指定編輯器
+在 about:config 裡修改 "UserCSSLoader.FOLDER" 以指定存放文件夾
 
-類似滾動條css的瀏覽器chrome樣式，請改成以"xul-"為開頭，或以".as.css"為結尾的文件名，才能正常載入 */
+類似滾動條 css 的瀏覽器 chrome 樣式，請改成以 "xul-" 為開頭，或以 ".as.css" 為結尾的文件名，才能正常載入
+
+ **** 結束說明 ****/
 
 (function(){
 
@@ -85,7 +74,7 @@ window.UCL = {
 			aFolder.initWithPath(folderPath);
 		} catch (e) {
 			aFolder = Services.dirsvc.get("UChrm", Ci.nsILocalFile);
-			aFolder.appendRelativePath("CSS");//指定用戶css文件夾名稱，若不存在會自動創建
+			aFolder.appendRelativePath("UserCSSLoader");//指定用戶css文件夾名稱，若不存在會自動創建
 		}
 		if (!aFolder.exists() || !aFolder.isDirectory()) {
 			aFolder.create(Ci.nsIFile.DIRECTORY_TYPE, 0664);
@@ -99,65 +88,65 @@ window.UCL = {
 		return win;
 	},
 	init: function() {
-		var navBar = document.getElementById("TabsToolbar"); //urlbar-icons status-bar searchbar devToolsSeparator
+		var navBar = $("TabsToolbar"); //urlbar-icons devToolsSeparator
 		if (!navBar) return;
-	
-		var menubtn = document.createElement("toolbarbutton"); //menu
-		menubtn.id = "usercssloader_menubtn";
-		menubtn.setAttribute("label", "UC-Stylish-Loader");
-		menubtn.setAttribute("tooltiptext", "CSS-Stylish管理器");
-		menubtn.setAttribute("type", "menu"); //下拉菜單,若需要右鍵菜單請替換為"context", "_child"  
-		menubtn.setAttribute("class", "toolbarbutton-1"); //menu-iconic
-	//	menubtn.setAttribute("removable", "true");
-		menubtn.setAttribute("image","data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAARklEQVQ4jWNgYGD4TyFm+L/uaBJezMDA8H+vgyEGHk4GEIPxGnBhdikKZmBg+P/vEyscjxrASjglEmPAvBMPMPBwMoASDADElRSk+LLlQAAAAABJRU5ErkJggg=="); 
-
+//菜單按鈕start
+		var menubtn = $C("toolbarbutton", { //menu
+			id: "usercssloader_menubtn",
+			label: "UC-Stylish-Loader",
+			tooltiptext: "CSS-Stylish管理器",
+			type: "menu", //下拉菜單,若需要右鍵菜單請替換為"context", "_child"
+			class: "toolbarbutton-1", //menu-iconic
+			image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAARklEQVQ4jWNgYGD4TyFm+L/uaBJezMDA8H+vgyEGHk4GEIPxGnBhdikKZmBg+P/vEyscjxrASjglEmPAvBMPMPBwMoASDADElRSk+LLlQAAAAABJRU5ErkJggg=="
+		});
+//菜單按鈕end
 		navBar.appendChild(menubtn); 
 	//	navBar.parentNode.insertBefore(menubtn, navBar.previousSibling);
 
 		var xml_menubtn = '\
-				<menupopup id="usercssloader_menubtn_popup">\
-					<menuitem label="打開 CSS 文件夾"\
-				          accesskey="O"\
+			<menupopup id="usercssloader_menubtn_popup">\
+				<menuitem label="打開樣式目錄"\
+						  accesskey="O"\
 						  class="menuitem-iconic"\
-				          oncommand="UCL.openFolder();" />\
-					<menuitem label="編輯 userChrome.css"\
-							  hidden="false"\
-							  class="menuitem-iconic"\
-							  oncommand="UCL.editUserCSS(\'userChrome.css\')" />\
-					<menuitem label="編輯 userContent.css"\
-							  hidden="false"\
-							  oncommand="UCL.editUserCSS(\'userContent.css\')" />\
-					<menuitem label="重新加載選中的css樣式"\
-				          accesskey="R"\
+						  oncommand="UCL.openFolder();" />\
+				<menuitem label="編輯 userChrome.css"\
+						  hidden="false"\
 						  class="menuitem-iconic"\
-				          acceltext="Alt + R"\
+						  oncommand="UCL.editUserCSS(\'userChrome.css\')" />\
+				<menuitem label="編輯 userContent.css"\
+						  hidden="false"\
+						  oncommand="UCL.editUserCSS(\'userContent.css\')" />\
+				<menuitem label="重新加載選中的css樣式"\
+						  accesskey="R"\
+						  class="menuitem-iconic"\
+						  acceltext="Alt + R"\
 						  oncommand="UCL.rebuild();" />\
-					<menuseparator />\
-					<menuitem label="新建用戶css樣式(外部編輯器)"\
-							  accesskey="N"\
-							  class="menuitem-iconic"\
-							  oncommand="UCL.create();" />\
-					<menuitem label="新建瀏覽器(Chrome)樣式"\
-							  id="usercssloader-test-chrome"\
-							  accesskey="C"\
-							  oncommand="UCL.styleTest(window);" />\
-					<menuitem label="新建當前網頁(Web)樣式"\
-							  id="usercssloader-test-content"\
-							  accesskey="W"\
-							  oncommand="UCL.styleTest();" />\
-					<menuitem label="在userstyles.org檢索當前網頁樣式"\
-				          accesskey="S"\
+				<menuseparator />\
+				<menuitem label="新建用戶css樣式(外部編輯器)"\
+						  accesskey="N"\
 						  class="menuitem-iconic"\
-				          oncommand="UCL.searchStyle();" />\
-					<menu label=".uc.css" accesskey="U" hidden="'+ !UCL.USE_UC +'">\
-						<menupopup id="usercssloader_menubtn_ucmenupopup">\
-							<menuitem label="Rebuild(.uc.js)"\
-							          oncommand="UCL.UCrebuild();" />\
-							<menuseparator id="usercssloader_menubtn_ucseparator"/>\
-						</menupopup>\
-					</menu>\
-					<menuseparator id="ucl_menubtn_separator"/>\
-				</menupopup>\
+						  oncommand="UCL.create();" />\
+				<menuitem label="新建瀏覽器(Chrome)樣式"\
+						  id="usercssloader-test-chrome"\
+						  accesskey="C"\
+						  oncommand="UCL.styleTest(window);" />\
+				<menuitem label="新建當前網頁(Web)樣式"\
+						  id="usercssloader-test-content"\
+						  accesskey="W"\
+						  oncommand="UCL.styleTest();" />\
+				<menuitem label="在userstyles.org檢索當前網頁樣式"\
+						  accesskey="S"\
+						  class="menuitem-iconic"\
+						  oncommand="UCL.searchStyle();" />\
+				<menu label=".uc.css" accesskey="U" hidden="'+ !UCL.USE_UC +'">\
+					<menupopup id="usercssloader_menubtn_ucmenupopup">\
+						<menuitem label="Rebuild(.uc.js)"\
+								  oncommand="UCL.UCrebuild();" />\
+						<menuseparator id="usercssloader_menubtn_ucseparator"/>\
+					</menupopup>\
+				</menu>\
+				<menuseparator id="ucl_menubtn_separator"/>\
+			</menupopup>\
 		';
 
 		var range_menubtn = document.createRange();
@@ -191,9 +180,9 @@ window.UCL = {
 		window.removeEventListener("unload", this, false);
 	},
 	destroy: function() {
-		var i = document.getElementById("usercssloader_menu");
+		var i = $("usercssloader_menu");
 		if (i) i.parentNode.removeChild(i);
-		var i = document.getElementById("usercssloader-rebuild-key");
+		var i = $("usercssloader-rebuild-key");
 		if (i) i.parentNode.removeChild(i);
 		this.uninit();
 	},
@@ -222,7 +211,7 @@ window.UCL = {
 			this.rebuildMenu(leafName);
 		}
 		if (this.initialized)
-			XULBrowserWindow.statusTextField.label = "\u91CD\u65B0\u52A0\u8F09css\u6210\u529F ";//重新加載CSS成功//Rebuild しました
+			XULBrowserWindow.statusTextField.label = "重新加載css成功 ";//Rebuild しました
 	},
 	loadCSS: function(aFile) {
 		var CSS = this.readCSS[aFile.leafName];
@@ -239,7 +228,7 @@ window.UCL = {
 //按鈕css列表子菜單start
 	rebuildMenu: function(aLeafName) {
 		var CSS = this.readCSS[aLeafName];
-		var btnmenuitem = document.getElementById("btnusercssloader-" + aLeafName);
+		var btnmenuitem = $("btnusercssloader-" + aLeafName);
 
 		if (!CSS) {
 			if (btnmenuitem)
@@ -248,15 +237,15 @@ window.UCL = {
 		}
 
 		if (!btnmenuitem) {
-			btnmenuitem = document.createElement("menuitem");//按鈕css列表子菜單
-			btnmenuitem.setAttribute("label", aLeafName);
-			btnmenuitem.setAttribute("id", "btnusercssloader-" + aLeafName);
-			btnmenuitem.setAttribute("class", "usercssloader-item " + (CSS.SHEET == this.AGENT_SHEET? "AGENT_SHEET" : "USER_SHEET"));
-			btnmenuitem.setAttribute("type", "checkbox");
-			btnmenuitem.setAttribute("autocheck", "false");
-			btnmenuitem.setAttribute("oncommand", "UCL.toggle('"+ aLeafName +"');");
-			btnmenuitem.setAttribute("onclick", "UCL.itemClick(event);");
-			document.getElementById("usercssloader_menubtn_popup").appendChild(btnmenuitem);
+			btnmenuitem = $("usercssloader_menubtn_popup").appendChild($C("menuitem", {
+				label: aLeafName,
+				id: "btnusercssloader-" + aLeafName,
+				class: "usercssloader-item " + (CSS.SHEET == this.AGENT_SHEET? "AGENT_SHEET" : "USER_SHEET"),
+				type: "checkbox",
+				autocheck: "false",
+				oncommand: "UCL.toggle('"+ aLeafName +"');",
+				onclick: "UCL.itemClick(event);"
+			}));
 		}
 		btnmenuitem.setAttribute("checked", CSS.enabled);
 	},
@@ -310,7 +299,7 @@ window.UCL = {
 	},
 	edit: function(aFile) {
 		var editor = Services.prefs.getCharPref("view_source.editor.path");
-		if (!editor) return alert("\u672A\u6307\u5B9A\u5916\u90E8\u7F16\u8F91\u5668\u7684\u8DEF\u5F84\u3002\n\u8BF7\u5728about：config\u4E2D\u8BBE\u7F6Eview_source.editor.path");//未指定外部編輯器的路徑。\n 請在about：config中設置view_source.editor.path
+		if (!editor) return alert("未指定外部編輯器的路徑。\n請在about:config中設置view_source.editor.path");//エディタのパスが未設定です。\n view_source.editor.path を設定してください
 		try {
 			var UI = Cc["@mozilla.org/intl/scriptableunicodeconverter"].createInstance(Ci.nsIScriptableUnicodeConverter);
 			UI.charset = window.navigator.platform.toLowerCase().indexOf("win") >= 0? "GB2312": "UTF-8";//Shift_JIS
@@ -323,7 +312,7 @@ window.UCL = {
 		} catch (e) {}
 	},
 	create: function(aLeafName) {
-		if (!aLeafName) aLeafName = prompt("\u8BF7\u8F93\u5165\u6587\u4EF6\u540D", new Date().toLocaleFormat("%Y_%m%d_%H%M%S"));//請輸入文件名
+		if (!aLeafName) aLeafName = prompt("請輸入文件名", new Date().toLocaleFormat("%Y_%m%d_%H%M%S"));//ファイル名を入力してください
 		if (aLeafName) aLeafName = aLeafName.replace(/\s+/g, " ").replace(/[\\/:*?\"<>|]/g, "");
 		if (!aLeafName || !/\S/.test(aLeafName)) return;
 		if (!/\.css$/.test(aLeafName)) aLeafName += ".css";
@@ -359,17 +348,17 @@ window.UCL = {
 			if (!re.test(css.href)) return;
 			let fileURL = decodeURIComponent(css.href).split("?")[0];
 			let aLeafName = fileURL.split("/").pop();
-			let m = document.createElement("menuitem");
-			m.setAttribute("label", aLeafName);
-			m.setAttribute("tooltiptext", fileURL);
-			m.setAttribute("id", "usercssloader-" + aLeafName);
-			m.setAttribute("type", "checkbox");
-			m.setAttribute("autocheck", "false");
-			m.setAttribute("checked", "true");
-			m.setAttribute("oncommand", "this.setAttribute('checked', !(this.css.disabled = !this.css.disabled));");
-			m.setAttribute("onclick", "UCL.UCItemClick(event);");
+			let m = popup.appendChild($C("menuitem", {
+				label: aLeafName,
+				tooltiptext: fileURL,
+				id: "usercssloader-" + aLeafName,
+				type: "checkbox",
+				autocheck: "false",
+				checked: "true",
+				oncommand: "this.setAttribute('checked', !(this.css.disabled = !this.css.disabled));",
+				onclick: "UCL.UCItemClick(event);"
+			}));
 			m.css = css;
-			popup.appendChild(m);
 		});
 	},
 	UCItemClick: function(event) {
@@ -582,24 +571,4 @@ function $C(name, attr) {
 }
 
 function log() { Application.console.log(Array.slice(arguments)); }
-
-
-
-// 通過手動更新 toolbar 的 currentSet 特性來添加按鈕到 toolbar 裡，使得按鈕可拖動
-/*
-  var updateToolbar = {
-	runOnce: function() {
-		var toolbars = document.querySelectorAll("TabsToolbar");//toolbar//無需改為"addon-bar"
-		Array.slice(toolbars).forEach(function (toolbar) {
-			var currentset = toolbar.getAttribute("currentset");
-			if (currentset.split(",").indexOf("usercssloader_menubtn") < 0) return;   //按鈕 ID  
-			toolbar.currentSet = currentset;
-			try {
-				BrowserToolboxCustomizeDone(true);
-			} catch (ex) {
-				}
-		});
-	},
-  }
-  updateToolbar.runOnce(); */
 })();
