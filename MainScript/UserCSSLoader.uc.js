@@ -8,6 +8,7 @@
 // @compatibility	Firefox 4
 // @charset			UTF-8
 // @version			0.0.4
+// @note			2014/2/26 Mod by  dannylee添加可切換圖標和菜單模式, CSS菜單中鍵重載
 // @note			0.0.4 Remove E4X
 // @note			CSSEntry クラスを作った
 // @note			スタイルのテスト機能を作り直した
@@ -19,7 +20,8 @@
 
 在菜單「CSS-Stylish管理」菜單中：
 左鍵點擊各 CSS 項目，切換各項目的「應用與否」；
-中鍵點擊各 CSS 項目，也是切換各項目的「應用與否」，但不退出菜單，即可連續操作;
+//中鍵點擊各 CSS 項目，也是切換各項目的「應用與否」，但不退出菜單，即可連續操作;
+中鍵點擊各 CSS 項目，重新加載各項目;
 右鍵點擊各 CSS 項目，則是調用編輯器對其進行編輯；
 
 在 about:config 裡修改 "view_source.editor.path" 以指定編輯器
@@ -45,10 +47,13 @@ if (window.UCL) {
 }
 
 window.UCL = {
+	isready: false,
 	USE_UC: "UC" in window,
 	AGENT_SHEET: Ci.nsIStyleSheetService.AGENT_SHEET,
 	USER_SHEET : Ci.nsIStyleSheetService.USER_SHEET,
 	readCSS    : {},
+	UIPREF: "showtoolbutton",
+	ShowToolButton: true,
 	get disabled_list() {
 		let obj = [];
 		try {
@@ -88,90 +93,122 @@ window.UCL = {
 		return win;
 	},
 	init: function() {
-		var navBar = $("TabsToolbar"); //urlbar-icons devToolsSeparator
-		if (!navBar) return;
-//菜單按鈕start
-		var menubtn = $C("toolbarbutton", { //menu
-			id: "usercssloader_menubtn",
-			label: "UC-Stylish-Loader",
-			tooltiptext: "CSS-Stylish管理器",
-			type: "menu", //下拉菜單,若需要右鍵菜單請替換為"context", "_child"
-			class: "toolbarbutton-1", //menu-iconic
-			image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAARklEQVQ4jWNgYGD4TyFm+L/uaBJezMDA8H+vgyEGHk4GEIPxGnBhdikKZmBg+P/vEyscjxrASjglEmPAvBMPMPBwMoASDADElRSk+LLlQAAAAABJRU5ErkJggg=="
-		});
-//菜單按鈕end
-		navBar.appendChild(menubtn); 
-	//	navBar.parentNode.insertBefore(menubtn, navBar.previousSibling);
-
-		var xml_menubtn = '\
-			<menupopup id="usercssloader_menubtn_popup">\
-				<menuitem label="打開樣式目錄"\
-						  accesskey="O"\
-						  class="menuitem-iconic"\
-						  oncommand="UCL.openFolder();" />\
-				<menuitem label="編輯 userChrome.css"\
-						  hidden="false"\
-						  class="menuitem-iconic"\
-						  oncommand="UCL.editUserCSS(\'userChrome.css\')" />\
-				<menuitem label="編輯 userContent.css"\
-						  hidden="false"\
-						  oncommand="UCL.editUserCSS(\'userContent.css\')" />\
-				<menuitem label="重新加載選中的css樣式"\
-						  accesskey="R"\
-						  class="menuitem-iconic"\
-						  acceltext="Alt + R"\
-						  oncommand="UCL.rebuild();" />\
-				<menuseparator />\
-				<menuitem label="新建用戶css樣式(外部編輯器)"\
-						  accesskey="N"\
-						  class="menuitem-iconic"\
-						  oncommand="UCL.create();" />\
-				<menuitem label="新建瀏覽器(Chrome)樣式"\
-						  id="usercssloader-test-chrome"\
-						  accesskey="C"\
-						  oncommand="UCL.styleTest(window);" />\
-				<menuitem label="新建當前網頁(Web)樣式"\
-						  id="usercssloader-test-content"\
-						  accesskey="W"\
-						  oncommand="UCL.styleTest();" />\
-				<menuitem label="在userstyles.org檢索當前網頁樣式"\
-						  accesskey="S"\
-						  class="menuitem-iconic"\
-						  oncommand="UCL.searchStyle();" />\
-				<menu label=".uc.css" accesskey="U" hidden="'+ !UCL.USE_UC +'">\
-					<menupopup id="usercssloader_menubtn_ucmenupopup">\
-						<menuitem label="Rebuild(.uc.js)"\
-								  oncommand="UCL.UCrebuild();" />\
-						<menuseparator id="usercssloader_menubtn_ucseparator"/>\
+		UCL.isready = false;
+		var overlay = '\
+			<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" \
+			xmlns:html="http://www.w3.org/1999/xhtml"> \
+				<toolbarpalette id="TabsToolbar">\
+					<toolbarbutton id="usercssloader-menu" label="UC-Stylish" \
+								   class="toolbarbutton-1 chromeclass-toolbar-additional" type="menu" \
+								   removable="true" \
+								   image="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAARklEQVQ4jWNgYGD4TyFm+L/uaBJezMDA8H+vgyEGHk4GEIPxGnBhdikKZmBg+P/vEyscjxrASjglEmPAvBMPMPBwMoASDADElRSk+LLlQAAAAABJRU5ErkJggg==" \
+								   tooltiptext="用戶樣式管理器" >\
+					<menupopup id="usercssloader-menupopup">\
+						<menuitem label="打開樣式目錄"\
+								  accesskey="O"\
+								  oncommand="UCL.openFolder();" />\
+						<menuitem label="編輯 userChrome.css"\
+								  hidden="false"\
+								  oncommand="UCL.editUserCSS(\'userChrome.css\');"/>\
+						<menuitem label="編輯 userContent.css"\
+								  hidden="false"\
+								  oncommand="UCL.editUserCSS(\'userContent.css\');"/>\
+						<menuitem label="重新加載全部樣式"\
+								  accesskey="R"\
+								  acceltext="Alt + R"\
+								  oncommand="UCL.rebuild();" />\
+						<menuseparator />\
+						<menuitem label="新建用戶 css 樣式 (外部編輯器)"\
+								  accesskey="N"\
+								  oncommand="UCL.create();" />\
+						<menuitem label="新建瀏覽器樣式 (Chrome)"\
+								  id="usercssloader-test-chrome"\
+								  accesskey="C"\
+								  oncommand="UCL.styleTest(window);" />\
+						<menuitem label="新建當前網頁樣式 (Web)"\
+								  id="usercssloader-test-content"\
+								  accesskey="W"\
+								  oncommand="UCL.styleTest();" />\
+						<menuitem label="在userstyles.org檢索當前網頁樣式"\
+								  accesskey="S"\
+								  oncommand="UCL.searchStyle();" />\
+						<menu label=".uc.css" accesskey="U" hidden="'+ !UCL.USE_UC +'">\
+							<menupopup id="usercssloader-ucmenupopup">\
+								<menuitem label="Rebuild(.uc.js)"\
+										  oncommand="UCL.UCrebuild();" />\
+								<menuseparator id="usercssloader-ucsepalator"/>\
+							</menupopup>\
+						</menu>\
+						<menuitem id="showCSStoolsbutton" label="樣式管理器顯示為按鈕"\
+								  oncommand="UCL.toggleUI(1);" />\
+						<menuseparator id="ucl-sepalator"/>\
 					</menupopup>\
-				</menu>\
-				<menuseparator id="ucl_menubtn_separator"/>\
-			</menupopup>\
-		';
+					</toolbarbutton>\
+				</toolbarpalette>\
+			</overlay>';
+	overlay = "data:application/vnd.mozilla.xul+xml;charset=utf-8," + encodeURI(overlay);
+	window.userChrome_js.loadOverlay(overlay, UCL);
 
-		var range_menubtn = document.createRange();
-		range_menubtn.selectNodeContents($('usercssloader_menubtn'));
-		range_menubtn.collapse(false);
-		range_menubtn.insertNode(range_menubtn.createContextualFragment(xml_menubtn.replace(/\n|\t/g, '')));
-		range_menubtn.detach();
+	//dannylee
+	var menuitem = $("menu_ToolsPopup").insertBefore($C("menu", {
+		id: "usercssloader_Tools_Menu",
+		label: "用戶樣式管理器腳本版",
+		class: "menu-iconic",
+		image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAARklEQVQ4jWNgYGD4TyFm+L/uaBJezMDA8H+vgyEGHk4GEIPxGnBhdikKZmBg+P/vEyscjxrASjglEmPAvBMPMPBwMoASDADElRSk+LLlQAAAAABJRU5ErkJggg=="
+	}), $("menu_preferences"));
 
-//access key register
-		$("mainKeyset").appendChild($C("key", {
-			id: "usercssloader-rebuild-key",
-			oncommand: "UCL.rebuild();",
-			key: "R",
-			modifiers: "alt",
-		}));
-
-		this.rebuild();
-		this.initialized = true;
-		if (UCL.USE_UC) {
-			setTimeout(function() {
-				UCL.UCcreateMenuitem();
-			}, 100);
-		}
-		window.addEventListener("unload", this, false);
+	//dannylee
+	if (!this.prefs.prefHasUserValue(this.UIPREF)) {
+		this.prefs.setBoolPref(this.UIPREF, true);
+	}
+	this.ShowToolButton = this.prefs.getBoolPref(this.UIPREF);
 	},
+
+	observe: function(subject, topic, data) {
+		if (topic == "xul-overlay-merged") {
+			if (!UCL.isready) {
+				UCL.isready = true;
+				$("mainKeyset").appendChild($C("key", {
+					id: "usercssloader-rebuild-key",
+					oncommand: "UCL.rebuild();",
+					key: "R",
+					modifiers: "alt",
+				}));
+				this.rebuild();
+				this.initialized = true;
+				if (UCL.USE_UC) {
+					setTimeout(function() {
+						UCL.UCcreateMenuitem();
+						}, 100);
+				}
+				window.addEventListener("unload", this, false);
+				//dannylee
+				$("showCSStoolsbutton").setAttribute("label", (this.ShowToolButton ? "樣式管理器顯示為菜單" : "樣式管理器顯示為按鈕"));
+				UCL.toggleUI(0);
+				Application.console.log("UserCSSLoader界面加載完畢！");
+			}
+		}
+	},
+
+	//dannylee
+	toggleUI: function(tag){
+		if (tag > 0) {
+			UCL.prefs.setBoolPref(UCL.UIPREF, !UCL.prefs.getBoolPref(UCL.UIPREF));
+			UCL.ShowToolButton = UCL.prefs.getBoolPref(UCL.UIPREF);
+		}
+		window.setTimeout(function() {
+			$("usercssloader_Tools_Menu").hidden = UCL.ShowToolButton;
+			$("usercssloader-menu").hidden = !UCL.ShowToolButton;
+			if (!UCL.ShowToolButton) {
+				$("usercssloader_Tools_Menu").appendChild($("usercssloader-menupopup"));
+				$("showCSStoolsbutton").setAttribute("label", "樣式管理器顯示為按鈕");
+			} else {
+				$("usercssloader-menu").appendChild($("usercssloader-menupopup"));
+				$("showCSStoolsbutton").setAttribute("label", "樣式管理器顯示為菜單");
+			}
+		}, 10);
+	},
+
 	uninit: function() {
 		var dis = [x for(x in this.readCSS) if (!this.readCSS[x].enabled)];
 		var str = Cc["@mozilla.org/supports-string;1"].createInstance(Ci.nsISupportsString);
@@ -180,7 +217,7 @@ window.UCL = {
 		window.removeEventListener("unload", this, false);
 	},
 	destroy: function() {
-		var i = $("usercssloader_menu");
+		var i = $("usercssloader-menu");
 		if (i) i.parentNode.removeChild(i);
 		var i = $("usercssloader-rebuild-key");
 		if (i) i.parentNode.removeChild(i);
@@ -211,7 +248,7 @@ window.UCL = {
 			this.rebuildMenu(leafName);
 		}
 		if (this.initialized)
-			XULBrowserWindow.statusTextField.label = "重新加載css成功 ";//Rebuild しました
+			XULBrowserWindow.statusTextField.label = "重新加載css已完成 ";//Rebuild しました
 	},
 	loadCSS: function(aFile) {
 		var CSS = this.readCSS[aFile.leafName];
@@ -228,26 +265,27 @@ window.UCL = {
 //按鈕css列表子菜單start
 	rebuildMenu: function(aLeafName) {
 		var CSS = this.readCSS[aLeafName];
-		var btnmenuitem = $("btnusercssloader-" + aLeafName);
+		var menuitem = $("usercssloader-" + aLeafName);
 
 		if (!CSS) {
-			if (btnmenuitem)
-				btnmenuitem.parentNode.removeChild(btnmenuitem);
+			if (menuitem)
+				menuitem.parentNode.removeChild(menuitem);
 			return;
 		}
 
-		if (!btnmenuitem) {
-			btnmenuitem = $("usercssloader_menubtn_popup").appendChild($C("menuitem", {
+		if (!menuitem) {
+			menuitem = $("usercssloader-menupopup").appendChild($C("menuitem", {
 				label: aLeafName,
-				id: "btnusercssloader-" + aLeafName,
+				id: "usercssloader-" + aLeafName,
 				class: "usercssloader-item " + (CSS.SHEET == this.AGENT_SHEET? "AGENT_SHEET" : "USER_SHEET"),
 				type: "checkbox",
 				autocheck: "false",
 				oncommand: "UCL.toggle('"+ aLeafName +"');",
-				onclick: "UCL.itemClick(event);"
+				onclick: "UCL.itemClick(event);",
+				tooltiptext: "左鍵：啟用/禁用\n中鍵：重新加載\n右鍵：編輯"
 			}));
 		}
-		btnmenuitem.setAttribute("checked", CSS.enabled);
+		menuitem.setAttribute("checked", CSS.enabled);
 	},
 //按鈕css列表子菜單end
 	toggle: function(aLeafName) {
@@ -264,7 +302,11 @@ window.UCL = {
 		let label = event.currentTarget.getAttribute("label");
 
 		if (event.button == 1) {
-			this.toggle(label);
+			var CSS = this.readCSS[label];
+			if (!CSS) return;
+			CSS.reloadCSS();
+			XULBrowserWindow.statusTextField.label = label + " 重新加載已完成! ";
+			//this.toggle(label);
 		}
 		else if (event.button == 2) {
 			closeMenus(event.target);
@@ -333,7 +375,7 @@ window.UCL = {
 		UCL.UCcreateMenuitem();
 	},
 	UCcreateMenuitem: function() {
-		let sep = $("usercssloader_ucsepalator");
+		let sep = $("usercssloader-ucsepalator");
 		let popup = sep.parentNode;
 		if (sep.nextSibling) {
 			let range = document.createRange();
@@ -420,11 +462,22 @@ CSSEntry.prototype = {
 			}
 		}
 		if (this.lastModifiedTime !== 1 && isEnable && isForced) {
-			log(this.leafName + " 的更新已檢查。");//の更新を確認しました。
+			log(this.leafName + " 確認已更新。");//の更新を確認しました。
 		}
 		this.lastModifiedTime = lastModifiedTime;
 		return this._enabled = isEnable;
 	},
+	reloadCSS: function() {
+		if (!this._enabled) return;
+		var aFile = Cc["@mozilla.org/file/local;1"].createInstance(Ci.nsILocalFile)
+		aFile.initWithPath(this.path);
+		var isExists = aFile.exists(); 
+		var lastModifiedTime = isExists ? aFile.lastModifiedTime : 0;
+		var fileURL = Services.io.getProtocolHandler("file").QueryInterface(Ci.nsIFileProtocolHandler).getURLSpecFromFile(aFile);
+		var uri = Services.io.newURI(fileURL, null, null);
+		this.sss.unregisterSheet(uri, this.SHEET);
+		this.sss.loadAndRegisterSheet(uri, this.SHEET);
+	}
 };
 
 function CSSTester(aWindow, aCallback) {
