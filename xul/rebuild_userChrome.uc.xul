@@ -2,28 +2,13 @@
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 <!--
 // ==UserScript==
-// @name           rebuild_userChrome_Alice0775_UC腳本管理器_火狐橙菜單+可拖動按鈕版20130126.uc.xul
+// @name           rebuild_userChrome.uc.xul
 // @namespace      http://space.geocities.yahoo.co.jp/gl/alice0775
 // @description    Clear the cache of scripts for userChrome.js, Open a new window
 // @description    userChrome.js用のスクリプトのキャッシュをクリアーし,新しいウインドウを開く
 // @include        main
-// @charset        UTF-8
 // @compatibility  Firefox 3.5b4pre 3.6a1pre 4.0b7pre
 // @author         Alice0775
-// @note           ==UC管理器簡體中文圖形界面 forked by iwo & dannylee - Mozest.com==
-// @note           轉載請註明以下出處！
-// @note           腳本主頁@Mozest論壇 http://g.mozest.com/thread-41859-1-1
-// @version        2013/01/26 19:00 圖形界面升級為可拖動至Fx各工具欄的按鈕
-// @note			   ================================================================
-// ==/UserScript==
-// @note           2013/01/20 12:00 Fx21a+適用，更正菜單項譯名
-// @note           2013/01/12 22:00 基於20121130原版更新，Fx20a適用(已經不使用不再支持的E4X-xml語法)
-// @note           2012/10/10 20:00 隨原作更新，修正Ubuntu(Windows也可能)不能正常「打開Chrome文件夾」的錯誤
-// @note           2012/09/18 22:00 菜單優化，內部syntax整理
-// @note           2012/09/16 10:00 AppMenu按鈕使用內部新20*20圖標，可配合rebuild_userChrome_xul_Menu Icons.css使菜單圖標化
-// @note           2012/07/14 14:00 使用16*16圖標
-// @note           2012/07/13 18:00 支持右鍵編輯含中文名腳本文件
-// @note				================================================================
 // @version        2013/03/22 08:02 Added "use strict"
 // @version        2013/03/22 08:01 Fixed commands to work properly, even if menus had been moved into other place
 // @version        2013/03/22 08:00 Fixed dragdrop target
@@ -67,15 +52,15 @@ if (window.userChromejs) {
     _statusDisplay: null,
     get statusDisplay() {
       if (!this._statusDisplay)
-        this._statusDisplay = document.getElementById('status-bar') ||
-                              document.getElementById('statusbar-display');
+        this._statusDisplay = $('status-bar') ||
+                              $('statusbar-display');
       return this._statusDisplay;
     },
 
     _addonbar: null,
     get addonbar() {
       if (!this._addonbar)
-        this._addonbar = document.getElementById('addon-bar');
+        this._addonbar = $('addon-bar');
       return this._addonbar;
     },
 
@@ -104,67 +89,67 @@ if (window.userChromejs) {
       }
       this.addPrefListener(userChromejs.readLaterPrefListener); // 登錄處理
 
-//update menubutton stuff start
-	  var navBar = document.getElementById("TabsToolbar"); //urlbar-icons  status-bar addon-bar searchbar TabsToolbar alltabs-button bookmarks-menu-button
+//菜單按鈕 start
+	  var navBar = $("TabsToolbar"); //urlbar-icons devToolsSeparator
 	  if (!navBar) return;
 
-	  this.menuBtn = document.createElement("toolbarbutton");
-	  this.menuBtn.setAttribute("id", "userChromeJsManagerMenuBtn");
-	  this.menuBtn.setAttribute("class", "toolbarbutton-1 chromeclass-toolbar-additional");//
-	  this.menuBtn.setAttribute("label", "userChromeJs管理器");
-	  this.menuBtn.setAttribute("tooltiptext", "userChromeJS管理器");
-	  this.menuBtn.setAttribute("type", "menu" /*下拉菜單,右鍵菜單請替換為*//*"context", "_child"*/);
-	  //this.menuBtn.setAttribute("removable", "true");
-	  this.menuBtn.style.listStyleImage = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACk0lEQVQ4ja3RW0hTARwG8A+nEIIxI9DwyQtCarKj7vhkWEwj8AKahNR6siAispce6k2y9VJvIblpkBOt4xGU5ko0RKZuecMLedlxTk0ym7Y5TcvL10OmKwuC+uB7/fG/AP8jarWaERERNBgMDxsbG4uMRuMdQRB4WH2MGdog0gvuuL+XbnDLDW66wQNAeXl5mSzLeUajsVQQhHW1+gjFtPgNn6d2Yl6pdM4rlc53U8/G/a4T/q2/A9RMS0tfXfR86ZpwLjgmnAuOMYU27/TZpe0/AQ0NDbkmk+nGPpC25vF47Iqi9CmK0jfh9PV4p7OWDwCRkZEsKysz1NfXF1VUVNzaA7TatSXvcs+Uy9WruFy9k9P+bt9M9vLO3C9AXFwcBUGgKIrMyMhgYmIij4aFMT05+fPk0NDAQGfn8LDNNjzUNdb/seekd90eAKiCwxkVFc2EhOPUaDTUiiLjYmKYAvAMwHyAJQDvAqwE2IwgOqDaB87nH2JRgbhaUFj8tbi4ePWiXv8pLyfHJwDMBli4C5QDNAG0AOxHwATcACcHr483NXeNWSyWPovV2tnUKPekAMwCeCk01HNPp7M8ysxsq9Hp2pp1urYOne71PjAPvum44jLXWTslSbJLsuyoNdf0pQA8BbBUo3FY7fZkyWrNrNutuaUl+zfAyy5Jeu4IBE4DvJaUNNTQ3p77RJb1JlnWV8qy/rEslfwEdLffdFY9dXSY617ZzPWtturqpr0VLoSE+G+npg4+EIRRo1Y7Kmm1o62i+HYP2JoBl8fD19+PxPs+jMSuLI7Grrjt0f6U3SOeA3gZoAFgFcAWgAOBR9x0g9szIGfBnVmQc+DqGPgDKAJ4FeB9gFXBwXyhUrFXFfDGf8k3RzmjBlDWo+YAAAAASUVORK5CYII=)";
+	  this.menuBtn = $C("toolbarbutton", { //menu
+		id: "userChromeJsManagerMenuBtn",
+		label: "userChromeJs管理器",
+		tooltiptext: "userChromeJS管理器",
+		type: "menu", //下拉菜單,右鍵菜單請替換為 "context", "_child"
+		class: "toolbarbutton-1", //menu-iconic
+		style: "list-style-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACk0lEQVQ4ja3RW0hTARwG8A+nEIIxI9DwyQtCarKj7vhkWEwj8AKahNR6siAispce6k2y9VJvIblpkBOt4xGU5ko0RKZuecMLedlxTk0ym7Y5TcvL10OmKwuC+uB7/fG/AP8jarWaERERNBgMDxsbG4uMRuMdQRB4WH2MGdog0gvuuL+XbnDLDW66wQNAeXl5mSzLeUajsVQQhHW1+gjFtPgNn6d2Yl6pdM4rlc53U8/G/a4T/q2/A9RMS0tfXfR86ZpwLjgmnAuOMYU27/TZpe0/AQ0NDbkmk+nGPpC25vF47Iqi9CmK0jfh9PV4p7OWDwCRkZEsKysz1NfXF1VUVNzaA7TatSXvcs+Uy9WruFy9k9P+bt9M9vLO3C9AXFwcBUGgKIrMyMhgYmIij4aFMT05+fPk0NDAQGfn8LDNNjzUNdb/seekd90eAKiCwxkVFc2EhOPUaDTUiiLjYmKYAvAMwHyAJQDvAqwE2IwgOqDaB87nH2JRgbhaUFj8tbi4ePWiXv8pLyfHJwDMBli4C5QDNAG0AOxHwATcACcHr483NXeNWSyWPovV2tnUKPekAMwCeCk01HNPp7M8ysxsq9Hp2pp1urYOne71PjAPvum44jLXWTslSbJLsuyoNdf0pQA8BbBUo3FY7fZkyWrNrNutuaUl+zfAyy5Jeu4IBE4DvJaUNNTQ3p77RJb1JlnWV8qy/rEslfwEdLffdFY9dXSY617ZzPWtturqpr0VLoSE+G+npg4+EIRRo1Y7Kmm1o62i+HYP2JoBl8fD19+PxPs+jMSuLI7Grrjt0f6U3SOeA3gZoAFgFcAWgAOBR9x0g9szIGfBnVmQc+DqGPgDKAJ4FeB9gFXBwXyhUrFXFfDGf8k3RzmjBlDWo+YAAAAASUVORK5CYII=)"
+	  });
+
 	  navBar.appendChild(this.menuBtn);
 	  //navBar.parentNode.insertBefore(this.menuBtn, navBar.previousSibling);
 
   		var xml_menuBtn = '\
-						<menupopup id="userChromejs_options"\
-							  onpopupshowing="userChromejs.onpopup();"\
-							  context="">\
-							<menuitem label="打開Chrome文件夾"\
-							          id="userChromejs_openChromeFolder"\
-									  tooltiptext="即用戶腳本文件夾"\
-									  accesskey="h"\
-									  class="menuitem-iconic"\
-							          oncommand=\'new Components.Constructor("@mozilla.org/file/local;1","nsILocalFile", "initWithPath")(Components.classes["@mozilla.org/file/directory_service;1"].getService(Components.interfaces.nsIProperties).get("UChrm", Components.interfaces.nsIFile).path).reveal();\'/>\
-							<menuitem label="新建窗口並重載腳本"\
-							          id="userChromejs_rebuild"\
-									  tooltiptext="僅重新載入選中的腳本"\
-							          accesskey="x"\
-									  class="menuitem-iconic"\
-									  oncommand="userChromejs.rebuild();"/>\
-							<menuitem label="新建窗口時是否重新加載腳本？"\
-							          id="userChrome_setting"\
-									  tooltiptext="僅重新載入選中的腳本"\
-									  accesskey="u"\
-							          oncommand="userChromejs.setting();"\
-							          type="checkbox"/>\
-							<menuitem label="重新啟動瀏覽器"\
-							          id="userChromejs_restartApp"\
-							          accesskey="r"\
-									  class="menuitem-iconic"\
-									  oncommand="userChromejs.restartApp();"/>\
-							<menuseparator />\
-							<menu label="userChromeJS用戶腳本命令..."\
-								  id="userChromejs_script_options_Menu"\
-								  accesskey="s"\
-								  class="menu-iconic">\
-								<menupopup id="userChromejs_script_options" />\
-							</menu>\
-						</menupopup>\
+			<menupopup id="userChromejs_options"\
+					   onpopupshowing="userChromejs.onpopup();"\
+					   context="">\
+				<menuitem label="打開Chrome文件夾"\
+						  id="userChromejs_openChromeFolder"\
+						  tooltiptext="即用戶腳本文件夾"\
+						  accesskey="h"\
+						  class="menuitem-iconic"\
+						  oncommand=\'new Components.Constructor("@mozilla.org/file/local;1","nsILocalFile", "initWithPath")(Components.classes["@mozilla.org/file/directory_service;1"].getService(Components.interfaces.nsIProperties).get("UChrm", Components.interfaces.nsIFile).path).reveal();\'/>\
+				<menuitem label="新建窗口並重載腳本"\
+						  id="userChromejs_rebuild"\
+						  tooltiptext="僅重新載入選中的腳本"\
+						  accesskey="x"\
+						  class="menuitem-iconic"\
+						  oncommand="userChromejs.rebuild();"/>\
+				<menuitem label="新建窗口時是否重新加載腳本？"\
+						  id="userChrome_setting"\
+						  tooltiptext="僅重新載入選中的腳本"\
+						  accesskey="u"\
+						  oncommand="userChromejs.setting();"\
+						  type="checkbox"/>\
+				<menuitem label="重新啟動瀏覽器"\
+						  id="userChromejs_restartApp"\
+						  accesskey="r"\
+						  class="menuitem-iconic"\
+						  oncommand="userChromejs.restartApp();"/>\
+				<menuseparator />\
+				<menu label="userChromeJS用戶腳本命令..."\
+					  id="userChromejs_script_options_Menu"\
+					  accesskey="s"\
+					  class="menu-iconic">\
+					<menupopup id="userChromejs_script_options" />\
+				</menu>\
+			</menupopup>\
 		';
 
 	  var range_menuBtn = document.createRange();
-	  var referenceNode = document.getElementById("userChromeJsManagerMenuBtn");
-	  
+	  var referenceNode = $("userChromeJsManagerMenuBtn");
+
 	  range_menuBtn.selectNodeContents(referenceNode);
 	  range_menuBtn.collapse(false);
 	  range_menuBtn.insertNode(range_menuBtn.createContextualFragment(xml_menuBtn.replace(/\n|\t/g, '')));
 	  range_menuBtn.detach();
-
-//update menubutton stuff end
+//菜單按鈕 end
 
     },
     uninit: function(){
@@ -340,32 +325,28 @@ if (window.userChromejs) {
       var flag = this.getPref("userChrome.enable.reuse",'bool',true);
       this.setPref("userChrome.enable.reuse",'bool',!flag);
     },
-
-
     onpopup: function(){
       var menu;
       var flag = this.getPref("userChrome.enable.reuse",'bool',true);
-      var menuitem = document.getElementById('userChrome_setting');
-      menuitem.setAttribute('checked', !flag);
+      var menuitem = $('userChrome_setting', {checked: !flag});
 
-      var menupopup = document.getElementById("userChromejs_options");
+      var menupopup = $("userChromejs_options");
       for(var i = 6, len = menupopup.childNodes.length; i < len; i++){
         menupopup.removeChild(menupopup.lastChild);
       }
 
-      var menuseparator = document.createElement('menuseparator');
-      menupopup.appendChild(menuseparator);
+      var menuseparator = menupopup.appendChild($C('menuseparator'));
 
 	/*
-      menuitem = document.createElement('menuitem');
-      menuitem.setAttribute('label','\u555F\u7528/\u7981\u7528 userChromeJS');//啟用禁用
-      menuitem.setAttribute('tooltiptext','\u56E7rz\n\u5371\u96AA\u52D5\u4F5C\uFF01');
-      menuitem.setAttribute('oncommand','userChromejs.chgDirStat("*");');
-      menuitem.setAttribute('onclick','if(event.button != 0) {event.stopPropagation();event.preventDefault();userChromejs.clickDirMenuitem(event,true);}');
-      menuitem.setAttribute('type','checkbox');
-      menuitem.setAttribute('checked', !userChrome_js.dirDisable['*']);
+      menuitem = menupopup.appendChild($C('menuitem', {
+		label: '啟用/禁用 userChromeJS',
+		tooltiptext: '囧rz\n危險動作！',
+		oncommand: 'userChromejs.chgDirStat("*");',
+		onclick: 'if(event.button != 0) {event.stopPropagation();event.preventDefault();userChromejs.clickDirMenuitem(event,true);}',
+		type: 'checkbox',
+		checked: !userChrome_js.dirDisable['*']
+      }));
       menuitem.dirName = '*';
-      menupopup.appendChild(menuitem);
 	*/
       for(var j = 0, lenj = userChrome_js.arrSubdir.length; j < lenj; j++){
         var dirName = userChrome_js.arrSubdir[j] == "" ? "root" : userChrome_js.arrSubdir[j];
@@ -387,67 +368,65 @@ if (window.userChromejs) {
         if(!flg) continue;
 
 
-        menu = document.createElement('menu');
-        menu.setAttribute('label','chrome/' + (dirName=="root"?"":dirName) );
-        menu.setAttribute('onclick','if(event.button != 0) {event.stopPropagation();event.preventDefault();userChromejs.clickDirMenu(event);}');
+		menu = $C('menu', {
+			label: 'chrome/' + (dirName=="root"?"":dirName) ,
+			onclick: 'if(event.button != 0) {event.stopPropagation();event.preventDefault();userChromejs.clickDirMenu(event);}'
+		});
         if(userChrome_js.dirDisable[dirName])
           menu.setAttribute('style', 'font-style:italic;');
         menu.dirName = dirName;
 
-        menupopup = document.createElement('menupopup');
-        menupopup.setAttribute('onpopupshowing','event.stopPropagation();');
+		menupopup = $C('menupopup', {onpopupshowing: 'event.stopPropagation();'});
 
-        menuitem = document.createElement('menuitem');
-        menuitem.setAttribute('label','chrome/' + (dirName=="root"?"":dirName) + ' \u8173\u672C\u5168\u90E8\u555F\u7528/\u505C\u7528');
-        menuitem.setAttribute('oncommand', 'userChromejs.chgDirStat(this.dirName);');
-        menuitem.setAttribute('onclick','if(event.button != 0) {event.stopPropagation();event.preventDefault();userChromejs.clickDirMenuitem(event);}');
-        menuitem.setAttribute('type', 'checkbox');
-        menuitem.setAttribute('checked', !userChrome_js.dirDisable[dirName]);
+		menuitem = menupopup.appendChild($C('menuitem', {
+			label: 'chrome/' + (dirName=="root"?"":dirName) + ' 腳本全部啟用/停用',
+			oncommand: 'userChromejs.chgDirStat(this.dirName);',
+			onclick: 'if(event.button != 0) {event.stopPropagation();event.preventDefault();userChromejs.clickDirMenuitem(event);}',
+			type: 'checkbox',
+			checked: !userChrome_js.dirDisable[dirName]
+		}));
         menuitem.dirName = dirName;
-        menupopup.appendChild(menuitem);
 
-        menuseparator = document.createElement('menuseparator');//子文件夾名分割線
-        menupopup.appendChild(menuseparator);
+		menuseparator = menupopup.appendChild($C('menuseparator'));
 
         var flg = false;
         for(var i = 0, len = userChrome_js.scripts.length; i < len; i++){
           var script = userChrome_js.scripts[i];
           if(script.dir != dirName) continue;
             flg = true;
-            menuitem = document.createElement('menuitem');
-            menuitem.setAttribute('label',script.filename);
-            menuitem.setAttribute('oncommand','userChromejs.chgScriptStat(this.script.filename);');
-            menuitem.setAttribute('onclick','if(event.button != 0) {event.stopPropagation();event.preventDefault();userChromejs.clickScriptMenu(event);}');
-            menuitem.setAttribute('type','checkbox');
-            menuitem.setAttribute('autocheck','false');
-            menuitem.setAttribute('checked',!userChrome_js.scriptDisable[script.filename] );
+			menuitem = menupopup.appendChild($C('menuitem', {
+				label: script.filename,
+				oncommand: 'userChromejs.chgScriptStat(this.script.filename);',
+				onclick: 'if(event.button != 0) {event.stopPropagation();event.preventDefault();userChromejs.clickScriptMenu(event);}',
+				type: 'checkbox',
+				autocheck: 'false',
+				checked: !userChrome_js.scriptDisable[script.filename] 
+			}));
             if(script.description)
               menuitem.setAttribute('tooltiptext',script.description);
             menuitem.script = script;
-            menupopup.appendChild(menuitem);
         }
         for(var i = 0, len = userChrome_js.overlays.length; i < len; i++){
           var script = userChrome_js.overlays[i];
           if(script.dir != dirName) continue;
             if(flg){
-              menuseparator = document.createElement('menuseparator');
-              menupopup.appendChild(menuseparator);
+              menuseparator = menupopup.appendChild($C('menuseparator'));
             }
             flg = false;
-            menuitem = document.createElement('menuitem');
-            menuitem.setAttribute('label',script.filename);
-            menuitem.setAttribute('oncommand','userChromejs.chgScriptStat(this.script.filename);');
-            menuitem.setAttribute('onclick','if(event.button != 0) {event.stopPropagation();event.preventDefault();userChromejs.clickScriptMenu(event);}');
-            menuitem.setAttribute('type','checkbox');
-            menuitem.setAttribute('autocheck','false');
-            menuitem.setAttribute('checked',!userChrome_js.scriptDisable[script.filename] );
+			menuitem = menupopup.appendChild($C('menuitem', {
+				label: script.filename,
+				oncommand: 'userChromejs.chgScriptStat(this.script.filename);',
+				onclick: 'if(event.button != 0) {event.stopPropagation();event.preventDefault();userChromejs.clickScriptMenu(event);}',
+				type: 'checkbox',
+				autocheck: 'false',
+				checked: !userChrome_js.scriptDisable[script.filename] 
+			}));
             if(script.description)
               menuitem.setAttribute('tooltiptext',script.description);
             menuitem.script = script;
-            menupopup.appendChild(menuitem);
         }
         menu.appendChild(menupopup);
-        menupopup = document.getElementById("userChromejs_options");
+        menupopup = $("userChromejs_options");
         menupopup.appendChild(menu);
       }
     },
@@ -648,9 +627,14 @@ if (window.userChromejs) {
     }
   }
   window.userChromejs.init();
-
+	function $(id) { return document.getElementById(id); }
+	function $C(name, attr) {
+		var el = document.createElement(name);
+		if (attr) Object.keys(attr).forEach(function(n) el.setAttribute(n, attr[n]));
+		return el;
+	}
   //メニューが長くなりすぎるので, あまり使わないメニューを"userChrome.jsの各スクリプトの設定"の下に移動させる
-  window.userChromejsScriptOptionsMenu = {
+/*  window.userChromejsScriptOptionsMenu = {
     //あまり使わないメニューのリスト
     menues: [
 	'',
@@ -670,12 +654,12 @@ if (window.userChromejs) {
     },
 
     moveMenu: function(){
-      var menupopup = document.getElementById('userChromejs_script_options');
+      var menupopup = $('userChromejs_script_options');
       if (!menupopup)
         return false;
       var i = 0;
       while (i < this.menues.length) {
-        var menu = document.getElementById(this.menues[i])
+        var menu = $(this.menues[i])
         if (menu) {
           setTimeout(function(menupopup, menu){menupopup.appendChild(menu);}, 100, menupopup, menu);
           this.menues.splice(i, 1);
@@ -687,6 +671,7 @@ if (window.userChromejs) {
     },
   }
   window.userChromejsScriptOptionsMenu.run();
+*/
 })();
   ]]></script>
 </overlay>
