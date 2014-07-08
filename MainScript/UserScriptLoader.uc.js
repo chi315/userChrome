@@ -6,6 +6,7 @@
 // @compatibility  Firefox 5.0
 // @license        MIT License
 // @version        0.1.8.2
+// @note           modified by ywzhaiqi: 修正@include 正則表達式的支持 2014.06.23
 // @note           2014/2/26 Mod by  dannylee修改可切換圖標和菜單模式
 // @note           0.1.8.2 Firefox 22 用の修正
 // @note           0.1.8.2 require が機能していないのを修正
@@ -52,7 +53,6 @@ const GLOBAL_EXCLUDES = [
 	,"resource:*"
 ];
 
-
 const { classes: Cc, interfaces: Ci, utils: Cu, results: Cr } = Components;
 if (!window.Services) Cu.import("resource://gre/modules/Services.jsm");
 
@@ -88,7 +88,7 @@ USL.PrefManager.prototype = {
 			}
 		} catch(e) { }
 	},
-	getValue: function(name, defaultValue){
+	getValue: function(name, defaultValue) {
 		var value = defaultValue;
 		try {
 			switch(this.pref.getPrefType(name)) {
@@ -106,11 +106,11 @@ USL.PrefManager.prototype = {
 	},
 	listValues: function() this.pref.getChildList("", {}),
 	//dannylee
-	hasValue: function(name){
-	  if (this.pref.prefHasUserValue(name))
-	    return true;
-	  else
-	  	return false;
+	hasValue: function(name) {
+		if (this.pref.prefHasUserValue(name))
+			return true;
+		else
+			return false;
 	}
 };
 
@@ -130,10 +130,10 @@ USL.ScriptEntry.prototype = {
 		this.disabled = false;
 		this.requireSrc = "";
 		this.resources = {};
-    //add by dannylee
-    this.version = "version" in this.metadata ? this.metadata["version"][0] : "未定義";
-    this.downloadURL = "downloadurl" in this.metadata ? this.metadata["downloadurl"][0] : null;
-    //end by dannylee
+	//add by dannylee
+	this.version = "version" in this.metadata ? this.metadata["version"][0] : "未定義";
+	this.downloadURL = "downloadurl" in this.metadata ? this.metadata["downloadurl"][0] : null;
+	//end by dannylee
 		this.run_at = "run-at" in this.metadata ? this.metadata["run-at"][0] : "document-end";
 		this.name = "name" in this.metadata ? this.metadata.name[0] : this.leafName;
 		if (this.metadata.delay) {
@@ -164,7 +164,7 @@ USL.ScriptEntry.prototype = {
 		});
 
 		if (this.metadata.resource) {
-			this.metadata.resource.forEach(function(r){
+			this.metadata.resource.forEach(function(r) {
 				let res = r.split(/\s+/);
 				this.resources[res[0]] = { url: res[1] };
 			}, this);
@@ -192,10 +192,13 @@ USL.ScriptEntry.prototype = {
 		}
 	},
 	createRegExp: function(urlarray, isMatch) {
-		let regstr = urlarray.map(function(url) {
+		let regstr = urlarray.map(function(url) { //add by ywzhaiqi
+			if (!isMatch && '/' == url.substr(0, 1) && '/' == url.substr(-1, 1)) {
+				return url.substring(1, url.length - 1);
+			} //end by ywzhaiqi
 			url = url.replace(/([()[\]{}|+.,^$?\\])/g, "\\$1");
 			if (isMatch) {
-				url = url.replace(/\*+|:\/\/\*\\\./g, function(str, index, full){
+				url = url.replace(/\*+|:\/\/\*\\\./g, function(str, index, full) {
 					if (str === "\\^") return "(?:^|$|\\b)";
 					if (str === "://*\\.") return "://(?:[^/]+\\.)?";
 					if (str[0] === "*" && index === 0) return "(?:https?|ftp|file)";
@@ -245,7 +248,7 @@ USL.ScriptEntry.prototype = {
 			aFile.appendRelativePath(encodeURIComponent(url));
 			if (aFile.exists() && aFile.isFile()) {
 				let fileURL = Services.io.getProtocolHandler("file").QueryInterface(Ci.nsIFileProtocolHandler).getURLSpecFromFile(aFile);
-				USL.getLocalFileContents(fileURL, function(bytes, contentType){
+				USL.getLocalFileContents(fileURL, function(bytes, contentType) {
 					let ascii = /^text|javascript/.test(contentType);
 					if (ascii) {
 						try { bytes = decodeURIComponent(escape(bytes)); } catch(e) {}
@@ -255,7 +258,7 @@ USL.ScriptEntry.prototype = {
 				});
 				continue;
 			}
-			USL.getContents(url, function(bytes, contentType){
+			USL.getContents(url, function(bytes, contentType) {
 				let ascii = /^text|javascript/.test(contentType);
 				if (ascii) {
 					try { bytes = decodeURIComponent(escape(bytes)); } catch(e) {}
@@ -269,7 +272,7 @@ USL.ScriptEntry.prototype = {
 	getRequire: function() {
 		if (!this.metadata.require) return;
 		var self = this;
-		this.metadata.require.forEach(function(url){
+		this.metadata.require.forEach(function(url) {
 			let aFile = USL.REQUIRES_FOLDER.clone();
 			aFile.QueryInterface(Ci.nsILocalFile);
 			aFile.appendRelativePath(encodeURIComponent(url));
@@ -277,7 +280,7 @@ USL.ScriptEntry.prototype = {
 				self.requireSrc += USL.loadText(aFile) + ";\r\n";
 				return;
 			}
-			USL.getContents(url, function(bytes, contentType){
+			USL.getContents(url, function(bytes, contentType) {
 				let ascii = /^text|javascript/.test(contentType);
 				if (ascii) {
 					try { bytes = decodeURIComponent(escape(bytes)); } catch(e) {}
@@ -297,8 +300,8 @@ USL.Console.prototype = {
 		time: "r",
 		timeEnd: "r",
 	},
-	log: function(str){ Application.console.log(str); },
-	dir: function(obj){ window.inspectObject? inspectObject(obj): this.log(obj); },
+	log: function(str) { Application.console.log(str); },
+	dir: function(obj) { window.inspectObject? inspectObject(obj): this.log(obj); },
 	time: function(name) { this['_' + name] = new Date().getTime(); },
 	timeEnd: function(name) {
 		if (typeof this['_' + name] == 'undefined')
@@ -306,7 +309,7 @@ USL.Console.prototype = {
 		this.log(name + ':' + (new Date().getTime() - this['_' + name]));
 		delete this['_' + name];
 	},
-	__noSuchMethod__: function(id, args){ this.log('console.' + id + ' is not function'); }
+	__noSuchMethod__: function(id, args) { this.log('console.' + id + ' is not function'); }
 };
 
 USL.API = function(script, sandbox, win, doc) {
@@ -317,7 +320,7 @@ USL.API = function(script, sandbox, win, doc) {
 	};
 
 	this.GM_notification = function (aMsg, aTitle, aIconURL, aCallback) {
-	if  (!USL.ALLOW_NOTIFY)  return;
+	if (!USL.ALLOW_NOTIFY) return;
 		if (aCallback)
 			var callback = {
 				observe : function (subject, topic, data) {
@@ -481,12 +484,12 @@ USL.initialized = false;
 USL.isready = false;
 USL.eventName = "USL_DocumentStart" + Math.random();
 
-USL.__defineGetter__("pref", function(){
+USL.__defineGetter__("pref", function() {
 	delete this.pref;
 	return this.pref = new USL.PrefManager();
 });
 
-USL.__defineGetter__("SCRIPTS_FOLDER", function(){
+USL.__defineGetter__("SCRIPTS_FOLDER", function() {
 	let folderPath = this.pref.getValue('SCRIPTS_FOLDER', "");
 	let aFolder = Cc['@mozilla.org/file/local;1'].createInstance(Ci.nsILocalFile)
 	if (!folderPath) {
@@ -502,7 +505,7 @@ USL.__defineGetter__("SCRIPTS_FOLDER", function(){
 	return this.SCRIPTS_FOLDER = aFolder;
 });
 
-USL.__defineGetter__("REQUIRES_FOLDER", function(){
+USL.__defineGetter__("REQUIRES_FOLDER", function() {
 	let aFolder = this.SCRIPTS_FOLDER.clone();
 	aFolder.QueryInterface(Ci.nsILocalFile);
 	aFolder.appendRelativePath('require');
@@ -513,18 +516,18 @@ USL.__defineGetter__("REQUIRES_FOLDER", function(){
 	return this.REQUIRES_FOLDER = aFolder;
 });
 
-USL.__defineGetter__("EDITOR", function(){
+USL.__defineGetter__("EDITOR", function() {
 	delete this.EDITOR;
 	return this.EDITOR = this.pref.getValue('EDITOR', "") || Services.prefs.getCharPref("view_source.editor.path");
 });
 
-USL.__defineGetter__("disabled_scripts", function(){
+USL.__defineGetter__("disabled_scripts", function() {
 	let ds = this.pref.getValue('script.disabled', '');
 	delete this.disabled_scripts;
 	return this.disabled_scripts = ds? ds.split('|') : [];
 });
 
-USL.__defineGetter__("GLOBAL_EXCLUDES_REGEXP", function(){
+USL.__defineGetter__("GLOBAL_EXCLUDES_REGEXP", function() {
 	let regexp = null;
 	let ge = USL.pref.getValue('GLOBAL_EXCLUDES', null);
 	ge = ge ? ge.trim().split(/\s*\,\s*/) : GLOBAL_EXCLUDES;
@@ -539,7 +542,7 @@ USL.__defineGetter__("GLOBAL_EXCLUDES_REGEXP", function(){
 
 var DISABLED = true;
 USL.__defineGetter__("disabled", function() DISABLED);
-USL.__defineSetter__("disabled", function(bool){
+USL.__defineSetter__("disabled", function(bool) {
 	if (bool) {
 		this.icon.setAttribute("image", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAI6SURBVDhPhZPfS1NhGMe9E7yw6KaVYcNOa65tLjMda9VhxRoLz5aUghcZuygZtkVIDRl+xxARGUNkRMSIiOhihITEEBGRERFjSIzDkCHSRX9I5/voRstgBx7eX9/v533e93lPR0ebb9RnP62pzpER54WJ/r4z8XZ6WX945+qJkOq8q6muuG/YCrtyFlaziXGrLeDICMMMt7OvYYTL2ovAdduUQ+mJK4rS+V9QSB14SuOjsAp1yAKPS4F3UIHfY5MYsvWi32w632LWPI5LoRvOCUYiOolyaQ16ZQMf3ixKFmw55jzXG1r6BHTfd+VVakYTccNc293C3s9tFNfyRrsj/VplExUDQh319AlgbjqI/OJjPI+EZSeKV3NprKymsV/7jtzrBaOfakKoo54+AcwbtOWX41hKRsGd69UdxBIxWAYt+FWvNPv1aknWl5IzyM1Pgj4B3LvpiBPwNps8BOgldJu60XWqC78Pqs3+vv5NsqCOAPoEcPliz0DY55Lz7R0BssspZDNpAaxkF5Axxg1ApfQF1NMngEBA6WTZ9HIRW18/Ihzwwe8eRkQLIjY+hidjGoJeNx4E/dgufpJ74kU2S0lAowKJF9NYL+TlGLzAg9oPabn7+uc85majUqkWAEmjqmsqNRuRLFgunpWXyYtjK2U0jqeXN0Ad9S2P6fCHccVZosK7jKRZ290UE1vdgBbeZ6TU1FF/7CnzKOo1y+2g1/6MKf4bnOc6de1+qJOG4JwR5r+CY84f+/4AS9dVtRJZF3sAAAAASUVORK5CYII=");
 		this.icon.setAttribute("tooltiptext", "油猴腳本管理器（鼠標右鍵開OR關）已禁用");
@@ -563,7 +566,7 @@ USL.__defineSetter__("DEBUG", function(bool) {
 
 var HIDE_EXCLUDE = USL.pref.getValue('HIDE_EXCLUDE', false);
 USL.__defineGetter__("HIDE_EXCLUDE", function() HIDE_EXCLUDE);
-USL.__defineSetter__("HIDE_EXCLUDE", function(bool){
+USL.__defineSetter__("HIDE_EXCLUDE", function(bool) {
 	HIDE_EXCLUDE = !!bool;
 	let elem = $("UserScriptLoader-hide-exclude");
 	if (elem) elem.setAttribute("checked", HIDE_EXCLUDE);
@@ -572,7 +575,7 @@ USL.__defineSetter__("HIDE_EXCLUDE", function(bool){
 
 var ALLOW_NOTIFY = USL.pref.getValue('ALLOW_NOTIFY', true);
 USL.__defineGetter__("ALLOW_NOTIFY", function() ALLOW_NOTIFY);
-USL.__defineSetter__("ALLOW_NOTIFY", function(bool){
+USL.__defineSetter__("ALLOW_NOTIFY", function(bool) {
 	ALLOW_NOTIFY = !!bool;
 	let elem = $("UserScriptLoader-allow-notify");
 	if (elem) elem.setAttribute("checked", ALLOW_NOTIFY);
@@ -581,7 +584,7 @@ USL.__defineSetter__("ALLOW_NOTIFY", function(bool){
 
 var AUTO_RELOAD_PAGE = USL.pref.getValue('AUTO_RELOAD_PAGE', true);
 USL.__defineGetter__("AUTO_RELOAD_PAGE", function() AUTO_RELOAD_PAGE);
-USL.__defineSetter__("AUTO_RELOAD_PAGE", function(bool){
+USL.__defineSetter__("AUTO_RELOAD_PAGE", function(bool) {
 	AUTO_RELOAD_PAGE = !!bool;
 	let elem = $("UserScriptLoader-auto-reload-page");
 	if (elem) elem.setAttribute("checked", AUTO_RELOAD_PAGE);
@@ -590,7 +593,7 @@ USL.__defineSetter__("AUTO_RELOAD_PAGE", function(bool){
 
 var CACHE_SCRIPT = USL.pref.getValue('CACHE_SCRIPT', true);
 USL.__defineGetter__("CACHE_SCRIPT", function() CACHE_SCRIPT);
-USL.__defineSetter__("CACHE_SCRIPT", function(bool){
+USL.__defineSetter__("CACHE_SCRIPT", function(bool) {
 	CACHE_SCRIPT = !!bool;
 	let elem = $("UserScriptLoader-cache-script");
 	if (elem) elem.setAttribute("checked", CACHE_SCRIPT);
@@ -602,50 +605,50 @@ USL.getFocusedWindow = function () {
 	return (!win || win == window) ? content : win;
 };
 //urlbar-icons PlacesToolbar
-USL.init = function(){
-	  USL.isready = false;
-	   var overlay = '\
-        <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" \
-                 xmlns:html="http://www.w3.org/1999/xhtml"> \
-            <toolbarpalette id="TabsToolbar">\
-                 <toolbarbutton id="UserScriptLoader-icon" label="UserScriptLoader" \
-                               class="toolbarbutton-1" type="menu" \
-                               onclick="USL.iconClick(event);"  removable="true" \
-                               image="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIzSURBVDhPhVNNSFRRFD5LdxqtSxkj4gUZg4TmT0/HqGhhZTsXU5laiGhUDP5OpRlBNeZPY5HdMjKTcnBRRptp51KthaBOd4yidi1n+XXOeY06GMyFw7n3nO/73nn3nEuUZXVXUVGvS231BygW8JHNhtd8VxXlMynCZlsOEY7tIbgFauGsAkIMuwQx/mqaiNp9hGulFD9RSLbGR7n/FWLyghAjdTvQXEwIHiQ0+AlXD3tW56jgkQxyTwXV9lRSTOx1+36kFvuAlQdYeFGvVYiXs8Qln8YKT4U6Azl/xlv9Clby6iCQeAR8ewI7d109ElGOD3G+X3GCF54KDF/yY3bgJExTIYMiCjZT52EmGoH1VzBvmnh/gYUec/6h4gQvPE+gtQyToTLM9VUCayOAfQq3zUVeeR7wY2Zzb41WJri34QCEpwIXK3ZaEZiPnvJKTz4H7SXQLgJ+fdzcr09oFfPR0yogPBU47qNgZ3UOUku3NwTM6GWY0Xbg9yeY6BWYkRb+nZcqkFoagOCFpwKhGsqVtmHlPga7zuDL+5vA90ku/x3wc5Zths9T+PrhFoa6z2pH5CI3WikC6Q4k471oOFqEoLMb/SUOxkod3GXf6OSjmePJzze0UxkCosQDFI91FLP6PW0XEmN6mbDP2Ma9DsgFc5WCE3zGMP17MFZatDx9zmvn2rBHEs+zsTzNreW8vA/Bbxtl+RUe3zuhclpNv4WtXuKaZ1y2B1XAgBI2d4vJWeLb1l8Iw62jtqs6OwAAAABJRU5ErkJggg==" \
-                               tooltiptext="油猴腳本管理器（鼠標右鍵開OR關）" >\
-                   <menupopup id="UserScriptLoader-popup" \
-              		           onpopupshowing="USL.onPopupShowing(event);"\
-              		           onpopuphidden="USL.onPopupHidden(event);"\
-              		           onclick="USL.menuClick(event);">\
-              			<menuseparator id="UserScriptLoader-menuseparator"/>\
-              			<menu label="用戶腳本命令"\
-              			      id="UserScriptLoader-register-menu"\
-              			      accesskey="C">\
-              				<menupopup id="UserScriptLoader-register-popup"/>\
-              			</menu>\
-              			<menu label="管理菜單" id="UserScriptLoader-submenu">\
-              				<menupopup id="UserScriptLoader-submenu-popup">\
-              					<menuitem label="刪除系統pref預加載"\
-              					          oncommand="USL.deleteStorage(\'pref\');" />\
-              					<menuseparator/>\
-              					<menuitem label="隱藏未觸發腳本"\
-              					          id="UserScriptLoader-hide-exclude"\
-              					          accesskey="N"\
-              					          type="checkbox"\
-              					          checked="' + USL.HIDE_EXCLUDE + '"\
-              					          oncommand="USL.HIDE_EXCLUDE = !USL.HIDE_EXCLUDE;" />\
-              					<menuitem label="緩存腳本"\
-              					          id="UserScriptLoader-cache-script"\
-              					          accesskey="C"\
-              					          type="checkbox"\
-              					          checked="' + USL.CACHE_SCRIPT + '"\
-              					          oncommand="USL.CACHE_SCRIPT = !USL.CACHE_SCRIPT;" />\
-              					<menuitem label="切換到調試模式"\
-              					          id="UserScriptLoader-debug-mode"\
-              					          accesskey="D"\
-              					          type="checkbox"\
-              					          checked="' + USL.DEBUG + '"\
-              					          oncommand="USL.DEBUG = !USL.DEBUG;" />\
+USL.init = function() {
+	USL.isready = false;
+	var overlay = '\
+		<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" \
+				 xmlns:html="http://www.w3.org/1999/xhtml"> \
+			<toolbarpalette id="TabsToolbar">\
+				<toolbarbutton id="UserScriptLoader-icon" label="UserScriptLoader" \
+							   class="toolbarbutton-1" type="menu" \
+							   onclick="USL.iconClick(event);"  removable="true" \
+							   image="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIzSURBVDhPhVNNSFRRFD5LdxqtSxkj4gUZg4TmT0/HqGhhZTsXU5laiGhUDP5OpRlBNeZPY5HdMjKTcnBRRptp51KthaBOd4yidi1n+XXOeY06GMyFw7n3nO/73nn3nEuUZXVXUVGvS231BygW8JHNhtd8VxXlMynCZlsOEY7tIbgFauGsAkIMuwQx/mqaiNp9hGulFD9RSLbGR7n/FWLyghAjdTvQXEwIHiQ0+AlXD3tW56jgkQxyTwXV9lRSTOx1+36kFvuAlQdYeFGvVYiXs8Qln8YKT4U6Azl/xlv9Clby6iCQeAR8ewI7d109ElGOD3G+X3GCF54KDF/yY3bgJExTIYMiCjZT52EmGoH1VzBvmnh/gYUec/6h4gQvPE+gtQyToTLM9VUCayOAfQq3zUVeeR7wY2Zzb41WJri34QCEpwIXK3ZaEZiPnvJKTz4H7SXQLgJ+fdzcr09oFfPR0yogPBU47qNgZ3UOUku3NwTM6GWY0Xbg9yeY6BWYkRb+nZcqkFoagOCFpwKhGsqVtmHlPga7zuDL+5vA90ku/x3wc5Zths9T+PrhFoa6z2pH5CI3WikC6Q4k471oOFqEoLMb/SUOxkod3GXf6OSjmePJzze0UxkCosQDFI91FLP6PW0XEmN6mbDP2Ma9DsgFc5WCE3zGMP17MFZatDx9zmvn2rBHEs+zsTzNreW8vA/Bbxtl+RUe3zuhclpNv4WtXuKaZ1y2B1XAgBI2d4vJWeLb1l8Iw62jtqs6OwAAAABJRU5ErkJggg==" \
+							   tooltiptext="油猴腳本管理器（鼠標右鍵開OR關）" >\
+					<menupopup id="UserScriptLoader-popup" \
+							   onpopupshowing="USL.onPopupShowing(event);"\
+							   onpopuphidden="USL.onPopupHidden(event);"\
+							   onclick="USL.menuClick(event);">\
+						<menuseparator id="UserScriptLoader-menuseparator"/>\
+						<menu label="用戶腳本命令"\
+							  id="UserScriptLoader-register-menu"\
+							  accesskey="C">\
+							<menupopup id="UserScriptLoader-register-popup"/>\
+						</menu>\
+						<menu label="管理菜單" id="UserScriptLoader-submenu">\
+							<menupopup id="UserScriptLoader-submenu-popup">\
+								<menuitem label="刪除系統pref預加載"\
+										  oncommand="USL.deleteStorage(\'pref\');" />\
+								<menuseparator/>\
+								<menuitem label="隱藏未觸發腳本"\
+										  id="UserScriptLoader-hide-exclude"\
+										  accesskey="N"\
+										  type="checkbox"\
+										  checked="' + USL.HIDE_EXCLUDE + '"\
+										  oncommand="USL.HIDE_EXCLUDE = !USL.HIDE_EXCLUDE;" />\
+								<menuitem label="緩存腳本"\
+										  id="UserScriptLoader-cache-script"\
+										  accesskey="C"\
+										  type="checkbox"\
+										  checked="' + USL.CACHE_SCRIPT + '"\
+										  oncommand="USL.CACHE_SCRIPT = !USL.CACHE_SCRIPT;" />\
+								<menuitem label="切換到調試模式"\
+										  id="UserScriptLoader-debug-mode"\
+										  accesskey="D"\
+										  type="checkbox"\
+										  checked="' + USL.DEBUG + '"\
+										  oncommand="USL.DEBUG = !USL.DEBUG;" />\
 								<menuitem label="允許腳本彈窗通知"\
 										  id="UserScriptLoader-allow-notify"\
 										  type="checkbox"\
@@ -656,8 +659,8 @@ USL.init = function(){
 										  type="checkbox"\
 										  checked="' + USL.AUTO_RELOAD_PAGE + '"\
 										  oncommand="USL.AUTO_RELOAD_PAGE = !USL.AUTO_RELOAD_PAGE;" />\
-              				</menupopup>\
-              			</menu>\
+							</menupopup>\
+						</menu>\
 						<menuitem label="打開腳本目錄"\
 								  id="UserScriptLoader-openFolderMenu"\
 								  accesskey="O"\
@@ -668,40 +671,39 @@ USL.init = function(){
 						<menuitem label="為本站搜索腳本"\
 								  id="UserScriptLoader-find-script"\
 								  oncommand="USL.findscripts();" />\
-              			<menuitem label="保存當前頁面的腳本"\
-              			          id="UserScriptLoader-saveMenu"\
-              			          accesskey="S"\
-              			          oncommand="USL.saveScript();"/>\
-              			<menuitem id="showScripttoolsbutton"\
-              			          label="油猴腳本版顯示為按鈕"\
-              			          oncommand="USL.toggleUI(1);" />\
-              		</menupopup>\
-                 </toolbarbutton>\
-            </toolbarpalette>\
-        </overlay>';
-  overlay = "data:application/vnd.mozilla.xul+xml;charset=utf-8," + encodeURI(overlay);
-  window.userChrome_js.loadOverlay(overlay, USL);
+						<menuitem label="保存當前頁面的腳本"\
+								  id="UserScriptLoader-saveMenu"\
+								  accesskey="S"\
+								  oncommand="USL.saveScript();"/>\
+						<menuitem id="showScripttoolsbutton"\
+								  label="油猴腳本版顯示為按鈕"\
+								  oncommand="USL.toggleUI(1);" />\
+					</menupopup>\
+				</toolbarbutton>\
+			</toolbarpalette>\
+		</overlay>';
+	overlay = "data:application/vnd.mozilla.xul+xml;charset=utf-8," + encodeURI(overlay);
+	window.userChrome_js.loadOverlay(overlay, USL);
 	USL.style = addStyle(css);
-	
-	  //dannylee
-    var menuitem = document.createElement("menu");
-		menuitem.setAttribute("id", "UserScriptLoader_Tools_Menu");
-		menuitem.setAttribute("label", "油猴腳本管理器腳本版");
-		menuitem.setAttribute("class", "menu-iconic");
-    menuitem.setAttribute("image", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIzSURBVDhPhVNNSFRRFD5LdxqtSxkj4gUZg4TmT0/HqGhhZTsXU5laiGhUDP5OpRlBNeZPY5HdMjKTcnBRRptp51KthaBOd4yidi1n+XXOeY06GMyFw7n3nO/73nn3nEuUZXVXUVGvS231BygW8JHNhtd8VxXlMynCZlsOEY7tIbgFauGsAkIMuwQx/mqaiNp9hGulFD9RSLbGR7n/FWLyghAjdTvQXEwIHiQ0+AlXD3tW56jgkQxyTwXV9lRSTOx1+36kFvuAlQdYeFGvVYiXs8Qln8YKT4U6Azl/xlv9Clby6iCQeAR8ewI7d109ElGOD3G+X3GCF54KDF/yY3bgJExTIYMiCjZT52EmGoH1VzBvmnh/gYUec/6h4gQvPE+gtQyToTLM9VUCayOAfQq3zUVeeR7wY2Zzb41WJri34QCEpwIXK3ZaEZiPnvJKTz4H7SXQLgJ+fdzcr09oFfPR0yogPBU47qNgZ3UOUku3NwTM6GWY0Xbg9yeY6BWYkRb+nZcqkFoagOCFpwKhGsqVtmHlPga7zuDL+5vA90ku/x3wc5Zths9T+PrhFoa6z2pH5CI3WikC6Q4k471oOFqEoLMb/SUOxkod3GXf6OSjmePJzze0UxkCosQDFI91FLP6PW0XEmN6mbDP2Ma9DsgFc5WCE3zGMP17MFZatDx9zmvn2rBHEs+zsTzNreW8vA/Bbxtl+RUe3zuhclpNv4WtXuKaZ1y2B1XAgBI2d4vJWeLb1l8Iw62jtqs6OwAAAABJRU5ErkJggg==");
-		var ins = document.getElementById("menu_ToolsPopup");
-		ins.insertBefore(menuitem, document.getElementById("menu_preferences"));
-    
-    //dannylee
-    if (!this.pref.hasValue(this.UIPREF)) {
-       this.pref.setValue(this.UIPREF, true);
-    }
-    this.ShowToolButton = this.pref.getValue(this.UIPREF);
+
+	//dannylee
+	var menuitem = $("menu_ToolsPopup").insertBefore($C("menu", {
+		id: "UserScriptLoader_Tools_Menu",
+		label: "油猴腳本管理器腳本版",
+		class: "menu-iconic",
+		image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIzSURBVDhPhVNNSFRRFD5LdxqtSxkj4gUZg4TmT0/HqGhhZTsXU5laiGhUDP5OpRlBNeZPY5HdMjKTcnBRRptp51KthaBOd4yidi1n+XXOeY06GMyFw7n3nO/73nn3nEuUZXVXUVGvS231BygW8JHNhtd8VxXlMynCZlsOEY7tIbgFauGsAkIMuwQx/mqaiNp9hGulFD9RSLbGR7n/FWLyghAjdTvQXEwIHiQ0+AlXD3tW56jgkQxyTwXV9lRSTOx1+36kFvuAlQdYeFGvVYiXs8Qln8YKT4U6Azl/xlv9Clby6iCQeAR8ewI7d109ElGOD3G+X3GCF54KDF/yY3bgJExTIYMiCjZT52EmGoH1VzBvmnh/gYUec/6h4gQvPE+gtQyToTLM9VUCayOAfQq3zUVeeR7wY2Zzb41WJri34QCEpwIXK3ZaEZiPnvJKTz4H7SXQLgJ+fdzcr09oFfPR0yogPBU47qNgZ3UOUku3NwTM6GWY0Xbg9yeY6BWYkRb+nZcqkFoagOCFpwKhGsqVtmHlPga7zuDL+5vA90ku/x3wc5Zths9T+PrhFoa6z2pH5CI3WikC6Q4k471oOFqEoLMb/SUOxkod3GXf6OSjmePJzze0UxkCosQDFI91FLP6PW0XEmN6mbDP2Ma9DsgFc5WCE3zGMP17MFZatDx9zmvn2rBHEs+zsTzNreW8vA/Bbxtl+RUe3zuhclpNv4WtXuKaZ1y2B1XAgBI2d4vJWeLb1l8Iw62jtqs6OwAAAABJRU5ErkJggg=="
+	}), $("menu_preferences"));
+
+	//dannylee
+	if (!this.pref.hasValue(this.UIPREF)) {
+		this.pref.setValue(this.UIPREF, true);
+	}
+	this.ShowToolButton = this.pref.getValue(this.UIPREF);
 };
 
 USL.loadconfig = function () {
-  USL.loadSetting();
-  USL.icon          = $('UserScriptLoader-icon');
+	USL.loadSetting();
+	USL.icon          = $('UserScriptLoader-icon');
 	USL.popup         = $('UserScriptLoader-popup');
 	USL.menuseparator = $('UserScriptLoader-menuseparator');
 	USL.registMenu    = $('UserScriptLoader-register-menu');
@@ -734,9 +736,9 @@ USL.destroy = function () {
 	USL.pref.setValue('ALLOW_NOTIFY', USL.ALLOW_NOTIFY);
 	USL.pref.setValue('AUTO_RELOAD_PAGE', USL.AUTO_RELOAD_PAGE);
 	
-	var e = document.getElementById("UserScriptLoader-icon");
+	var e = $("UserScriptLoader-icon");
 	if (e) e.parentNode.removeChild(e);
-	var e = document.getElementById("UserScriptLoader-popup");
+	var e = $("UserScriptLoader-popup");
 	if (e) e.parentNode.removeChild(e);
 	if (USL.style) USL.style.parentNode.removeChild(USL.style);
 	USL.disabled = true;
@@ -762,12 +764,12 @@ USL.handleEvent = function (event) {
 USL.observe = function (subject, topic, data) {
 	if (topic == "xul-overlay-merged") {
 		if (!USL.isready) {
-		  USL.isready = true;
-		  USL.loadconfig();
-		 //dannylee
-		  document.getElementById("showScripttoolsbutton").setAttribute("label", (this.ShowToolButton ? "油猴腳本版顯示為菜單" : "油猴腳本版顯示為按鈕"));
-		  USL.toggleUI(0);
-		  Application.console.log("UserScriptLoader界面加載完畢！");
+			USL.isready = true;
+			USL.loadconfig();
+			//dannylee
+			$("showScripttoolsbutton").setAttribute("label", (this.ShowToolButton ? "油猴腳本版顯示為菜單" : "油猴腳本版顯示為按鈕"));
+			USL.toggleUI(0);
+			Application.console.log("UserScriptLoader界面加載完畢！");
 		}
 	}
 	if (topic === "content-document-global-created") {
@@ -779,22 +781,22 @@ USL.observe = function (subject, topic, data) {
 };
 
 //dannylee
-USL.toggleUI = function(tag){
-      if (tag > 0) {
-        USL.pref.setValue(USL.UIPREF, !USL.pref.getValue(USL.UIPREF));
-        USL.ShowToolButton = USL.pref.getValue(USL.UIPREF);
-      }
-      window.setTimeout(function() { 
-        document.getElementById("UserScriptLoader_Tools_Menu").hidden = USL.ShowToolButton;
-        document.getElementById("UserScriptLoader-icon").hidden = !USL.ShowToolButton;
-        if (!USL.ShowToolButton) {
-          document.getElementById("UserScriptLoader_Tools_Menu").appendChild(document.getElementById("UserScriptLoader-popup"));
-          document.getElementById("showScripttoolsbutton").setAttribute("label", "油猴腳本版顯示為按鈕");
-        } else{
-          document.getElementById("UserScriptLoader-icon").appendChild(document.getElementById("UserScriptLoader-popup"));
-          document.getElementById("showScripttoolsbutton").setAttribute("label", "油猴腳本版顯示為菜單");
-        }
-      }, 10);
+USL.toggleUI = function(tag) {
+	if (tag > 0) {
+		USL.pref.setValue(USL.UIPREF, !USL.pref.getValue(USL.UIPREF));
+		USL.ShowToolButton = USL.pref.getValue(USL.UIPREF);
+	}
+	window.setTimeout(function() {
+		$("UserScriptLoader_Tools_Menu").hidden = USL.ShowToolButton;
+		$("UserScriptLoader-icon").hidden = !USL.ShowToolButton;
+		if (!USL.ShowToolButton) {
+			$("UserScriptLoader_Tools_Menu").appendChild($("UserScriptLoader-popup"));
+			$("showScripttoolsbutton").setAttribute("label", "油猴腳本版顯示為按鈕");
+		} else {
+			$("UserScriptLoader-icon").appendChild($("UserScriptLoader-popup"));
+			$("showScripttoolsbutton").setAttribute("label", "油猴腳本版顯示為菜單");
+		}
+	}, 10);
 };
 
 USL.createMenuitem = function () {
@@ -805,16 +807,16 @@ USL.createMenuitem = function () {
 		range.deleteContents();
 		range.detach();
 	}
-	USL.readScripts.forEach(function(script){
-		let m = document.createElement('menuitem');
-		m.setAttribute('label', script.name + ' (' + script.version + ')');
-		m.setAttribute('tooltiptext', '左鍵啟用/禁用，中鍵下載鏈接，右鍵編輯');
-		m.setAttribute("class", "UserScriptLoader-item");
-		m.setAttribute('checked', !script.disabled);
-		m.setAttribute('type', 'checkbox');
-		m.setAttribute('oncommand', 'this.script.disabled = !this.script.disabled;if(USL.AUTO_RELOAD_PAGE)BrowserReload();');
+	USL.readScripts.forEach(function(script) {
+		let m = USL.popup.insertBefore($C('menuitem', {
+			label: script.name + ' (' + script.version + ')',
+			tooltiptext: '左鍵：啟用/禁用\n中鍵：下載鏈接\n右鍵：編輯',
+			class: "UserScriptLoader-item",
+			checked: !script.disabled,
+			type: 'checkbox',
+			oncommand: 'this.script.disabled = !this.script.disabled;if(USL.AUTO_RELOAD_PAGE)BrowserReload();'
+		}), USL.menuseparator);
 		m.script = script;
-		USL.popup.insertBefore(m, USL.menuseparator);
 	});
 };
 
@@ -837,9 +839,9 @@ USL.rebuild = function() {
 
 	function loadScript(aFile) {
 		var script,
-		    leafName = aFile.leafName,
-		    lastModifiedTime = aFile.lastModifiedTime;
-		USL.readScripts.some(function(s, i){
+			leafName = aFile.leafName,
+			lastModifiedTime = aFile.lastModifiedTime;
+		USL.readScripts.some(function(s, i) {
 			if (s.leafName === leafName) {
 				if (s.lastModifiedTime !== lastModifiedTime && USL.initialized) {
 					USL.log(s.name + " reload.");
@@ -860,7 +862,7 @@ USL.rebuild = function() {
 };
 
 USL.reloadScripts = function() {
-	USL.readScripts.forEach(function(script){
+	USL.readScripts.forEach(function(script) {
 		let aFile = script.file;
 		if (aFile.exists() && script.lastModifiedTime !== aFile.lastModifiedTimeOfLink) {
 			script.init(aFile);
@@ -877,8 +879,8 @@ USL.saveScript = function() {
 	var win = USL.getFocusedWindow();
 	var doc = win.document;
 	var name = /\/\/\s*@name\s+(.*)/i.exec(doc.body.textContent);
-  var filename = (name && name[1] ? name[1] : win.location.href.split("/").pop()).replace(/\.user\.js$|$/i, ".user.js").replace(/\s/g, '_').toLowerCase();
-  
+	var filename = (name && name[1] ? name[1] : win.location.href.split("/").pop()).replace(/\.user\.js$|$/i, ".user.js").replace(/\s/g, '_').toLowerCase();
+
 	// https://developer.mozilla.org/ja/XUL_Tutorial/Open_and_Save_Dialogs
 	var fp = Cc["@mozilla.org/filepicker;1"].createInstance(Ci.nsIFilePicker);
 	fp.init(window, "", Ci.nsIFilePicker.modeSave);
@@ -932,10 +934,10 @@ USL.onPopupShowing = function(event) {
 	switch(popup.id) {
 		case 'UserScriptLoader-popup':
 			let run = win.USL_run, match = win.USL_match;
-			Array.slice(popup.children).some(function(menuitem){
+			Array.slice(popup.children).some(function(menuitem) {
 				if (!menuitem.classList.contains("UserScriptLoader-item")) return true;
 				let index_run = run ? run.indexOf(menuitem.script) : -1,
-				    index_match = match ? match.indexOf(menuitem.script) : -1;
+					index_match = match ? match.indexOf(menuitem.script) : -1;
 				menuitem.style.fontWeight = index_run !== -1 ? "bold" : "";
 				menuitem.hidden = USL.HIDE_EXCLUDE && index_match === -1;
 			});
@@ -956,16 +958,16 @@ USL.onPopupShowing = function(event) {
 			var registers = win.USL_registerCommands;
 			if (!registers) return;
 			for (let [uuid, item] in Iterator(registers)) {
-				let m = document.createElement('menuitem');
-				m.setAttribute('label', item.label);
-				m.setAttribute('tooltiptext', item.tooltiptext);
-				m.setAttribute('oncommand', 'this.registCommand();');
+				let m = popup.appendChild($C('menuitem', {
+					label: item.label,
+					tooltiptext: item.tooltiptext,
+					oncommand: 'this.registCommand();',
+				}));
 				if (item.accessKey)
 					m.setAttribute("accesskey", item.accessKey);
 				if (item.disabled)
 					m.setAttribute("disabled", item.disabled);
 				m.registCommand = item.func;
-				popup.appendChild(m);
 			}
 			break;
 	}
@@ -984,7 +986,7 @@ USL.onPopupHidden = function(event) {
 	}
 };
 
-USL.menuClick = function(event){
+USL.menuClick = function(event) {
 	var menuitem = event.target;
 	if (event.button == 0 || menuitem.getAttribute('type') != 'checkbox')
 		return;
@@ -993,7 +995,7 @@ USL.menuClick = function(event){
 		//menuitem.setAttribute('checked', menuitem.getAttribute('checked') == 'true'? 'false' : 'true');
 		//Application.console.log("downloadURL:" + menuitem.script.downloadURL);
 		if (menuitem.script && menuitem.script.downloadURL != null)
-		  openLinkIn(menuitem.script.downloadURL,  "tab", {});	
+			openLinkIn(menuitem.script.downloadURL,  "tab", {});	
 	} else if (event.button == 2 && USL.EDITOR && menuitem.script) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -1015,7 +1017,7 @@ USL.edit = function(path) {
 	} catch (e) {}
 };
 
-USL.iconClick = function(event){
+USL.iconClick = function(event) {
 	if (event.target != USL.icon) return;
 	if (event.button == 2) {
 		event.preventDefault();
@@ -1059,10 +1061,10 @@ USL.injectScripts = function(safeWindow, rsflag) {
 		//if (!/^(?:https?|data|file|chrome):/.test(locationHref)) return;
 		if (!script.isURLMatching(locationHref)) return false;
 		if ("noframes" in script && 
-		    safeWindow.frameElement && 
-		    !(safeWindow.frameElement instanceof HTMLFrameElement))
+			safeWindow.frameElement && 
+			!(safeWindow.frameElement instanceof HTMLFrameElement))
 			return false;
-			
+
 		safeWindow.USL_match.push(script);
 		if (script.disabled) return false;
 		
@@ -1075,7 +1077,7 @@ USL.injectScripts = function(safeWindow, rsflag) {
 		}
 	});
 	if (documentEnds.length) {
-		aDocument.addEventListener("DOMContentLoaded", function(event){
+		aDocument.addEventListener("DOMContentLoaded", function(event) {
 			event.currentTarget.removeEventListener(event.type, arguments.callee, false);
 			documentEnds.forEach(function(s) "delay" in s ? 
 				safeWindow.setTimeout(run, s.delay, s) : run(s));
@@ -1154,7 +1156,7 @@ USL.loadText = function(aFile) {
 	return data;
 };
 
-USL.loadBinary = function(aFile){
+USL.loadBinary = function(aFile) {
 	var istream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
 	istream.init(aFile, -1, -1, false);
 	var bstream = Cc["@mozilla.org/binaryinputstream;1"].createInstance(Ci.nsIBinaryInputStream);
@@ -1206,7 +1208,7 @@ USL.saveSetting = function() {
 	USL.saveText(aFile, JSON.stringify(USL.database));
 };
 
-USL.getContents = function(aURL, aCallback){
+USL.getContents = function(aURL, aCallback) {
 	try {
 		urlSecurityCheck(aURL, gBrowser.contentPrincipal, Ci.nsIScriptSecurityManager.DISALLOW_INHERIT_PRINCIPAL);
 	} catch(ex) {
@@ -1225,14 +1227,14 @@ USL.getContents = function(aURL, aCallback){
 	if (aCallback) {
 		wbp.progressListener = {
 			onStateChange: function(aWebProgress, aRequest, aStateFlags, aStatus) {
-				if (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP){
+				if (aStateFlags & Ci.nsIWebProgressListener.STATE_STOP) {
 					let channel = aRequest.QueryInterface(Ci.nsIHttpChannel);
 					let bytes = USL.loadBinary(aFile);
 					aCallback(bytes, channel.contentType);
 					return;
 				}
 			},
-			onLocationChange: function(aProgress, aRequest, aURI){},
+			onLocationChange: function(aProgress, aRequest, aURI) {},
 			onProgressChange: function(aWebProgress, aRequest, aCurSelfProgress, aMaxSelfProgress, aCurTotalProgress, aMaxTotalProgress) {},
 			onStatusChange: function(aWebProgress, aRequest, aStatus, aMessage) {},
 			onSecurityChange: function(aWebProgress, aRequest, aState) {},
@@ -1259,7 +1261,7 @@ USL.getLocalFileContents = function(aURL, callback) {
 
 USL.wildcardToRegExpStr = function(urlstr) {
 	if (urlstr instanceof RegExp) return urlstr.source;
-	let reg = urlstr.replace(/[()\[\]{}|+.,^$?\\]/g, "\\$&").replace(/\*+/g, function(str){
+	let reg = urlstr.replace(/[()\[\]{}|+.,^$?\\]/g, "\\$&").replace(/\*+/g, function(str) {
 		return str === "*" ? ".*" : "[^/]*";
 	});
 	return "^" + reg + "$";
@@ -1267,38 +1269,38 @@ USL.wildcardToRegExpStr = function(urlstr) {
 
 USL.findscripts = function() {
 	var wins = USL.getFocusedWindow();
-  var href = wins.location.href;
-  var p=0;			//for number of "."
-  var f= new Array(); 
-  var q=2; 
-  var t=1; 
-  var a=0; 
-  var y;
-  var o;
-  var m=4;
-  var stringa; //= new Array();
-  var re = /(?:[a-z0-9-]+\.)+[a-z]{2,4}/;
-  href=href.match(re); //extract the url part 
-  href=href.toString();
-  //get the places and nunbers of the "."
-  for (var i=0;i<href.length;i++){
- 		if (href[i]=="."){
- 				f[p]=i;
-				p++ ;		
-	  } 
-  }
-  if (p==t){  
-    stringa=href.substring(a,f[0]);
-
-  }
-	else if  (p==q){
-	  stringa=href.substring(++f[0],f[1]);
+	var href = wins.location.href;
+	var p=0;			//for number of "."
+	var f= new Array(); 
+	var q=2; 
+	var t=1; 
+	var a=0; 
+	var y;
+	var o;
+	var m=4;
+	var stringa; //= new Array();
+	var re = /(?:[a-z0-9-]+\.)+[a-z]{2,4}/;
+	href=href.match(re); //extract the url part 
+	href=href.toString();
+	//get the places and nunbers of the "."
+	for (var i=0;i<href.length;i++) {
+		if (href[i]==".") {
+			f[p]=i;
+			p++ ;
+		}
 	}
- 	else {
- 		stringa=href.substring(++f[0],f[2]);
+	if (p==t) {
+		stringa=href.substring(a,f[0]);
 	}
-  //openLinkIn("http://www.google.com/search?btnG=Google+Search&q=site:userscripts.org+inurl:scripts+inurl:show+"+ stringa, "tab", {});	
-	openLinkIn("http://userscripts.org/scripts/search?q="+ stringa + "&submit=Search",  "tab", {});	
+	else if (p==q) {
+		stringa=href.substring(++f[0],f[1]);
+	}
+	else {
+		stringa=href.substring(++f[0],f[2]);
+	}
+	//openLinkIn("http://www.google.com/search?btnG=Google+Search&q=site:userscripts.org+inurl:scripts+inurl:show+"+ stringa, "tab", {});	
+	openLinkIn("http://userscripts.org:8080/scripts/search?q="+ stringa + "&submit=Search", "tab", {});
+	openLinkIn("https://greasyfork.org/scripts/search?q="+ stringa, "tab", {});	
 };
 
 USL.init();
@@ -1322,32 +1324,30 @@ function addStyle(css) {
 	);
 	return document.insertBefore(pi, document.documentElement);
 }
-
-
 })('\
 #UserScriptLoader-icon {\
-  -moz-appearance: none !important;\
-  border-style: none !important;\
-  border-radius: 0 !important;\
-  padding: 0 2px !important;\
-  margin: 0 !important;\
-  background: transparent !important;\
-  box-shadow: none !important;\
-  -moz-box-align: center !important;\
-  -moz-box-pack: center !important;\
-  min-width: 18px !important;\
-  min-height: 18px !important;\
+	-moz-appearance: none !important;\
+	border-style: none !important;\
+	border-radius: 0 !important;\
+	padding: 0 2px !important;\
+	margin: 0 !important;\
+	background: transparent !important;\
+	box-shadow: none !important;\
+	-moz-box-align: center !important;\
+	-moz-box-pack: center !important;\
+	min-width: 18px !important;\
+	min-height: 18px !important;\
 }\
 #UserScriptLoader-icon > .toolbarbutton-icon {\
-    max-width: 18px !important;\
-    padding: 0 !important;\
-    margin: 0 !important;\
+	max-width: 18px !important;\
+	padding: 0 !important;\
+	margin: 0 !important;\
 }\
 #UserScriptLoader-icon:not([disabled="true"]):hover,\
 #UserScriptLoader-icon:not([disabled="true"])[type="menu-button"]:hover,\
 #UserScriptLoader-icon:not([disabled="true"])[open="true"],\
 #UserScriptLoader-icon:not([disabled="true"])[type="menu-button"][open="true"] {\
-    background-image: -moz-linear-gradient(rgba(242, 245, 249, 0.95), rgba(220, 223, 225, 0.67) 49%, rgba(198, 204, 208, 0.65) 51%, rgba(194, 197, 201, 0.3)) !important;\
+	background-image: -moz-linear-gradient(rgba(242, 245, 249, 0.95), rgba(220, 223, 225, 0.67) 49%, rgba(198, 204, 208, 0.65) 51%, rgba(194, 197, 201, 0.3)) !important;\
 }\
 #UserScriptLoader-icon dropmarker{display: none !important;}\
 '.replace(/[\r\n\t]/g, ''));
