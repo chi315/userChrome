@@ -605,7 +605,7 @@ if (window.userChromejs) {
 		return el;
 	}
   //メニューが長くなりすぎるので, あまり使わないメニューを"userChrome.jsの各スクリプトの設定"の下に移動させる
-/*  window.userChromejsScriptOptionsMenu = {
+  window.userChromejsScriptOptionsMenu = {
     //あまり使わないメニューのリスト
     menues: [
 	'',
@@ -617,6 +617,7 @@ if (window.userChromejs) {
     timer: null,
 
     run: function() {
+		userChromejs.toggleUI(0);
       //DOMの構築が完了するのを待ってからメニューを移動させる(5秒間隔で最大50回までトライ)
       this.timer = setInterval(function(self) {
         if (++self.count > self.maxcount || self.moveMenu())
@@ -642,7 +643,7 @@ if (window.userChromejs) {
     },
   }
   window.userChromejsScriptOptionsMenu.run();
-*/
+
 })();
   ]]></script>
 	<toolbarpalette id="TabsToolbar">
