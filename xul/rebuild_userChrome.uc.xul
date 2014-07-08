@@ -38,7 +38,7 @@
  -->
 
 <script type="application/javascript" xmlns="http://www.w3.org/1999/xhtml"><![CDATA[
-(function(){
+(function() {
   "use strict";
 if (window.userChromejs) {
 	window.userChromejs.uninit();
@@ -82,11 +82,11 @@ if (window.userChromejs) {
       }
     },
 
-    init: function(){
+    init: function() {
       window.addEventListener("unload",this , false);
       if ("nsDragAndDrop" in window && this.statusDisplay) {
-        this.statusDisplay.addEventListener('dragover',function(event){nsDragAndDrop.dragOver(event,userChromejs.dndObserver);},true);
-        this.statusDisplay.addEventListener('dragdrop',function(event){nsDragAndDrop.drop(event,userChromejs.dndObserver);},true);
+        this.statusDisplay.addEventListener('dragover',function(event) {nsDragAndDrop.dragOver(event,userChromejs.dndObserver);},true);
+        this.statusDisplay.addEventListener('dragdrop',function(event) {nsDragAndDrop.drop(event,userChromejs.dndObserver);},true);
       } else if(this.addonbar) {
         this.addonbar.addEventListener('dragover', this ,true);
         this.addonbar.addEventListener('drop', this ,true);
@@ -106,10 +106,10 @@ if (window.userChromejs) {
 			gPrefService.setBoolPref(this.UIPREF, true);
 		}
     },
-    uninit: function(){
+    uninit: function() {
       if ("nsDragAndDrop" in window && this.statusDisplay) {
-        this.statusDisplay.removeEventListener('dragover',function(event){nsDragAndDrop.dragOver(event,userChromejs.dndObserver);},true);
-        this.statusDisplay.removeEventListener('dragdrop',function(event){nsDragAndDrop.drop(event,userChromejs.dndObserver);},true);
+        this.statusDisplay.removeEventListener('dragover',function(event) {nsDragAndDrop.dragOver(event,userChromejs.dndObserver);},true);
+        this.statusDisplay.removeEventListener('dragdrop',function(event) {nsDragAndDrop.drop(event,userChromejs.dndObserver);},true);
       } else if(this.addonbar) {
         this.addonbar.removeEventListener('dragover', this ,true);
         this.addonbar.removeEventListener('drop', this ,true);
@@ -181,15 +181,15 @@ if (window.userChromejs) {
         flavours.appendFlavour("application/x-moz-file");
         return flavours;
       },
-      onDragOver: function (evt,flavour,session){},
-      onDrop: function (evt,dropdata,session){
+      onDragOver: function (evt,flavour,session) {},
+      onDrop: function (evt,dropdata,session) {
         var fname;
         evt.stopPropagation();
         evt.preventDefault();
-        if (dropdata.data!=""){
+        if (dropdata.data!="") {
           //ステータスバーの左1/3にドロップしたか
           var target = evt.target;
-          while(target){
+          while(target) {
             if(target == userChromejs.statusDisplay ||
                target == userChromejs.addonbar)
               break;
@@ -210,20 +210,20 @@ if (window.userChromejs) {
           if(/(.*)\n?(.*)?/m.test(dropdata.data) )
             fname = RegExp.$2?RegExp.$2:"";
           //データスキームか
-          if(/(^data:text\/javascript(;.*)?,?)|(^data:application\/x-javascript(;.*)?,?)/.test(url)){
+          if(/(^data:text\/javascript(;.*)?,?)|(^data:application\/x-javascript(;.*)?,?)/.test(url)) {
             // urlSecurityCheck は saveFolderModoki.directSaveLinkで実施している
             saveScript(url, fname, folder);
           }else{
             //リンクか
             if(!/(^h?ttps?:\/\/)|(^ftp:\/\/)/.test(url)) return;
-            if (/^h?.?.p(s?):(.+)$/i.test(url)){
+            if (/^h?.?.p(s?):(.+)$/i.test(url)) {
               url = "http" + RegExp.$1 + ':' + RegExp.$2;
               if(!RegExp.$2) return null;
               fname = url.match(/.+\/(.+)$/)[1];
             }
             fname = fname.replace(/\.uc\.xul\.txt$/,'.uc.xul');
             //スクリプトファイルか?
-            if(/(\.uc\.js|\.uc\.xul|\.uc\.xul\.txt)$/.test(url)){
+            if(/(\.uc\.js|\.uc\.xul|\.uc\.xul\.txt)$/.test(url)) {
               if (typeof gBrowser.dragDropSecurityCheck == 'function')
                 gBrowser.dragDropSecurityCheck(evt, session, url);
               else {
@@ -233,7 +233,7 @@ if (window.userChromejs) {
             }
           }
         }
-        function saveScript(url, fname, folder){
+        function saveScript(url, fname, folder) {
           //ファイルピッカによりnsIFile決定
           var aFile = getFolderPath(fname, folder)
           if(!aFile) return;
@@ -245,16 +245,16 @@ if (window.userChromejs) {
           //リンクを保存
           saveFolderModoki.directSaveLink(null, url, aFile.leafName, gBrowser.currentURI, aFolder);
         }
-        function getFolderPath(fname, folder){
+        function getFolderPath(fname, folder) {
           //ファイルピッカにより保存先決定
           var fp = Components.classes['@mozilla.org/filepicker;1']
                     .createInstance(Components.interfaces.nsIFilePicker);
             fp.init(window, "Save script As", fp.modeSave);
             fp.appendFilter("Script Files","*.uc.js; *.uc.xul");
-          if(/\.uc\.js$/.test(fname)){
+          if(/\.uc\.js$/.test(fname)) {
             fp.defaultExtension = "uc.js";
             fp.defaultString = fname;
-          }else if(/\.uc\.xul$/.test(fname)){
+          }else if(/\.uc\.xul$/.test(fname)) {
             fp.defaultExtension = "uc.xul";
             fp.defaultString = fname;
           }else{
@@ -269,23 +269,23 @@ if (window.userChromejs) {
       }
     },
 
-    rebuild: function(){
+    rebuild: function() {
       var flag = this.getPref("userChrome.enable.reuse",'bool',true);
       this.setPref("userChrome.enable.reuse",'bool',false);
-      setTimeout(function(){OpenBrowserWindow();},  0);
-      setTimeout(function(self,flag){self.setPref("userChrome.enable.reuse",'bool',flag);},2000,this,flag);
+      setTimeout(function() {OpenBrowserWindow();},  0);
+      setTimeout(function(self,flag) {self.setPref("userChrome.enable.reuse",'bool',flag);},2000,this,flag);
     },
-    setting: function(){
+    setting: function() {
       var flag = this.getPref("userChrome.enable.reuse",'bool',true);
       this.setPref("userChrome.enable.reuse",'bool',!flag);
     },
-    onpopup: function(){
+    onpopup: function() {
       var menu;
       var flag = this.getPref("userChrome.enable.reuse",'bool',true);
       var menuitem = $('userChrome_setting', {checked: !flag});
 
       var menupopup = $("userChromejs_options");
-      for(var i = 7, len = menupopup.childNodes.length; i < len; i++){
+      for(var i = 7, len = menupopup.childNodes.length; i < len; i++) {
         menupopup.removeChild(menupopup.lastChild);
       }
 
@@ -302,17 +302,17 @@ if (window.userChromejs) {
       }));
       menuitem.dirName = '*';
 	*/
-      for(var j = 0, lenj = userChrome_js.arrSubdir.length; j < lenj; j++){
+      for(var j = 0, lenj = userChrome_js.arrSubdir.length; j < lenj; j++) {
         var dirName = userChrome_js.arrSubdir[j] == "" ? "root" : userChrome_js.arrSubdir[j];
         var flg = false;
-        for(var i = 0, len = userChrome_js.scripts.length; i < len; i++){
+        for(var i = 0, len = userChrome_js.scripts.length; i < len; i++) {
           var script = userChrome_js.scripts[i];
           if(script.dir != dirName) continue;
           flg = true;
           break;
         }
-        if(!flg){
-          for(var i = 0, len = userChrome_js.overlays.length; i < len; i++){
+        if(!flg) {
+          for(var i = 0, len = userChrome_js.overlays.length; i < len; i++) {
             var script = userChrome_js.overlays[i];
             if(script.dir != dirName) continue;
             flg = true;
@@ -344,7 +344,7 @@ if (window.userChromejs) {
 		menuseparator = menupopup.appendChild($C('menuseparator'));
 
         var flg = false;
-        for(var i = 0, len = userChrome_js.scripts.length; i < len; i++){
+        for(var i = 0, len = userChrome_js.scripts.length; i < len; i++) {
           var script = userChrome_js.scripts[i];
           if(script.dir != dirName) continue;
             flg = true;
@@ -360,10 +360,10 @@ if (window.userChromejs) {
               menuitem.setAttribute('tooltiptext',script.description);
             menuitem.script = script;
         }
-        for(var i = 0, len = userChrome_js.overlays.length; i < len; i++){
+        for(var i = 0, len = userChrome_js.overlays.length; i < len; i++) {
           var script = userChrome_js.overlays[i];
           if(script.dir != dirName) continue;
-            if(flg){
+            if(flg) {
               menuseparator = menupopup.appendChild($C('menuseparator'));
             }
             flg = false;
@@ -383,10 +383,11 @@ if (window.userChromejs) {
         menupopup = $("userChromejs_options");
         menupopup.appendChild(menu);
       }
+      $("showToolsMenu").setAttribute("label", (userChromejs.ShowToolButton ? "UC腳本管理器顯示為菜單" : "UC腳本管理器顯示為按鈕"));
     },
 
-    clickDirMenu: function(event){
-      if(event.button == 1 || event.button == 2){
+    clickDirMenu: function(event) {
+      if(event.button == 1 || event.button == 2) {
         userChromejs.chgDirStat(event.target.dirName);
         if(event.target.firstChild && event.target.firstChild.firstChild)
           event.target.firstChild.firstChild.setAttribute('checked',!userChrome_js.dirDisable[event.target.dirName] );
@@ -397,8 +398,8 @@ if (window.userChromejs) {
       }
     },
 
-    clickDirMenuitem: function(event,stop){
-      if(event.button == 1 || event.button == 2){
+    clickDirMenuitem: function(event,stop) {
+      if(event.button == 1 || event.button == 2) {
         userChromejs.chgDirStat(event.target.dirName);
         event.target.setAttribute('checked',!userChrome_js.dirDisable[event.target.dirName] );
         if(!stop && !!userChrome_js.dirDisable[event.target.dirName])
@@ -408,21 +409,21 @@ if (window.userChromejs) {
       }
     },
 
-    clickScriptMenu: function(event){
-      if(event.button==1){
+    clickScriptMenu: function(event) {
+      if(event.button==1) {
         userChromejs.chgScriptStat(event.target.script.filename);
         event.target.setAttribute('checked',!userChrome_js.scriptDisable[event.target.script.filename] );
-      }else if(event.button==2){
+      }else if(event.button==2) {
         this.launchEditor(event.target.script);
       }
     },
 
-    launchEditor: function(aScript){
+    launchEditor: function(aScript) {
       var editor = this.editor;
       var UI = Components.classes['@mozilla.org/intl/scriptableunicodeconverter'].createInstance(Components.interfaces.nsIScriptableUnicodeConverter);
 
       var platform = window.navigator.platform.toLowerCase();
-      if(platform.indexOf('win') > -1){
+      if(platform.indexOf('win') > -1) {
         UI.charset = 'GB2312';//Shift_JIS
       }else{
         UI.charset =  'UTF-8';
@@ -438,9 +439,9 @@ if (window.userChromejs) {
       process.run(false, [path], 1, {});
     },
 
-    chgDirStat: function(adirName){
+    chgDirStat: function(adirName) {
       var s = userChromejs.getPref("userChrome.disable.directory", "str", "");
-      if(!userChrome_js.dirDisable[adirName]){
+      if(!userChrome_js.dirDisable[adirName]) {
         s = (s+',').replace(adirName+',','') + adirName+',';
       }else{
         s = (s+',').replace(adirName+',','');
@@ -450,9 +451,9 @@ if (window.userChromejs) {
       userChrome_js.dirDisable = this.restoreState(s.split(','));
     },
 
-    chgScriptStat: function(afilename){
+    chgScriptStat: function(afilename) {
       var s = userChromejs.getPref("userChrome.disable.script", "str", "");
-      if(!userChrome_js.scriptDisable[afilename]){
+      if(!userChrome_js.scriptDisable[afilename]) {
         s = (s+',').replace(afilename+',','') + afilename+',';
       }else{
         s = (s+',').replace(afilename+',','');
@@ -462,7 +463,7 @@ if (window.userChromejs) {
       userChrome_js.scriptDisable = this.restoreState(s.split(','));
     },
 
-    restoreState: function (arr){
+    restoreState: function (arr) {
       var disable = [];
       for(var i = 0,len = arr.length; i < len; i++)
         disable[arr[i]] = true;
@@ -471,11 +472,11 @@ if (window.userChromejs) {
 
 
     //prefを読み込み
-    getPref: function(aPrefString, aPrefType, aDefault){
+    getPref: function(aPrefString, aPrefType, aDefault) {
       var xpPref = Components.classes['@mozilla.org/preferences-service;1']
                     .getService(Components.interfaces.nsIPrefBranch2);
       try{
-        switch (aPrefType){
+        switch (aPrefType) {
           case 'complex':
             return xpPref.getComplexValue(aPrefString, Components.interfaces.nsILocalFile); break;
           case 'str':
@@ -486,16 +487,16 @@ if (window.userChromejs) {
           default:
             return xpPref.getBoolPref(aPrefString); break;
         }
-      }catch(e){
+      }catch(e) {
       }
       return aDefault;
     },
     //prefを書き込み
-    setPref: function(aPrefString, aPrefType, aValue){
+    setPref: function(aPrefString, aPrefType, aValue) {
       var xpPref = Components.classes['@mozilla.org/preferences-service;1']
                     .getService(Components.interfaces.nsIPrefBranch2);
       try{
-        switch (aPrefType){
+        switch (aPrefType) {
           case 'complex':
             return xpPref.setComplexValue(aPrefString, Components.interfaces.nsILocalFile, aValue); break;
           case 'str':
@@ -507,7 +508,7 @@ if (window.userChromejs) {
           default:
             return xpPref.setBoolPref(aPrefString, aValue); break;
         }
-      }catch(e){
+      }catch(e) {
       }
       return null;
     },
@@ -536,7 +537,7 @@ if (window.userChromejs) {
         observe : function(aSubject, aTopic, aPrefstring) {
             if (aTopic == 'nsPref:changed') {
                 // 設定が変更された時の處理
-                setTimeout(function(){
+                setTimeout(function() {
                   var s = userChromejs.getPref("userChrome.disable.directory", "str", "");
                   userChrome_js.dirDisable = userChromejs.restoreState(s.split(','));
                   s = userChromejs.getPref("userChrome.disable.script", "str", "");
@@ -580,20 +581,18 @@ if (window.userChromejs) {
       appStartup.quit(appStartup.eRestart | appStartup.eAttemptQuit);
     },
 	//dannylee
-	toggleUI: function(tag){
+	toggleUI: function(tag) {
 		if (tag > 0) {
 			gPrefService.setBoolPref(this.UIPREF, !gPrefService.getBoolPref(this.UIPREF));
-			userChromejs.ShowToolButton = gPrefService.getBoolPref(userChromejs.UIPREF);
 		}
+		userChromejs.ShowToolButton = gPrefService.getBoolPref(userChromejs.UIPREF);
 		window.setTimeout(function() {
 			$("userChromejs_Tools_Menu").hidden = userChromejs.ShowToolButton;
 			$("userChromebtnMenu").hidden = !userChromejs.ShowToolButton;
 			if (!userChromejs.ShowToolButton) {
 				$("userChromejs_Tools_Menu").appendChild($("userChromejs_options"));
-				$("showToolsMenu").setAttribute("label", "UC腳本管理器顯示為按鈕");
 			} else {
 				$("userChromebtnMenu").appendChild($("userChromejs_options"));
-				$("showToolsMenu").setAttribute("label", "UC腳本管理器顯示為菜單");
 			}
 		}, 10);
 	},
@@ -619,13 +618,13 @@ if (window.userChromejs) {
 
     run: function() {
       //DOMの構築が完了するのを待ってからメニューを移動させる(5秒間隔で最大50回までトライ)
-      this.timer = setInterval(function(self){
+      this.timer = setInterval(function(self) {
         if (++self.count > self.maxcount || self.moveMenu())
           clearInterval(self.timer);
       }, this.interval, this);
     },
 
-    moveMenu: function(){
+    moveMenu: function() {
       var menupopup = $('userChromejs_script_options');
       if (!menupopup)
         return false;
@@ -633,7 +632,7 @@ if (window.userChromejs) {
       while (i < this.menues.length) {
         var menu = $(this.menues[i])
         if (menu) {
-          setTimeout(function(menupopup, menu){menupopup.appendChild(menu);}, 100, menupopup, menu);
+          setTimeout(function(menupopup, menu) {menupopup.appendChild(menu);}, 100, menupopup, menu);
           this.menues.splice(i, 1);
           continue;
         }
