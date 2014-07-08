@@ -8,7 +8,8 @@
 // @compatibility	Firefox 4
 // @charset			UTF-8
 // @version			0.0.4
-// @note			2014/2/26 Mod by  dannylee添加可切換圖標和菜單模式, CSS菜單中鍵重載
+// @note			2014/7/8 Mod by feiruo 添加重載 userChrome.css 和重載 userContent.css
+// @note			2014/2/26 Mod by dannylee 添加可切換圖標和菜單模式, CSS菜單中鍵重載
 // @note			0.0.4 Remove E4X
 // @note			CSSEntry クラスを作った
 // @note			スタイルのテスト機能を作り直した
@@ -23,6 +24,10 @@
 //中鍵點擊各 CSS 項目，也是切換各項目的「應用與否」，但不退出菜單，即可連續操作;
 中鍵點擊各 CSS 項目，重新加載各項目;
 右鍵點擊各 CSS 項目，則是調用編輯器對其進行編輯；
+
+userChrome.css 和 userContent.css
+左鍵：重載
+右鍵：編輯
 
 在 about:config 裡修改 "view_source.editor.path" 以指定編輯器
 在 about:config 裡修改 "UserCSSLoader.FOLDER" 以指定存放文件夾
@@ -39,6 +44,7 @@ if (!window.Services)
 
 // 起動時に他の窓がある（２窓目の）場合は抜ける
 let list = Services.wm.getEnumerator("navigator:browser");
+let inIDOMUtils = Cc["@mozilla.org/inspector/dom-utils;1"].getService(Ci.inIDOMUtils);
 while(list.hasMoreElements()) { if(list.getNext() != window) return; }
 
 if (window.UCL) {
@@ -107,12 +113,16 @@ window.UCL = {
 							<menuitem label="打開樣式目錄"\
 									  accesskey="O"\
 									  oncommand="UCL.openFolder();" />\
-							<menuitem label="編輯 userChrome.css"\
+							<menuitem label="userChrome.css"\
+									  tooltiptext="左鍵：重載 | 右鍵：編輯"\
 									  hidden="false"\
-									  oncommand="UCL.editUserCSS(\'userChrome.css\');"/>\
-							<menuitem label="編輯 userContent.css"\
+									  oncommand="UCL.reloadUserChromeCSS();"\
+									  onclick="if (event.button ==2) {UCL.editUserCSS(\'userChrome.css\'); event.preventDefault();}"/>\
+							<menuitem label="userContent.css"\
+									  tooltiptext="左鍵：重載 | 右鍵：編輯"\
 									  hidden="false"\
-									  oncommand="UCL.editUserCSS(\'userContent.css\');"/>\
+									  oncommand="UCL.reloadUserContentCSS();"\
+									  onclick="if (event.button ==2) {UCL.editUserCSS(\'userContent.css\'); event.preventDefault();}"/>\
 							<menuitem label="重新加載全部樣式"\
 									  accesskey="R"\
 									  acceltext="Alt + R"\
@@ -329,7 +339,7 @@ window.UCL = {
 	searchStyle: function() {
 		let win = this.getFocusedWindow();
 		let word = win.location.host || win.location.href;
-		openLinkIn("http://userstyles.org/styles/browse?category=" + word, "tab", {});//http://userstyles.org/styles/browse/site/
+		openLinkIn("https://userstyles.org/styles/browse?category=" + word, "tab", {});//http://userstyles.org/styles/browse/site/
 	},
 	openFolder: function() {
 		this.FOLDER.launch();
@@ -418,6 +428,69 @@ window.UCL = {
 			this.edit(file);
 		}
 	},
+		reloadUserChromeCSS: function() { //add by feiruo
+			var aFile = Services.dirsvc.get("UChrm", Ci.nsILocalFile);
+			aFile.appendRelativePath("userChrome.css");
+
+			var fileURL = Services.io.getProtocolHandler("file")
+				.QueryInterface(Ci.nsIFileProtocolHandler)
+				.getURLSpecFromFile(aFile);
+
+			var rule = UCL.getStyleSheet(document.documentElement, fileURL);
+			if (!rule) return;
+
+			inIDOMUtils.parseStyleSheet(rule, UCL.loadText(aFile));
+			rule.insertRule(":root{}", rule.cssRules.length); // おまじない
+			XULBrowserWindow.statusTextField.label = "重新加載 userChrome.css 已完成 ";
+			// ウインドウを一度背面にする必要がある
+			var w = window.open("", "", "width=10, height=10");
+			w.close();
+		},
+		reloadUserContentCSS: function() {
+			var aFile = Services.dirsvc.get("UChrm", Ci.nsILocalFile);
+			aFile.appendRelativePath("userContent.css");
+
+			var fileURL = Services.io.getProtocolHandler("file")
+				.QueryInterface(Ci.nsIFileProtocolHandler)
+				.getURLSpecFromFile(aFile);
+
+			var rule = UCL.getStyleSheet(content.document.documentElement, fileURL);
+			if (!rule) return;
+
+			inIDOMUtils.parseStyleSheet(rule, UCL.loadText(aFile));
+			rule.insertRule(":root{}", rule.cssRules.length); // おまじない
+			XULBrowserWindow.statusTextField.label = "重新加載 userContent.css 已完成 ";
+			// 再描畫處理
+			var s = gBrowser.markupDocumentViewer;
+			s.authorStyleDisabled = !s.authorStyleDisabled;
+			s.authorStyleDisabled = !s.authorStyleDisabled;
+		},
+		getStyleSheet: function(aElement, cssURL) {
+			var rules = inIDOMUtils.getCSSStyleRules(aElement);
+			var count = rules.Count();
+			if (!count) return null;
+
+			for (var i = 0; i < count; ++i) {
+				var rule = rules.GetElementAt(i).parentStyleSheet;
+				if (rule && rule.href === cssURL)
+					return rule;
+			};
+			return null;
+		},
+		loadText: function(aFile) {
+			if (!aFile.exists() || !aFile.isFile()) return null;
+			var fstream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
+			var sstream = Cc["@mozilla.org/scriptableinputstream;1"].createInstance(Ci.nsIScriptableInputStream);
+			fstream.init(aFile, -1, 0, 0);
+			sstream.init(fstream);
+			var data = sstream.read(sstream.available());
+			try {
+				data = decodeURIComponent(escape(data));
+			} catch (e) {}
+			sstream.close();
+			fstream.close();
+			return data;
+		}, //end by feiruo
 };
 
 function CSSEntry(aFile) {
