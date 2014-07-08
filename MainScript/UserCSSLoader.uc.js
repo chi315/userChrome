@@ -31,7 +31,7 @@
 
  **** 結束說明 ****/
 
-(function(){
+(function() {
 
 let { classes: Cc, interfaces: Ci, utils: Cu, results: Cr } = Components;
 if (!window.Services)
@@ -39,7 +39,7 @@ if (!window.Services)
 
 // 起動時に他の窓がある（２窓目の）場合は抜ける
 let list = Services.wm.getEnumerator("navigator:browser");
-while(list.hasMoreElements()){ if(list.getNext() != window) return; }
+while(list.hasMoreElements()) { if(list.getNext() != window) return; }
 
 if (window.UCL) {
 	window.UCL.destroy();
@@ -66,7 +66,7 @@ window.UCL = {
 		delete this.prefs;
 		return this.prefs = Services.prefs.getBranch("UserCSSLoader.")
 	},
-	get styleSheetServices(){
+	get styleSheetServices() {
 		delete this.styleSheetServices;
 		return this.styleSheetServices = Cc["@mozilla.org/content/style-sheet-service;1"].getService(Ci.nsIStyleSheetService);
 	},
@@ -96,53 +96,53 @@ window.UCL = {
 		UCL.isready = false;
 		var overlay = '\
 			<overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" \
-			xmlns:html="http://www.w3.org/1999/xhtml"> \
+					 xmlns:html="http://www.w3.org/1999/xhtml"> \
 				<toolbarpalette id="TabsToolbar">\
 					<toolbarbutton id="usercssloader-menu" label="UC-Stylish" \
 								   class="toolbarbutton-1 chromeclass-toolbar-additional" type="menu" \
 								   removable="true" \
 								   image="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAARklEQVQ4jWNgYGD4TyFm+L/uaBJezMDA8H+vgyEGHk4GEIPxGnBhdikKZmBg+P/vEyscjxrASjglEmPAvBMPMPBwMoASDADElRSk+LLlQAAAAABJRU5ErkJggg==" \
 								   tooltiptext="用戶樣式管理器" >\
-					<menupopup id="usercssloader-menupopup">\
-						<menuitem label="打開樣式目錄"\
-								  accesskey="O"\
-								  oncommand="UCL.openFolder();" />\
-						<menuitem label="編輯 userChrome.css"\
-								  hidden="false"\
-								  oncommand="UCL.editUserCSS(\'userChrome.css\');"/>\
-						<menuitem label="編輯 userContent.css"\
-								  hidden="false"\
-								  oncommand="UCL.editUserCSS(\'userContent.css\');"/>\
-						<menuitem label="重新加載全部樣式"\
-								  accesskey="R"\
-								  acceltext="Alt + R"\
-								  oncommand="UCL.rebuild();" />\
-						<menuseparator />\
-						<menuitem label="新建用戶 css 樣式 (外部編輯器)"\
-								  accesskey="N"\
-								  oncommand="UCL.create();" />\
-						<menuitem label="新建瀏覽器樣式 (Chrome)"\
-								  id="usercssloader-test-chrome"\
-								  accesskey="C"\
-								  oncommand="UCL.styleTest(window);" />\
-						<menuitem label="新建當前網頁樣式 (Web)"\
-								  id="usercssloader-test-content"\
-								  accesskey="W"\
-								  oncommand="UCL.styleTest();" />\
-						<menuitem label="在userstyles.org檢索當前網頁樣式"\
-								  accesskey="S"\
-								  oncommand="UCL.searchStyle();" />\
-						<menu label=".uc.css" accesskey="U" hidden="'+ !UCL.USE_UC +'">\
-							<menupopup id="usercssloader-ucmenupopup">\
-								<menuitem label="Rebuild(.uc.js)"\
-										  oncommand="UCL.UCrebuild();" />\
-								<menuseparator id="usercssloader-ucsepalator"/>\
-							</menupopup>\
-						</menu>\
-						<menuitem id="showCSStoolsbutton" label="樣式管理器顯示為按鈕"\
-								  oncommand="UCL.toggleUI(1);" />\
-						<menuseparator id="ucl-sepalator"/>\
-					</menupopup>\
+						<menupopup id="usercssloader-menupopup">\
+							<menuitem label="打開樣式目錄"\
+									  accesskey="O"\
+									  oncommand="UCL.openFolder();" />\
+							<menuitem label="編輯 userChrome.css"\
+									  hidden="false"\
+									  oncommand="UCL.editUserCSS(\'userChrome.css\');"/>\
+							<menuitem label="編輯 userContent.css"\
+									  hidden="false"\
+									  oncommand="UCL.editUserCSS(\'userContent.css\');"/>\
+							<menuitem label="重新加載全部樣式"\
+									  accesskey="R"\
+									  acceltext="Alt + R"\
+									  oncommand="UCL.rebuild();" />\
+							<menuseparator />\
+							<menuitem label="新建用戶 css 樣式 (外部編輯器)"\
+									  accesskey="N"\
+									  oncommand="UCL.create();" />\
+							<menuitem label="新建瀏覽器樣式 (Chrome)"\
+									  id="usercssloader-test-chrome"\
+									  accesskey="C"\
+									  oncommand="UCL.styleTest(window);" />\
+							<menuitem label="新建當前網頁樣式 (Web)"\
+									  id="usercssloader-test-content"\
+									  accesskey="W"\
+									  oncommand="UCL.styleTest();" />\
+							<menuitem label="在userstyles.org檢索當前網頁樣式"\
+									  accesskey="S"\
+									  oncommand="UCL.searchStyle();" />\
+							<menu label=".uc.css" accesskey="U" hidden="'+ !UCL.USE_UC +'">\
+								<menupopup id="usercssloader-ucmenupopup">\
+									<menuitem label="Rebuild(.uc.js)"\
+											  oncommand="UCL.UCrebuild();" />\
+									<menuseparator id="usercssloader-ucsepalator"/>\
+								</menupopup>\
+							</menu>\
+							<menuitem id="showCSStoolsbutton" label="樣式管理器顯示為按鈕"\
+									  oncommand="UCL.toggleUI(1);" />\
+							<menuseparator id="ucl-sepalator"/>\
+						</menupopup>\
 					</toolbarbutton>\
 				</toolbarpalette>\
 			</overlay>';
@@ -191,7 +191,7 @@ window.UCL = {
 	},
 
 	//dannylee
-	toggleUI: function(tag){
+	toggleUI: function(tag) {
 		if (tag > 0) {
 			UCL.prefs.setBoolPref(UCL.UIPREF, !UCL.prefs.getBoolPref(UCL.UIPREF));
 			UCL.ShowToolButton = UCL.prefs.getBoolPref(UCL.UIPREF);
@@ -224,7 +224,7 @@ window.UCL = {
 		this.uninit();
 	},
 	handleEvent: function(event) {
-		switch(event.type){
+		switch(event.type) {
 			case "unload": this.uninit(); break;
 		}
 	},
@@ -321,7 +321,7 @@ window.UCL = {
 	},
 	styleTest: function(aWindow) {
 		aWindow || (aWindow = this.getFocusedWindow());
-		new CSSTester(aWindow, function(tester){
+		new CSSTester(aWindow, function(tester) {
 			if (tester.saved)
 				UCL.rebuild();
 		});
@@ -364,7 +364,7 @@ window.UCL = {
 	UCrebuild: function() {
 		let re = /^file:.*\.uc\.css(?:\?\d+)?$/i;
 		let query = "?" + new Date().getTime();
-		Array.slice(document.styleSheets).forEach(function(css){
+		Array.slice(document.styleSheets).forEach(function(css) {
 			if (!re.test(css.href)) return;
 			if (css.ownerNode) {
 				css.ownerNode.parentNode.removeChild(css.ownerNode);
