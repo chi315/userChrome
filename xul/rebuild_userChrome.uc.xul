@@ -9,6 +9,7 @@
 // @include        main
 // @compatibility  Firefox 3.5b4pre 3.6a1pre 4.0b7pre
 // @author         Alice0775
+// @version        2014/02/24 00:00 by dannylee UI add switch button between toolsmenu and toolbutton
 // @version        2013/03/22 08:02 Added "use strict"
 // @version        2013/03/22 08:01 Fixed commands to work properly, even if menus had been moved into other place
 // @version        2013/03/22 08:00 Fixed dragdrop target
@@ -48,6 +49,9 @@ if (window.userChromejs) {
 	editor: "D:\\Program Files\\Notepad++\\notepad++.exe",
 	//editor: "C:\\WINDOWS\\system32\\notepad.exe",
     // editor: "/usr/bin/gedit",
+	//dannylee
+	UIPREF: "userChromeJS.rebuildUI.showtoolbutton",
+	ShowToolButton: true,
 // --- config ---
     _statusDisplay: null,
     get statusDisplay() {
@@ -89,68 +93,18 @@ if (window.userChromejs) {
       }
       this.addPrefListener(userChromejs.readLaterPrefListener); // 登錄處理
 
-//菜單按鈕 start
-	  var navBar = $("TabsToolbar"); //urlbar-icons devToolsSeparator
-	  if (!navBar) return;
+		//dannylee
+		var menuitem = $("menu_ToolsPopup").insertBefore($C("menu", {
+			id: "userChromejs_Tools_Menu",
+			label: "userChromeJs管理器",
+			class: "menu-iconic",
+			image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACk0lEQVQ4ja3RW0hTARwG8A+nEIIxI9DwyQtCarKj7vhkWEwj8AKahNR6siAispce6k2y9VJvIblpkBOt4xGU5ko0RKZuecMLedlxTk0ym7Y5TcvL10OmKwuC+uB7/fG/AP8jarWaERERNBgMDxsbG4uMRuMdQRB4WH2MGdog0gvuuL+XbnDLDW66wQNAeXl5mSzLeUajsVQQhHW1+gjFtPgNn6d2Yl6pdM4rlc53U8/G/a4T/q2/A9RMS0tfXfR86ZpwLjgmnAuOMYU27/TZpe0/AQ0NDbkmk+nGPpC25vF47Iqi9CmK0jfh9PV4p7OWDwCRkZEsKysz1NfXF1VUVNzaA7TatSXvcs+Uy9WruFy9k9P+bt9M9vLO3C9AXFwcBUGgKIrMyMhgYmIij4aFMT05+fPk0NDAQGfn8LDNNjzUNdb/seekd90eAKiCwxkVFc2EhOPUaDTUiiLjYmKYAvAMwHyAJQDvAqwE2IwgOqDaB87nH2JRgbhaUFj8tbi4ePWiXv8pLyfHJwDMBli4C5QDNAG0AOxHwATcACcHr483NXeNWSyWPovV2tnUKPekAMwCeCk01HNPp7M8ysxsq9Hp2pp1urYOne71PjAPvum44jLXWTslSbJLsuyoNdf0pQA8BbBUo3FY7fZkyWrNrNutuaUl+zfAyy5Jeu4IBE4DvJaUNNTQ3p77RJb1JlnWV8qy/rEslfwEdLffdFY9dXSY617ZzPWtturqpr0VLoSE+G+npg4+EIRRo1Y7Kmm1o62i+HYP2JoBl8fD19+PxPs+jMSuLI7Grrjt0f6U3SOeA3gZoAFgFcAWgAOBR9x0g9szIGfBnVmQc+DqGPgDKAJ4FeB9gFXBwXyhUrFXFfDGf8k3RzmjBlDWo+YAAAAASUVORK5CYII="
+		}), $("menu_preferences"));
 
-	  this.menuBtn = $C("toolbarbutton", { //menu
-		id: "userChromeJsManagerMenuBtn",
-		label: "userChromeJs管理器",
-		tooltiptext: "userChromeJS管理器",
-		type: "menu", //下拉菜單,右鍵菜單請替換為 "context", "_child"
-		class: "toolbarbutton-1", //menu-iconic
-		style: "list-style-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACk0lEQVQ4ja3RW0hTARwG8A+nEIIxI9DwyQtCarKj7vhkWEwj8AKahNR6siAispce6k2y9VJvIblpkBOt4xGU5ko0RKZuecMLedlxTk0ym7Y5TcvL10OmKwuC+uB7/fG/AP8jarWaERERNBgMDxsbG4uMRuMdQRB4WH2MGdog0gvuuL+XbnDLDW66wQNAeXl5mSzLeUajsVQQhHW1+gjFtPgNn6d2Yl6pdM4rlc53U8/G/a4T/q2/A9RMS0tfXfR86ZpwLjgmnAuOMYU27/TZpe0/AQ0NDbkmk+nGPpC25vF47Iqi9CmK0jfh9PV4p7OWDwCRkZEsKysz1NfXF1VUVNzaA7TatSXvcs+Uy9WruFy9k9P+bt9M9vLO3C9AXFwcBUGgKIrMyMhgYmIij4aFMT05+fPk0NDAQGfn8LDNNjzUNdb/seekd90eAKiCwxkVFc2EhOPUaDTUiiLjYmKYAvAMwHyAJQDvAqwE2IwgOqDaB87nH2JRgbhaUFj8tbi4ePWiXv8pLyfHJwDMBli4C5QDNAG0AOxHwATcACcHr483NXeNWSyWPovV2tnUKPekAMwCeCk01HNPp7M8ysxsq9Hp2pp1urYOne71PjAPvum44jLXWTslSbJLsuyoNdf0pQA8BbBUo3FY7fZkyWrNrNutuaUl+zfAyy5Jeu4IBE4DvJaUNNTQ3p77RJb1JlnWV8qy/rEslfwEdLffdFY9dXSY617ZzPWtturqpr0VLoSE+G+npg4+EIRRo1Y7Kmm1o62i+HYP2JoBl8fD19+PxPs+jMSuLI7Grrjt0f6U3SOeA3gZoAFgFcAWgAOBR9x0g9szIGfBnVmQc+DqGPgDKAJ4FeB9gFXBwXyhUrFXFfDGf8k3RzmjBlDWo+YAAAAASUVORK5CYII=)"
-	  });
-
-	  navBar.appendChild(this.menuBtn);
-	  //navBar.parentNode.insertBefore(this.menuBtn, navBar.previousSibling);
-
-  		var xml_menuBtn = '\
-			<menupopup id="userChromejs_options"\
-					   onpopupshowing="userChromejs.onpopup();"\
-					   context="">\
-				<menuitem label="打開Chrome文件夾"\
-						  id="userChromejs_openChromeFolder"\
-						  tooltiptext="即用戶腳本文件夾"\
-						  accesskey="h"\
-						  class="menuitem-iconic"\
-						  oncommand=\'new Components.Constructor("@mozilla.org/file/local;1","nsILocalFile", "initWithPath")(Components.classes["@mozilla.org/file/directory_service;1"].getService(Components.interfaces.nsIProperties).get("UChrm", Components.interfaces.nsIFile).path).reveal();\'/>\
-				<menuitem label="新建窗口並重載腳本"\
-						  id="userChromejs_rebuild"\
-						  tooltiptext="僅重新載入選中的腳本"\
-						  accesskey="x"\
-						  class="menuitem-iconic"\
-						  oncommand="userChromejs.rebuild();"/>\
-				<menuitem label="新建窗口時是否重新加載腳本？"\
-						  id="userChrome_setting"\
-						  tooltiptext="僅重新載入選中的腳本"\
-						  accesskey="u"\
-						  oncommand="userChromejs.setting();"\
-						  type="checkbox"/>\
-				<menuitem label="重新啟動瀏覽器"\
-						  id="userChromejs_restartApp"\
-						  accesskey="r"\
-						  class="menuitem-iconic"\
-						  oncommand="userChromejs.restartApp();"/>\
-				<menuseparator />\
-				<menu label="userChromeJS用戶腳本命令..."\
-					  id="userChromejs_script_options_Menu"\
-					  accesskey="s"\
-					  class="menu-iconic">\
-					<menupopup id="userChromejs_script_options" />\
-				</menu>\
-			</menupopup>\
-		';
-
-	  var range_menuBtn = document.createRange();
-	  var referenceNode = $("userChromeJsManagerMenuBtn");
-
-	  range_menuBtn.selectNodeContents(referenceNode);
-	  range_menuBtn.collapse(false);
-	  range_menuBtn.insertNode(range_menuBtn.createContextualFragment(xml_menuBtn.replace(/\n|\t/g, '')));
-	  range_menuBtn.detach();
-//菜單按鈕 end
-
+		//dannylee
+		if (!gPrefService.prefHasUserValue(this.UIPREF)) {
+			gPrefService.setBoolPref(this.UIPREF, true);
+		}
     },
     uninit: function(){
       if ("nsDragAndDrop" in window && this.statusDisplay) {
@@ -331,7 +285,7 @@ if (window.userChromejs) {
       var menuitem = $('userChrome_setting', {checked: !flag});
 
       var menupopup = $("userChromejs_options");
-      for(var i = 6, len = menupopup.childNodes.length; i < len; i++){
+      for(var i = 7, len = menupopup.childNodes.length; i < len; i++){
         menupopup.removeChild(menupopup.lastChild);
       }
 
@@ -624,7 +578,25 @@ if (window.userChromejs) {
       if (typeof XRE.invalidateCachesOnRestart == "function")
         XRE.invalidateCachesOnRestart();
       appStartup.quit(appStartup.eRestart | appStartup.eAttemptQuit);
-    }
+    },
+	//dannylee
+	toggleUI: function(tag){
+		if (tag > 0) {
+			gPrefService.setBoolPref(this.UIPREF, !gPrefService.getBoolPref(this.UIPREF));
+			userChromejs.ShowToolButton = gPrefService.getBoolPref(userChromejs.UIPREF);
+		}
+		window.setTimeout(function() {
+			$("userChromejs_Tools_Menu").hidden = userChromejs.ShowToolButton;
+			$("userChromebtnMenu").hidden = !userChromejs.ShowToolButton;
+			if (!userChromejs.ShowToolButton) {
+				$("userChromejs_Tools_Menu").appendChild($("userChromejs_options"));
+				$("showToolsMenu").setAttribute("label", "UC腳本管理器顯示為按鈕");
+			} else {
+				$("userChromebtnMenu").appendChild($("userChromejs_options"));
+				$("showToolsMenu").setAttribute("label", "UC腳本管理器顯示為菜單");
+			}
+		}, 10);
+	},
   }
   window.userChromejs.init();
 	function $(id) { return document.getElementById(id); }
@@ -674,4 +646,53 @@ if (window.userChromejs) {
 */
 })();
   ]]></script>
+	<toolbarpalette id="TabsToolbar">
+		<toolbarbutton id="userChromebtnMenu"
+					   label="userChromeJs管理器"
+					   class="toolbarbutton-1 chromeclass-toolbar-additional"
+					   type="menu"
+					   removable="true"
+					   image="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACk0lEQVQ4ja3RW0hTARwG8A+nEIIxI9DwyQtCarKj7vhkWEwj8AKahNR6siAispce6k2y9VJvIblpkBOt4xGU5ko0RKZuecMLedlxTk0ym7Y5TcvL10OmKwuC+uB7/fG/AP8jarWaERERNBgMDxsbG4uMRuMdQRB4WH2MGdog0gvuuL+XbnDLDW66wQNAeXl5mSzLeUajsVQQhHW1+gjFtPgNn6d2Yl6pdM4rlc53U8/G/a4T/q2/A9RMS0tfXfR86ZpwLjgmnAuOMYU27/TZpe0/AQ0NDbkmk+nGPpC25vF47Iqi9CmK0jfh9PV4p7OWDwCRkZEsKysz1NfXF1VUVNzaA7TatSXvcs+Uy9WruFy9k9P+bt9M9vLO3C9AXFwcBUGgKIrMyMhgYmIij4aFMT05+fPk0NDAQGfn8LDNNjzUNdb/seekd90eAKiCwxkVFc2EhOPUaDTUiiLjYmKYAvAMwHyAJQDvAqwE2IwgOqDaB87nH2JRgbhaUFj8tbi4ePWiXv8pLyfHJwDMBli4C5QDNAG0AOxHwATcACcHr483NXeNWSyWPovV2tnUKPekAMwCeCk01HNPp7M8ysxsq9Hp2pp1urYOne71PjAPvum44jLXWTslSbJLsuyoNdf0pQA8BbBUo3FY7fZkyWrNrNutuaUl+zfAyy5Jeu4IBE4DvJaUNNTQ3p77RJb1JlnWV8qy/rEslfwEdLffdFY9dXSY617ZzPWtturqpr0VLoSE+G+npg4+EIRRo1Y7Kmm1o62i+HYP2JoBl8fD19+PxPs+jMSuLI7Grrjt0f6U3SOeA3gZoAFgFcAWgAOBR9x0g9szIGfBnVmQc+DqGPgDKAJ4FeB9gFXBwXyhUrFXFfDGf8k3RzmjBlDWo+YAAAAASUVORK5CYII="
+					   tooltiptext="userChromeJs管理器"
+					   popup="userChromejs_options">
+			<menupopup id="userChromejs_options"
+					   onpopupshowing="userChromejs.onpopup();"
+					   context="">
+				<menuitem label="打開腳本目錄"
+						  id="userChromejs_openChromeFolder"
+						  tooltiptext="即 chrome 文件夾"
+						  accesskey="h"
+						  class="menuitem-iconic"
+						  oncommand='new Components.Constructor("@mozilla.org/file/local;1","nsILocalFile", "initWithPath")(Components.classes["@mozilla.org/file/directory_service;1"].getService(Components.interfaces.nsIProperties).get("UChrm", Components.interfaces.nsIFile).path).reveal();'/>
+				<menuitem label="新建窗口並重載腳本"
+						  id="userChromejs_rebuild"
+						  tooltiptext="僅重新載入選中的腳本"
+						  accesskey="x"
+						  class="menuitem-iconic"
+						  oncommand="userChromejs.rebuild();"/>
+				<menuitem label="新建窗口時是否重新加載腳本？"
+						  id="userChrome_setting"
+						  tooltiptext="僅重新載入選中的腳本"
+						  accesskey="u"
+						  oncommand="userChromejs.setting();"
+						  type="checkbox"/>
+				<menuitem label="重新啟動瀏覽器"
+						  id="userChromejs_restartApp"
+						  accesskey="r"
+						  class="menuitem-iconic"
+						  oncommand="userChromejs.restartApp();"/>
+				<menuitem label="UC腳本管理器顯示為菜單"
+						  id="showToolsMenu"
+						  class="menuitem-iconic"
+						  oncommand="userChromejs.toggleUI(1);"/>
+				<menuseparator/>
+				<menu label="userChromeJS用戶腳本命令..."
+					  id="userChromejs_script_options_Menu"
+					  accesskey="s"
+					  class="menu-iconic">
+					<menupopup id="userChromejs_script_options"/>
+				</menu>
+			</menupopup>
+		</toolbarbutton>
+	</toolbarpalette>
 </overlay>
