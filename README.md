@@ -65,6 +65,7 @@ Commonly Used (Default: enabled)
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/clipple/" target="_blank">Clipple</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/downthemall/" target="_blank">DownThemAll!</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-tw/firefox/addon/noscript/" target="_blank">NoScript Security Suite</a><br></li>
+<li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/quick-copy-2/" target="_blank">Quick Copy 2</a><br></li>
 <li><a href="http://userchromejs.mozdev.org/" target="_blank">userChromeJS</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/zoom-panel/" target="_blank">快速縮放</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/%E6%96%B0%E5%90%8C%E6%96%87%E5%A0%82-new-tong-wen-tang/" target="_blank">新同文堂</a><br></li>
@@ -79,6 +80,8 @@ Non-Commonly Used (Using when needed, Default: disabled)
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/element-inspector/" target="_blank">Element Inspector</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/faviconreloader/" target="_blank">FavIcon Reloader</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/fun-characters/" target="_blank">Fun Characters</a><br></li>
+<li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/quick-context-2/" target="_blank">Quick Context 2</a><br></li>
+<li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/quickcontextsearch/" target="_blank">Quick Context Search</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/super-drag/?src=userprofile" target="_blank">Super Drag</a><br></li>
 <li><a href="https://addons.mozilla.org/zh-TW/firefox/addon/unblock-youku/" target="_blank">Unblock Youku</a><br></li>
 </ol>
