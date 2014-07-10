@@ -113,12 +113,9 @@ window.UCL = {
 								   class="toolbarbutton-1 chromeclass-toolbar-additional" type="menu" \
 								   removable="true" \
 								   image="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAARklEQVQ4jWNgYGD4TyFm+L/uaBJezMDA8H+vgyEGHk4GEIPxGnBhdikKZmBg+P/vEyscjxrASjglEmPAvBMPMPBwMoASDADElRSk+LLlQAAAAABJRU5ErkJggg==" \
-								   tooltiptext="用戶樣式管理器" >\
+								   tooltiptext="用戶樣式管理器（鼠標右鍵開OR關）"\
+								   onclick="if (event.button == 2) {UCL.enableUCL(); event.preventDefault();}" >\
 						<menupopup id="usercssloader-menupopup">\
-							<menuitem label="UserCSSLoader 已啟用"\
-									  id="usercssloader_enableUCL"\
-									  class="menuitem-iconic"\
-									  oncommand="UCL.enableUCL();" />\
 							<menuitem label="打開樣式目錄"\
 									  accesskey="O"\
 									  oncommand="UCL.openFolder();" />\
@@ -135,7 +132,7 @@ window.UCL = {
 									  acceltext="Alt + R"\
 									  oncommand="UCL.rebuild();" />\
 							<menuseparator />\
-							<menuitem label="新建用戶 css 樣式 (外部編輯器)"\
+							<menuitem label="新建用戶樣式 (外部編輯器)"\
 									  accesskey="N"\
 									  oncommand="UCL.create();" />\
 							<menuitem label="新建瀏覽器樣式 (Chrome)"\
@@ -252,12 +249,12 @@ window.UCL = {
 				delete this.readCSS[leafName];
 			}
 			UCL.UCLdisable=!UCL.UCLdisable;
-			$("usercssloader_enableUCL").setAttribute("label", "UserCSSLoader 已禁用");
+			$("usercssloader-menu").setAttribute("image", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAARElEQVQ4je3SsQkAMAgAwd/V3RzAARzEZUwXCAEjpAsprv3qAfISaWYlIEVk81Kgowyo6gLIiJh+IM4ndgLuvnkpcGMAOeYtnkwr+88AAAAASUVORK5CYII=");
 			XULBrowserWindow.statusTextField.label = "UserCSSLoader 已禁用";
 		} else {
 			this.rebuild();
 			UCL.UCLdisable=!UCL.UCLdisable;
-			$("usercssloader_enableUCL").setAttribute("label", "UserCSSLoader 已啟用");
+			$("usercssloader-menu").setAttribute("image", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAARklEQVQ4jWNgYGD4TyFm+L/uaBJezMDA8H+vgyEGHk4GEIPxGnBhdikKZmBg+P/vEyscjxrASjglEmPAvBMPMPBwMoASDADElRSk+LLlQAAAAABJRU5ErkJggg==");
 			XULBrowserWindow.statusTextField.label = "UserCSSLoader 已啟用";
 		}
 	},
@@ -315,7 +312,7 @@ window.UCL = {
 				autocheck: "false",
 				oncommand: "UCL.toggle('"+ aLeafName +"');",
 				onclick: "UCL.itemClick(event);",
-				tooltiptext: "左鍵：啟用 / 禁用\n中鍵：重新加載\n右鍵：編輯\n\nCtrl + 中鍵：複選啟用 / 禁用"
+				tooltiptext: "左鍵：啟用 / 禁用\n中鍵：重新加載\n右鍵：編輯\nCtrl + 中鍵：複選啟用 / 禁用"
 			}));
 		}
 		menuitem.setAttribute("checked", CSS.enabled);
