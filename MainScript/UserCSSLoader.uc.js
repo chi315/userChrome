@@ -8,6 +8,9 @@
 // @compatibility	Firefox 4
 // @charset			UTF-8
 // @version			0.0.4
+// @homepageURL		https://github.com/Griever/userChromeJS/blob/master/UserCSSLoader
+// @note			2014/7/10 Mod by Oos 添加 Ctrl + 中鍵複選啟用/停用
+// @note			2014/7/10 Mod by feiruo 添加啟用/停用 UserCSSLoader
 // @note			2014/7/8 Mod by feiruo 添加重載 userChrome.css 和重載 userContent.css
 // @note			2014/2/26 Mod by dannylee 添加可切換圖標和菜單模式, CSS菜單中鍵重載
 // @note			0.0.4 Remove E4X
@@ -21,8 +24,8 @@
 
 在菜單「CSS-Stylish管理」菜單中：
 左鍵點擊各 CSS 項目，切換各項目的「應用與否」；
-//中鍵點擊各 CSS 項目，也是切換各項目的「應用與否」，但不退出菜單，即可連續操作;
 中鍵點擊各 CSS 項目，重新加載各項目;
+Ctrl + 中鍵點擊各 CSS 項目，也是切換各項目的「應用與否」，但不退出菜單，即可連續操作;
 右鍵點擊各 CSS 項目，則是調用編輯器對其進行編輯；
 
 userChrome.css 和 userContent.css
@@ -60,6 +63,8 @@ window.UCL = {
 	readCSS    : {},
 	UIPREF: "showtoolbutton",
 	ShowToolButton: true,
+	UCLdisable:false,
+	disabled_listTmp:{},
 	get disabled_list() {
 		let obj = [];
 		try {
@@ -110,19 +115,21 @@ window.UCL = {
 								   image="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAARklEQVQ4jWNgYGD4TyFm+L/uaBJezMDA8H+vgyEGHk4GEIPxGnBhdikKZmBg+P/vEyscjxrASjglEmPAvBMPMPBwMoASDADElRSk+LLlQAAAAABJRU5ErkJggg==" \
 								   tooltiptext="用戶樣式管理器" >\
 						<menupopup id="usercssloader-menupopup">\
+							<menuitem label="UserCSSLoader 已啟用"\
+									  id="usercssloader_enableUCL"\
+									  class="menuitem-iconic"\
+									  oncommand="UCL.enableUCL();" />\
 							<menuitem label="打開樣式目錄"\
 									  accesskey="O"\
 									  oncommand="UCL.openFolder();" />\
 							<menuitem label="userChrome.css"\
 									  tooltiptext="左鍵：重載 | 右鍵：編輯"\
 									  hidden="false"\
-									  oncommand="UCL.reloadUserChromeCSS();"\
-									  onclick="if (event.button ==2) {UCL.editUserCSS(\'userChrome.css\'); event.preventDefault();}"/>\
+									  onclick="UCL.userC(event,\'userChrome.css\');"/>\
 							<menuitem label="userContent.css"\
 									  tooltiptext="左鍵：重載 | 右鍵：編輯"\
 									  hidden="false"\
-									  oncommand="UCL.reloadUserContentCSS();"\
-									  onclick="if (event.button ==2) {UCL.editUserCSS(\'userContent.css\'); event.preventDefault();}"/>\
+									  onclick="UCL.userC(event,\'userContent.css\');"/>\
 							<menuitem label="重新加載全部樣式"\
 									  accesskey="R"\
 									  acceltext="Alt + R"\
@@ -238,6 +245,22 @@ window.UCL = {
 			case "unload": this.uninit(); break;
 		}
 	},
+	enableUCL:function() {
+		if (!UCL.UCLdisable) {
+			for (let [leafName, CSS] in Iterator(this.readCSS)) {
+				CSS.enabled = false;
+				delete this.readCSS[leafName];
+			}
+			UCL.UCLdisable=!UCL.UCLdisable;
+			$("usercssloader_enableUCL").setAttribute("label", "UserCSSLoader 已禁用");
+			XULBrowserWindow.statusTextField.label = "UserCSSLoader 已禁用";
+		} else {
+			this.rebuild();
+			UCL.UCLdisable=!UCL.UCLdisable;
+			$("usercssloader_enableUCL").setAttribute("label", "UserCSSLoader 已啟用");
+			XULBrowserWindow.statusTextField.label = "UserCSSLoader 已啟用";
+		}
+	},
 	rebuild: function() {
 		let ext = /\.css$/i;
 		let not = /\.uc\.css/i;
@@ -292,7 +315,7 @@ window.UCL = {
 				autocheck: "false",
 				oncommand: "UCL.toggle('"+ aLeafName +"');",
 				onclick: "UCL.itemClick(event);",
-				tooltiptext: "左鍵：啟用/禁用\n中鍵：重新加載\n右鍵：編輯"
+				tooltiptext: "左鍵：啟用 / 禁用\n中鍵：重新加載\n右鍵：編輯\n\nCtrl + 中鍵：複選啟用 / 禁用"
 			}));
 		}
 		menuitem.setAttribute("checked", CSS.enabled);
@@ -312,11 +335,15 @@ window.UCL = {
 		let label = event.currentTarget.getAttribute("label");
 
 		if (event.button == 1) {
-			var CSS = this.readCSS[label];
-			if (!CSS) return;
-			CSS.reloadCSS();
-			XULBrowserWindow.statusTextField.label = label + " 重新加載已完成! ";
-			//this.toggle(label);
+			if (event.ctrlKey) {
+				this.toggle(label);
+			}
+			else {
+				var CSS = this.readCSS[label];
+				if (!CSS) return;
+				CSS.reloadCSS();
+				XULBrowserWindow.statusTextField.label = label + " 重新加載已完成! ";
+			}
 		}
 		else if (event.button == 2) {
 			closeMenus(event.target);
@@ -428,42 +455,40 @@ window.UCL = {
 			this.edit(file);
 		}
 	},
-		reloadUserChromeCSS: function() { //add by feiruo
+		userC:function(event,str) { //add by feiruo
+				if (event.button == 0) {
+				UCL.reloadUserCSS(str);
+			} else if (event.button == 2) {
+				UCL.editUserCSS(str);
+				event.preventDefault();
+			}
+		},
+		reloadUserCSS: function(str) {
 			var aFile = Services.dirsvc.get("UChrm", Ci.nsILocalFile);
-			aFile.appendRelativePath("userChrome.css");
-
+			aFile.appendRelativePath(str);
 			var fileURL = Services.io.getProtocolHandler("file")
 				.QueryInterface(Ci.nsIFileProtocolHandler)
 				.getURLSpecFromFile(aFile);
-
+			if(str=="userChrome.css") {
 			var rule = UCL.getStyleSheet(document.documentElement, fileURL);
 			if (!rule) return;
-
 			inIDOMUtils.parseStyleSheet(rule, UCL.loadText(aFile));
-			rule.insertRule(":root{}", rule.cssRules.length); // おまじない
-			XULBrowserWindow.statusTextField.label = "重新加載 userChrome.css 已完成 ";
-			// ウインドウを一度背面にする必要がある
+			rule.insertRule(":root{}", rule.cssRules.length); 
 			var w = window.open("", "", "width=10, height=10");
 			w.close();
-		},
-		reloadUserContentCSS: function() {
-			var aFile = Services.dirsvc.get("UChrm", Ci.nsILocalFile);
-			aFile.appendRelativePath("userContent.css");
-
-			var fileURL = Services.io.getProtocolHandler("file")
-				.QueryInterface(Ci.nsIFileProtocolHandler)
-				.getURLSpecFromFile(aFile);
-
+		}
+		if(str=="userContent.css") {			
 			var rule = UCL.getStyleSheet(content.document.documentElement, fileURL);
 			if (!rule) return;
-
 			inIDOMUtils.parseStyleSheet(rule, UCL.loadText(aFile));
-			rule.insertRule(":root{}", rule.cssRules.length); // おまじない
-			XULBrowserWindow.statusTextField.label = "重新加載 userContent.css 已完成 ";
+			rule.insertRule(":root{}", rule.cssRules.length); 
 			// 再描畫處理
 			var s = gBrowser.markupDocumentViewer;
 			s.authorStyleDisabled = !s.authorStyleDisabled;
 			s.authorStyleDisabled = !s.authorStyleDisabled;
+		}
+
+			XULBrowserWindow.statusTextField.label = "重新加載 "+str+" 已完成 ";
 		},
 		getStyleSheet: function(aElement, cssURL) {
 			var rules = inIDOMUtils.getCSSStyleRules(aElement);
