@@ -4,6 +4,7 @@
 // @description		リンクを左ボタン長押しで新しいタブで開く
 // @include			main
 // @namespace		http://d.hatena.ne.jp/rikuba/20100403/1270228018
+// @downloadURL		http://u6.getuploader.com/script/edit/970
 // @note			tips:  browser.link.open_newwindowを1に設定すればリンクをその場で開くか新しいタブで開くかをこちら側で制御できるようになる
 // ==/UserScript==
 (function() {
@@ -30,6 +31,7 @@
 	}, false);
 
 	gBrowser.mPanelContainer.addEventListener('click', function(e) {
+		if (e.button != 2) return;
 		if (tid == null) return;
 		if (opened) {
 			e.preventDefault();
