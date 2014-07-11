@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name			openLinkByLongPress.uc.js
-// @description		按住右鍵500亳秒後打開鏈結 (新分頁前景)
+// @description		按住右鍵250亳秒後打開鏈結 (新分頁前景)
 // @description		リンクを左ボタン長押しで新しいタブで開く
 // @include			main
 // @namespace		http://d.hatena.ne.jp/rikuba/20100403/1270228018
@@ -23,7 +23,7 @@
 		tid = setTimeout(function() {
 			openLinkIn(node.href, loadInBackground ? "tab" : "tabshifted", {});
 			opened = true;
-		}, 500);
+		}, 250);
 	}, false);
 
 	gBrowser.mPanelContainer.addEventListener('mouseup', function(e) {
@@ -35,6 +35,7 @@
 		if (tid == null) return;
 		if (opened) {
 			e.preventDefault();
+			document.getElementById("contentAreaContextMenu").hidePopup();
 			opened = false;
 		} else {
 			clearTimeout(tid);
