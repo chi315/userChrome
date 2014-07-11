@@ -9,6 +9,8 @@
 // @include        main
 // @compatibility  Firefox 3.5b4pre 3.6a1pre 4.0b7pre
 // @author         Alice0775
+// @homepageURL    https://github.com/alice0775/userChrome.js/blob/master/rebuild_userChrome.uc.xul
+// @version        2014/07/08 00:00 by ywzhaiqi 添加中鍵打開主頁或下載鏈接和 Ctrl + 中鍵複選啟用/停用
 // @version        2014/07/08 00:00 by ywzhaiqi 第一層目錄移動到頂層，簡化目錄的名字
 // @version        2014/02/24 00:00 by dannylee UI add switch button between toolsmenu and toolbutton & setEditor
 // @version        2013/03/22 08:02 Added "use strict"
@@ -303,6 +305,13 @@
 
       let parentMenuPopup = menupopup,
           topMenuitems = [];
+      let getTooltiptext = function(script, url) {
+        let text = '左鍵：啟用 / 禁用\n中鍵：打開主頁或下載鏈結\n右鍵：編輯\nCtrl + 中鍵：複選啟用 / 禁用\n\n' + '說明：' + script.description || '';
+        if (url) {
+          text += '\n' + '鏈結：' + url;
+        }
+        return text;
+      };
 
       for(var j = 0, lenj = userChrome_js.arrSubdir.length; j < lenj; j++) {
         var dirName = userChrome_js.arrSubdir[j] == "" ? "root" : userChrome_js.arrSubdir[j];
@@ -362,8 +371,13 @@
 				autocheck: 'false',
 				checked: !userChrome_js.scriptDisable[script.filename] 
 			}));
-            if(script.description)
-              menuitem.setAttribute('tooltiptext',script.description);
+            let url = this.getScriptHomeURL(script);
+            if (url)
+              menuitem.setAttribute('homeURL', url);
+            let description = getTooltiptext(script, url);
+            if(description)
+              menuitem.setAttribute('tooltiptext', description);
+
             menuitem.script = script;
             if (dirName === 'root') {
               topMenuitems.push(menuitem);
@@ -386,8 +400,13 @@
 				autocheck: 'false',
 				checked: !userChrome_js.scriptDisable[script.filename] 
 			}));
-            if(script.description)
-              menuitem.setAttribute('tooltiptext',script.description);
+            let url = this.getScriptHomeURL(script);
+            if (url)
+              menuitem.setAttribute('homeURL', url);
+            let description = getTooltiptext(script, url);
+            if(description)
+              menuitem.setAttribute('tooltiptext', description);
+
             menuitem.script = script;
             if (dirName === 'root') {
               topMenuitems.push(menuitem);
@@ -434,13 +453,24 @@
 
     clickScriptMenu: function(event) {
       if(event.button==1) {
-        userChromejs.chgScriptStat(event.target.script.filename);
-        event.target.setAttribute('checked',!userChrome_js.scriptDisable[event.target.script.filename] );
+        let script = event.target.script;
+        if (event.ctrlKey) {
+          userChromejs.chgScriptStat(script.filename);
+          event.target.setAttribute('checked',!userChrome_js.scriptDisable[script.filename] );
+        } else {
+          let url = event.target.getAttribute('homeURL');
+          if (url) {
+            gBrowser.addTab(url);
+          }
+        }
       }else if(event.button==2) {
         userChromejs.launchEditor(event.target.script);
       }
     },
 
+    getScriptHomeURL: function(script) {
+      return script.homepageURL || script.downloadURL || script.updateURL || script.reviewURL;
+    },
     launchEditor: function(aScript) {
       userChromejs.editor = gPrefService.getCharPref("view_source.editor.path");//dannylee
       var editor = userChromejs.editor;
