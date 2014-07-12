@@ -6,6 +6,7 @@
 // @compatibility  Firefox 5.0
 // @license        MIT License
 // @version        0.1.8.2
+// @homepageURL    https://github.com/Griever/userChromeJS/blob/master/UserScriptLoader
 // @note           modified by ywzhaiqi: 修正@include 正則表達式的支持 2014.06.23
 // @note           2014/2/26 Mod by  dannylee修改可切換圖標和菜單模式
 // @note           0.1.8.2 Firefox 22 用の修正
@@ -543,13 +544,15 @@ USL.__defineGetter__("GLOBAL_EXCLUDES_REGEXP", function() {
 var DISABLED = true;
 USL.__defineGetter__("disabled", function() DISABLED);
 USL.__defineSetter__("disabled", function(bool) {
+	var str = "油猴腳本管理器";
+	var dstr = "\n\n中鍵：重新加載\n右鍵：啟用 / 禁用";
 	if (bool) {
 		this.icon.setAttribute("image", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAI6SURBVDhPhZPfS1NhGMe9E7yw6KaVYcNOa65tLjMda9VhxRoLz5aUghcZuygZtkVIDRl+xxARGUNkRMSIiOhihITEEBGRERFjSIzDkCHSRX9I5/voRstgBx7eX9/v533e93lPR0ebb9RnP62pzpER54WJ/r4z8XZ6WX945+qJkOq8q6muuG/YCrtyFlaziXGrLeDICMMMt7OvYYTL2ovAdduUQ+mJK4rS+V9QSB14SuOjsAp1yAKPS4F3UIHfY5MYsvWi32w632LWPI5LoRvOCUYiOolyaQ16ZQMf3ixKFmw55jzXG1r6BHTfd+VVakYTccNc293C3s9tFNfyRrsj/VplExUDQh319AlgbjqI/OJjPI+EZSeKV3NprKymsV/7jtzrBaOfakKoo54+AcwbtOWX41hKRsGd69UdxBIxWAYt+FWvNPv1aknWl5IzyM1Pgj4B3LvpiBPwNps8BOgldJu60XWqC78Pqs3+vv5NsqCOAPoEcPliz0DY55Lz7R0BssspZDNpAaxkF5Axxg1ApfQF1NMngEBA6WTZ9HIRW18/Ihzwwe8eRkQLIjY+hidjGoJeNx4E/dgufpJ74kU2S0lAowKJF9NYL+TlGLzAg9oPabn7+uc85majUqkWAEmjqmsqNRuRLFgunpWXyYtjK2U0jqeXN0Ad9S2P6fCHccVZosK7jKRZ290UE1vdgBbeZ6TU1FF/7CnzKOo1y+2g1/6MKf4bnOc6de1+qJOG4JwR5r+CY84f+/4AS9dVtRJZF3sAAAAASUVORK5CYII=");
-		this.icon.setAttribute("tooltiptext", "油猴腳本管理器（鼠標右鍵開OR關）已禁用");
+		this.icon.setAttribute("tooltiptext", str + "已禁用" + dstr);
 		gBrowser.mPanelContainer.removeEventListener(USL.eventName, this, false);
 	} else {
 		this.icon.setAttribute("image", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIzSURBVDhPhVNNSFRRFD5LdxqtSxkj4gUZg4TmT0/HqGhhZTsXU5laiGhUDP5OpRlBNeZPY5HdMjKTcnBRRptp51KthaBOd4yidi1n+XXOeY06GMyFw7n3nO/73nn3nEuUZXVXUVGvS231BygW8JHNhtd8VxXlMynCZlsOEY7tIbgFauGsAkIMuwQx/mqaiNp9hGulFD9RSLbGR7n/FWLyghAjdTvQXEwIHiQ0+AlXD3tW56jgkQxyTwXV9lRSTOx1+36kFvuAlQdYeFGvVYiXs8Qln8YKT4U6Azl/xlv9Clby6iCQeAR8ewI7d109ElGOD3G+X3GCF54KDF/yY3bgJExTIYMiCjZT52EmGoH1VzBvmnh/gYUec/6h4gQvPE+gtQyToTLM9VUCayOAfQq3zUVeeR7wY2Zzb41WJri34QCEpwIXK3ZaEZiPnvJKTz4H7SXQLgJ+fdzcr09oFfPR0yogPBU47qNgZ3UOUku3NwTM6GWY0Xbg9yeY6BWYkRb+nZcqkFoagOCFpwKhGsqVtmHlPga7zuDL+5vA90ku/x3wc5Zths9T+PrhFoa6z2pH5CI3WikC6Q4k471oOFqEoLMb/SUOxkod3GXf6OSjmePJzze0UxkCosQDFI91FLP6PW0XEmN6mbDP2Ma9DsgFc5WCE3zGMP17MFZatDx9zmvn2rBHEs+zsTzNreW8vA/Bbxtl+RUe3zuhclpNv4WtXuKaZ1y2B1XAgBI2d4vJWeLb1l8Iw62jtqs6OwAAAABJRU5ErkJggg==");
-		this.icon.setAttribute("tooltiptext", "油猴腳本管理器（鼠標右鍵開OR關）已啟用");
+		this.icon.setAttribute("tooltiptext", str + "已啟用" + dstr);
 		gBrowser.mPanelContainer.addEventListener(USL.eventName, this, false);
 	}
 	return DISABLED = bool;
@@ -614,8 +617,7 @@ USL.init = function() {
 				<toolbarbutton id="UserScriptLoader-icon" label="UserScriptLoader" \
 							   class="toolbarbutton-1" type="menu" \
 							   onclick="USL.iconClick(event);"  removable="true" \
-							   image="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIzSURBVDhPhVNNSFRRFD5LdxqtSxkj4gUZg4TmT0/HqGhhZTsXU5laiGhUDP5OpRlBNeZPY5HdMjKTcnBRRptp51KthaBOd4yidi1n+XXOeY06GMyFw7n3nO/73nn3nEuUZXVXUVGvS231BygW8JHNhtd8VxXlMynCZlsOEY7tIbgFauGsAkIMuwQx/mqaiNp9hGulFD9RSLbGR7n/FWLyghAjdTvQXEwIHiQ0+AlXD3tW56jgkQxyTwXV9lRSTOx1+36kFvuAlQdYeFGvVYiXs8Qln8YKT4U6Azl/xlv9Clby6iCQeAR8ewI7d109ElGOD3G+X3GCF54KDF/yY3bgJExTIYMiCjZT52EmGoH1VzBvmnh/gYUec/6h4gQvPE+gtQyToTLM9VUCayOAfQq3zUVeeR7wY2Zzb41WJri34QCEpwIXK3ZaEZiPnvJKTz4H7SXQLgJ+fdzcr09oFfPR0yogPBU47qNgZ3UOUku3NwTM6GWY0Xbg9yeY6BWYkRb+nZcqkFoagOCFpwKhGsqVtmHlPga7zuDL+5vA90ku/x3wc5Zths9T+PrhFoa6z2pH5CI3WikC6Q4k471oOFqEoLMb/SUOxkod3GXf6OSjmePJzze0UxkCosQDFI91FLP6PW0XEmN6mbDP2Ma9DsgFc5WCE3zGMP17MFZatDx9zmvn2rBHEs+zsTzNreW8vA/Bbxtl+RUe3zuhclpNv4WtXuKaZ1y2B1XAgBI2d4vJWeLb1l8Iw62jtqs6OwAAAABJRU5ErkJggg==" \
-							   tooltiptext="油猴腳本管理器（鼠標右鍵開OR關）" >\
+							   image="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIzSURBVDhPhVNNSFRRFD5LdxqtSxkj4gUZg4TmT0/HqGhhZTsXU5laiGhUDP5OpRlBNeZPY5HdMjKTcnBRRptp51KthaBOd4yidi1n+XXOeY06GMyFw7n3nO/73nn3nEuUZXVXUVGvS231BygW8JHNhtd8VxXlMynCZlsOEY7tIbgFauGsAkIMuwQx/mqaiNp9hGulFD9RSLbGR7n/FWLyghAjdTvQXEwIHiQ0+AlXD3tW56jgkQxyTwXV9lRSTOx1+36kFvuAlQdYeFGvVYiXs8Qln8YKT4U6Azl/xlv9Clby6iCQeAR8ewI7d109ElGOD3G+X3GCF54KDF/yY3bgJExTIYMiCjZT52EmGoH1VzBvmnh/gYUec/6h4gQvPE+gtQyToTLM9VUCayOAfQq3zUVeeR7wY2Zzb41WJri34QCEpwIXK3ZaEZiPnvJKTz4H7SXQLgJ+fdzcr09oFfPR0yogPBU47qNgZ3UOUku3NwTM6GWY0Xbg9yeY6BWYkRb+nZcqkFoagOCFpwKhGsqVtmHlPga7zuDL+5vA90ku/x3wc5Zths9T+PrhFoa6z2pH5CI3WikC6Q4k471oOFqEoLMb/SUOxkod3GXf6OSjmePJzze0UxkCosQDFI91FLP6PW0XEmN6mbDP2Ma9DsgFc5WCE3zGMP17MFZatDx9zmvn2rBHEs+zsTzNreW8vA/Bbxtl+RUe3zuhclpNv4WtXuKaZ1y2B1XAgBI2d4vJWeLb1l8Iw62jtqs6OwAAAABJRU5ErkJggg==" >\
 					<menupopup id="UserScriptLoader-popup" \
 							   onpopupshowing="USL.onPopupShowing(event);"\
 							   onpopuphidden="USL.onPopupHidden(event);"\
@@ -810,7 +812,7 @@ USL.createMenuitem = function () {
 	USL.readScripts.forEach(function(script) {
 		let m = USL.popup.insertBefore($C('menuitem', {
 			label: script.name + ' (' + script.version + ')',
-			tooltiptext: '左鍵：啟用/禁用\n中鍵：下載鏈接\n右鍵：編輯',
+			tooltiptext: '左鍵：啟用 / 禁用\n中鍵：打開下載鏈結 - ' + script.downloadURL + '\n右鍵：編輯\nCtrl + 中鍵：複選啟用 / 禁用',
 			class: "UserScriptLoader-item",
 			checked: !script.disabled,
 			type: 'checkbox',
@@ -991,11 +993,15 @@ USL.menuClick = function(event) {
 	if (event.button == 0 || menuitem.getAttribute('type') != 'checkbox')
 		return;
 	if (event.button == 1) {//edited by dannylee
-		//menuitem.doCommand();
-		//menuitem.setAttribute('checked', menuitem.getAttribute('checked') == 'true'? 'false' : 'true');
+		if (event.ctrlKey) {
+			menuitem.doCommand();
+			menuitem.setAttribute('checked', menuitem.getAttribute('checked') == 'true'? 'false' : 'true');
+		}
 		//Application.console.log("downloadURL:" + menuitem.script.downloadURL);
-		if (menuitem.script && menuitem.script.downloadURL != null)
-			openLinkIn(menuitem.script.downloadURL,  "tab", {});	
+		else {
+			if (menuitem.script && menuitem.script.downloadURL != null)
+			openLinkIn(menuitem.script.downloadURL,  "tab", {});
+		}
 	} else if (event.button == 2 && USL.EDITOR && menuitem.script) {
 		event.preventDefault();
 		event.stopPropagation();
@@ -1025,6 +1031,7 @@ USL.iconClick = function(event) {
 		USL.pref.setValue('disabled', USL.disabled);
 	} else if (event.button == 1) {
 		USL.rebuild();
+		BrowserReloadSkipCache();
 	}
 };
 
