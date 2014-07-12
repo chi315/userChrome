@@ -9,7 +9,7 @@
 // @charset			UTF-8
 // @version			0.0.4
 // @homepageURL		https://github.com/Griever/userChromeJS/blob/master/UserCSSLoader
-// @note			2014/7/10 Mod by Oos 添加 Ctrl + 中鍵複選啟用/停用
+// @note			2014/7/10 Mod by Oos 添加 CSS菜單 Ctrl + 中鍵複選啟用/停用, 按鈕中鍵重新加載和右鍵啟用 / 禁用
 // @note			2014/7/10 Mod by feiruo 添加啟用/停用 UserCSSLoader
 // @note			2014/7/8 Mod by feiruo 添加重載 userChrome.css 和重載 userContent.css
 // @note			2014/2/26 Mod by dannylee 添加可切換圖標和菜單模式, CSS菜單中鍵重載
@@ -112,13 +112,17 @@ window.UCL = {
 					<toolbarbutton id="usercssloader-menu" label="UC-Stylish" \
 								   class="toolbarbutton-1 chromeclass-toolbar-additional" type="menu" \
 								   removable="true" \
-								   image="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAARklEQVQ4jWNgYGD4TyFm+L/uaBJezMDA8H+vgyEGHk4GEIPxGnBhdikKZmBg+P/vEyscjxrASjglEmPAvBMPMPBwMoASDADElRSk+LLlQAAAAABJRU5ErkJggg==" \
-								   tooltiptext="用戶樣式管理器（鼠標右鍵開OR關）"\
-								   onclick="if (event.button == 2) {UCL.enableUCL(); event.preventDefault();}" >\
+								   image="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAARklEQVQ4jWNgYGD4TyFm+L/uaBJezMDA8H+vgyEGHk4GEIPxGnBhdikKZmBg+P/vEyscjxrASjglEmPAvBMPMPBwMoASDADElRSk+LLlQAAAAABJRU5ErkJggg=="\
+								   tooltiptext="用戶樣式管理器已啟用 (中鍵：重新加載 | 右鍵：啟用 / 禁用)"\
+								   onclick="UCL.iconClick(event);" >\
 						<menupopup id="usercssloader-menupopup">\
 							<menuitem label="打開樣式目錄"\
 									  accesskey="O"\
 									  oncommand="UCL.openFolder();" />\
+							<menuitem label="重新加載全部樣式"\
+									  accesskey="R"\
+									  acceltext="Alt + R"\
+									  oncommand="UCL.rebuild();" />\
 							<menuitem label="userChrome.css"\
 									  tooltiptext="左鍵：重載 | 右鍵：編輯"\
 									  hidden="false"\
@@ -127,10 +131,6 @@ window.UCL = {
 									  tooltiptext="左鍵：重載 | 右鍵：編輯"\
 									  hidden="false"\
 									  onclick="UCL.userC(event,\'userContent.css\');"/>\
-							<menuitem label="重新加載全部樣式"\
-									  accesskey="R"\
-									  acceltext="Alt + R"\
-									  oncommand="UCL.rebuild();" />\
 							<menuseparator />\
 							<menuitem label="新建用戶樣式 (外部編輯器)"\
 									  accesskey="N"\
@@ -243,6 +243,8 @@ window.UCL = {
 		}
 	},
 	enableUCL:function() {
+		var str = "用戶樣式管理器";
+		var dstr = "\n\n中鍵：重新加載\n右鍵：啟用 / 禁用";
 		if (!UCL.UCLdisable) {
 			for (let [leafName, CSS] in Iterator(this.readCSS)) {
 				CSS.enabled = false;
@@ -250,11 +252,13 @@ window.UCL = {
 			}
 			UCL.UCLdisable=!UCL.UCLdisable;
 			$("usercssloader-menu").setAttribute("image", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAARElEQVQ4je3SsQkAMAgAwd/V3RzAARzEZUwXCAEjpAsprv3qAfISaWYlIEVk81Kgowyo6gLIiJh+IM4ndgLuvnkpcGMAOeYtnkwr+88AAAAASUVORK5CYII=");
+			$("usercssloader-menu").setAttribute("tooltiptext", str + "已禁用" + dstr);
 			XULBrowserWindow.statusTextField.label = "UserCSSLoader 已禁用";
 		} else {
 			this.rebuild();
 			UCL.UCLdisable=!UCL.UCLdisable;
 			$("usercssloader-menu").setAttribute("image", "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAARklEQVQ4jWNgYGD4TyFm+L/uaBJezMDA8H+vgyEGHk4GEIPxGnBhdikKZmBg+P/vEyscjxrASjglEmPAvBMPMPBwMoASDADElRSk+LLlQAAAAABJRU5ErkJggg==");
+			$("usercssloader-menu").setAttribute("tooltiptext", str + "已啟用" + dstr);
 			XULBrowserWindow.statusTextField.label = "UserCSSLoader 已啟用";
 		}
 	},
@@ -278,7 +282,7 @@ window.UCL = {
 			this.rebuildMenu(leafName);
 		}
 		if (this.initialized)
-			XULBrowserWindow.statusTextField.label = "重新加載css已完成 ";//Rebuild しました
+			XULBrowserWindow.statusTextField.label = "重新加載 css 已完成 ";//Rebuild しました
 	},
 	loadCSS: function(aFile) {
 		var CSS = this.readCSS[aFile.leafName];
@@ -345,6 +349,14 @@ window.UCL = {
 		else if (event.button == 2) {
 			closeMenus(event.target);
 			this.edit(this.getFileFromLeafName(label));
+		}
+	},
+	iconClick: function(event) {
+		if (event.button == 2) {
+			UCL.enableUCL();
+			event.preventDefault();
+		} else if (event.button == 1) {
+			UCL.rebuild();
 		}
 	},
 	getFileFromLeafName: function(aLeafName) {
