@@ -1,3 +1,8 @@
+// ==UserScript==
+// @name			SuperDrag.uc.js
+// @homepageURL		http://www.cnblogs.com/ziyunfei/archive/2011/12/20/2293928.html
+// ==/UserScript==
+
 location == "chrome://browser/content/browser.xul" && (function(event) {
 	var self = arguments.callee;
 	if (!event) {
@@ -58,7 +63,7 @@ location == "chrome://browser/content/browser.xul" && (function(event) {
 					name: "尋找 & 高亮關鍵字及複製鏈結文字",
 					cmd: function(event, self) {
 						var linkTXT = event.dataTransfer.getData("text/x-moz-url").split("\n")[1];
-						gFindBar.open();
+//						gFindBar.open();
 						gFindBar.toggleHighlight(1);
 						gFindBar._findField.value = linkTXT;
 						gWHT.addWord(linkTXT);
@@ -93,7 +98,7 @@ location == "chrome://browser/content/browser.xul" && (function(event) {
 								goDoCommand("cmd_paste");
 							}
 							else if (e.button == 2) {
-							gBrowser.selectedTab = gBrowser.addTab('https://duckduckgo.com/?q=!gt ' + encodeURIComponent(event.dataTransfer.getData("text/x-moz-url").split("\n")[1]));
+							gBrowser.selectedTab = gBrowser.addTab('https://translate.google.com/#auto/zh-TW/' + encodeURIComponent(event.dataTransfer.getData("text/x-moz-url").split("\n")[1]));
 							}
 							content.removeEventListener("click", arguments.callee, false);
 							div.parentNode.removeChild(div);
@@ -113,7 +118,7 @@ location == "chrome://browser/content/browser.xul" && (function(event) {
 					name: "Google 翻譯及複製鏈結文字(新分頁前景)",
 					cmd: function(event, self) {
 						var linkTXT = event.dataTransfer.getData("text/x-moz-url").split("\n")[1];
-						gBrowser.selectedTab = gBrowser.addTab('https://duckduckgo.com/?q=!gt ' + encodeURIComponent(linkTXT));
+						gBrowser.selectedTab = gBrowser.addTab('https://translate.google.com/#auto/zh-TW/' + encodeURIComponent(linkTXT));
 						Components.classes['@mozilla.org/widget/clipboardhelper;1'].createInstance(Components.interfaces.nsIClipboardHelper).copyString(linkTXT);
 					}
 				},
@@ -134,7 +139,7 @@ location == "chrome://browser/content/browser.xul" && (function(event) {
 								goDoCommand("cmd_paste");
 							}
 							else if (e.button == 2) {
-							gBrowser.selectedTab = gBrowser.addTab('https://duckduckgo.com/?q=!gt ' + encodeURIComponent(event.dataTransfer.getData("text/x-moz-url").split("\n")[1]));
+							gBrowser.selectedTab = gBrowser.addTab('https://translate.google.com/#auto/zh-TW/' + encodeURIComponent(event.dataTransfer.getData("text/x-moz-url").split("\n")[1]));
 							}
 							content.removeEventListener("click", arguments.callee, false);
 							div.parentNode.removeChild(div);
@@ -146,7 +151,7 @@ location == "chrome://browser/content/browser.xul" && (function(event) {
 					name: "Google 加密搜尋及複製鏈結文字(新分頁前景)",
 					cmd: function(event, self) {
 						var linkTXT = event.dataTransfer.getData("text/x-moz-url").split("\n")[1];
-						gBrowser.selectedTab = gBrowser.addTab("https://duckduckgo.com/?q=!ge " + encodeURIComponent(linkTXT));
+						gBrowser.selectedTab = gBrowser.addTab("https://encrypted.google.com/#q=" + encodeURIComponent(linkTXT));
 						Components.classes['@mozilla.org/widget/clipboardhelper;1'].createInstance(Components.interfaces.nsIClipboardHelper).copyString(linkTXT);
 					}
 				},
@@ -177,7 +182,7 @@ location == "chrome://browser/content/browser.xul" && (function(event) {
 					name: "Google 加密站內搜尋及複製鏈結文字(新分頁前景)",
 					cmd: function(event, self) {
 						var linkTXT = event.dataTransfer.getData("text/x-moz-url").split("\n")[1];
-						gBrowser.selectedTab = gBrowser.addTab('https://duckduckgo.com/?q=!ge site:' + content.location.host + ' ' + encodeURIComponent(linkTXT));
+						gBrowser.selectedTab = gBrowser.addTab('https://encrypted.google.com/#q=site:' + content.location.host + ' ' + encodeURIComponent(linkTXT));
 						Components.classes['@mozilla.org/widget/clipboardhelper;1'].createInstance(Components.interfaces.nsIClipboardHelper).copyString(linkTXT);
 					}
 				},
@@ -215,7 +220,7 @@ location == "chrome://browser/content/browser.xul" && (function(event) {
 					name: "尋找 & 高亮關鍵字及複製選取文字",
 					cmd: function(event, self) {
 						var TXT = event.dataTransfer.getData("text/unicode");
-						gFindBar.open();
+//						gFindBar.open();
 						gFindBar.toggleHighlight(1);
 						gFindBar._findField.value = TXT;
 						gWHT.addWord(TXT);
@@ -286,7 +291,7 @@ location == "chrome://browser/content/browser.xul" && (function(event) {
 								goDoCommand("cmd_paste");
 							}
 							else if (e.button == 2) {
-							gBrowser.selectedTab = gBrowser.addTab('https://duckduckgo.com/?q=!gt ' + encodeURIComponent(event.dataTransfer.getData("text/unicode")));
+							gBrowser.selectedTab = gBrowser.addTab('https://translate.google.com/#auto/zh-TW/' + encodeURIComponent(event.dataTransfer.getData("text/unicode")));
 							}
 							content.removeEventListener("click", arguments.callee, false);
 							div.parentNode.removeChild(div);
@@ -307,7 +312,7 @@ location == "chrome://browser/content/browser.xul" && (function(event) {
 					name: "Google 翻譯及複製選取文字(新分頁前景)",
 					cmd: function(event, self) {
 						var TXT = event.dataTransfer.getData("text/unicode");
-						gBrowser.selectedTab = gBrowser.addTab('https://duckduckgo.com/?q=!gt ' + encodeURIComponent(TXT));
+						gBrowser.selectedTab = gBrowser.addTab('https://translate.google.com/#auto/zh-TW/' + encodeURIComponent(TXT));
 						Components.classes['@mozilla.org/widget/clipboardhelper;1'].createInstance(Components.interfaces.nsIClipboardHelper).copyString(TXT);
 					}
 				},
@@ -328,7 +333,7 @@ location == "chrome://browser/content/browser.xul" && (function(event) {
 								goDoCommand("cmd_paste");
 							}
 							else if (e.button == 2) {
-							gBrowser.selectedTab = gBrowser.addTab('https://duckduckgo.com/?q=!gt ' + encodeURIComponent(event.dataTransfer.getData("text/unicode")));
+							gBrowser.selectedTab = gBrowser.addTab('https://translate.google.com/#auto/zh-TW/' + encodeURIComponent(event.dataTransfer.getData("text/unicode")));
 							}
 							content.removeEventListener("click", arguments.callee, false);
 							div.parentNode.removeChild(div);
@@ -340,7 +345,7 @@ location == "chrome://browser/content/browser.xul" && (function(event) {
 					name: "Google 加密搜尋及複製選取文字[識別URL並打開](新分頁前景)",
 					cmd: function(event, self) {
 						var TXT = event.dataTransfer.getData("text/unicode");
-						(/^\s*(?:(?:(?:ht|f)tps?:\/\/)?(?:(?:\w+?)(?:\.(?:[\w-]+?))*(?:\.(?:[a-zA-Z]{2,5}))|(?:(?:\d+)(?:\.\d+){3}))(?::\d{2,5})?(?:\/\S*|$)|data:(text|image)\/[\u0025-\u007a]+)\s*$/.test(TXT) && (gBrowser.selectedTab = gBrowser.addTab(TXT))) || (gBrowser.selectedTab = gBrowser.addTab("https://duckduckgo.com/?q=!ge " + encodeURIComponent(TXT)));
+						(/^\s*(?:(?:(?:ht|f)tps?:\/\/)?(?:(?:\w+?)(?:\.(?:[\w-]+?))*(?:\.(?:[a-zA-Z]{2,5}))|(?:(?:\d+)(?:\.\d+){3}))(?::\d{2,5})?(?:\/\S*|$)|data:(text|image)\/[\u0025-\u007a]+)\s*$/.test(TXT) && (gBrowser.selectedTab = gBrowser.addTab(TXT))) || (gBrowser.selectedTab = gBrowser.addTab("https://encrypted.google.com/#q=" + encodeURIComponent(TXT)));
 						Components.classes['@mozilla.org/widget/clipboardhelper;1'].createInstance(Components.interfaces.nsIClipboardHelper).copyString(TXT);
 					}
 				},
@@ -380,7 +385,7 @@ location == "chrome://browser/content/browser.xul" && (function(event) {
 					name: "Google 加密站內搜尋及複製選取文字(新分頁前景)",
 					cmd: function(event, self) {
 						var TXT = event.dataTransfer.getData("text/unicode");
-						gBrowser.selectedTab = gBrowser.addTab('https://duckduckgo.com/?q=!ge site:' + content.location.host + ' ' + encodeURIComponent(TXT));
+						gBrowser.selectedTab = gBrowser.addTab('https://encrypted.google.com/#q=site:' + content.location.host + ' ' + encodeURIComponent(TXT));
 						Components.classes['@mozilla.org/widget/clipboardhelper;1'].createInstance(Components.interfaces.nsIClipboardHelper).copyString(TXT);
 					}
 				},
