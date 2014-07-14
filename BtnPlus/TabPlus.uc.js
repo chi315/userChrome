@@ -21,6 +21,14 @@
 		"if(/^javascript:/.test(url)||isTabEmpty(gBrowser.selectedTab)) {loadCurrent();} else {this.handleRevert();gBrowser.loadOneTab(url, {postData: postData, inBackground: false, allowThirdPartyFixup: true});}"));
 	} catch(e) {}
 
+	// 中鍵點擊書籤選單不關閉
+	try {
+		eval('BookmarksEventHandler.onClick =' + BookmarksEventHandler.onClick.toString().replace('node.hidePopup()', ''));
+		eval('checkForMiddleClick =' + checkForMiddleClick.toString().replace('closeMenus(event.target);', ''));
+	} catch(e) {}
+})();
+
+location == "chrome://browser/content/browser.xul" && (function() {
 	// 向上滾輪：關閉重複分頁 & 向下滾輪：關閉其他分頁 & 滾輪：切換分頁
 	gBrowser.mTabContainer.addEventListener('DOMMouseScroll', function(e) {
 		if (e.target.localName == "tab") {
@@ -40,7 +48,7 @@
 		return;
 	}, true);
 
-	// 中鍵：復原已關閉分頁 & 左鍵：Gmail
+	// 中鍵：復原已關閉分頁 & 左鍵：貼上就瀏覽 / Google 加密搜尋 (新分頁前景)
 	gBrowser.mTabContainer.addEventListener("click", function(e) {
 		if (e.target.localName == "tab") {
 			if (e.button == 2) {
@@ -49,7 +57,9 @@
 		}
 		else {
 			if (e.button == 2 && !e.ctrlKey) {
-				gBrowser.selectedTab = gBrowser.addTab('https://accounts.google.com/ServiceLogin?service=mail&passive=true&rm=false&continue=https://mail.google.com/mail/?tab%3Dwm&scc=1&ltmpl=default&ltmplcache=2');
+				XULBrowserWindow.statusTextField.label = "貼上就瀏覽 / Google 加密搜尋 (新分頁前景) ";
+				var TXT = getBrowserSelection() || readFromClipboard();
+				(/^\s*(?:(?:(?:ht|f)tps?:\/\/)?(?:(?:\w+?)(?:\.(?:[\w-]+?))*(?:\.(?:[a-zA-Z]{2,5}))|(?:(?:\d+)(?:\.\d+){3}))(?::\d{2,5})?(?:\/\S*|$)|data:(text|image)\/[\u0025-\u007a]+)\s*$/.test(TXT) && (gBrowser.selectedTab = gBrowser.addTab(TXT))) || (gBrowser.selectedTab = gBrowser.addTab("https://encrypted.google.com/#q=" + encodeURIComponent(TXT)));
 				e.preventDefault();
 				e.stopPropagation();
 			}
@@ -61,6 +71,13 @@
 		}
 		return;
 	}, true);
+
+	// 雙擊左鍵：重新載入
+	gBrowser.mTabContainer.addEventListener('dblclick', function (e) {
+		if (e.target.localName == 'tab' && e.button == 0) {
+			getBrowser().getBrowserForTab(e.target).reload();
+		}
+	}, false);
 
 	// 鼠標停留分頁自動聚焦
 	(document.getElementById("tabbrowser-tabs") || gBrowser.mTabBox).addEventListener('mouseover',
@@ -88,12 +105,6 @@
 		}, false);
 	}, false);
 
-	// 中鍵點擊書籤選單不關閉
-	try {
-		eval('BookmarksEventHandler.onClick =' + BookmarksEventHandler.onClick.toString().replace('node.hidePopup()', ''));
-		eval('checkForMiddleClick =' + checkForMiddleClick.toString().replace('closeMenus(event.target);', ''));
-	} catch(e) {}
-	
 	// 自動關閉下載產生的空白分頁
 	eval("gBrowser.mTabProgressListener = " + gBrowser.mTabProgressListener.toString().replace(/(?=var location)/, '\
       if (aWebProgress.DOMWindow.document.documentURI == "about:blank"\
