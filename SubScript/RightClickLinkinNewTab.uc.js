@@ -71,7 +71,7 @@
 					e.preventDefault();
 					e.stopPropagation();
 					document.getElementById("contentAreaContextMenu").hidePopup();
-					followLink({ link: link, window: e.view});
+					followLink({link: link, window: e.view});
 				}
 			}
 		}
