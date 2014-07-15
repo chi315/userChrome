@@ -84,7 +84,7 @@
 
 	gBrowser.mPanelContainer.addEventListener("dblclick", function(e) {
 		var eName = e.target.nodeName || e.target.localName || e.target.tagName;
-		if (eName == "TEXTAREA" || eName == "INPUT" || eName == "A" || eName == "IMG" || eName == "B" || e.target.isContentEditable) return;
+		if (eName == "TEXTAREA" || eName == "INPUT" || eName == "A" || eName == "IMG" || eName == "B" || eName == "VIDEO" || e.target.isContentEditable) return;
 		if (e.button == 0) {
 			$('History:UndoCloseTab').doCommand();
 		}
