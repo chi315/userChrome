@@ -470,6 +470,7 @@ window.UCL = {
 			} else if (event.button == 2) {
 				UCL.editUserCSS(str);
 				event.preventDefault();
+				event.stopPropagation();
 			}
 		},
 		reloadUserCSS: function(str) {
