@@ -144,7 +144,6 @@ SearchEngine-button
 		tooltiptext: "左鍵：啟用 / 禁用搜索高亮工具例\n中鍵：貼上到搜索欄並高亮\n右鍵：關閉高亮工具例並清除關鍵字\n向上滾動：尋找上一筆\n向下滾動：尋找下一筆",
 		style: "list-style-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAANUlEQVQ4jWNgGBTg6dOi/6RgrAb8/19PFB7EBlAUBoMDFD0t+k8qxjCgngQ4SA2gKAwGDAAAM3SE/usVkKQAAAAASUVORK5CYII=)",
 		oncommand: "gWHT.GET_KEYWORD = !gWHT.GET_KEYWORD",
-		onclick: "if (event.button == 2) {gWHT.destroyToolbar(); document.getElementById('searchbar').value=''; event.preventDefault();}",
 		onDOMMouseScroll: "gWHTFindScroll.onScroll(event);",
 	}), searchGoBtn);
 
@@ -158,20 +157,22 @@ SearchEngine-button
 				gWHT.addWord(searchbar.value);
 			}
 			return;
-		event.preventDefault();
 		}
+		else if (event.button == 2) {
+			gWHT.destroyToolbar();
+			$('searchbar').value = '';
+		}
+		event.preventDefault();
 	}, false);
 
 	gWHTFindScroll = {
 		onScroll: function(event) {
+			if (searchbar.value == "") return;
+			gWHT.addWord(searchbar.value);
 			if (event.detail > 0) {
-				if (searchbar.value == "") {return;}
-				gWHT.addWord(searchbar.value);
 				gWHT.find(searchbar.value, false);
 			}
 			else {
-				if (searchbar.value == "") {return;}
-				gWHT.addWord(searchbar.value);
 				gWHT.find(searchbar.value, true);
 			}
 			return;
@@ -190,21 +191,13 @@ SearchEngine-button
 			var EngineSearch = function() {
 				searchPopup.removeEventListener("command", EngineSearch, false);
 				searchPopup.removeEventListener("popuphidden", closeES, false)
-				var selected = getBrowserSelection();
-				if (!searchbar.value == "") {
-					var text = searchbar.value;
-					searchbar.value = "";
-				}
-				else {
-					if (selected) {var text = selected;}
-					else {var text = readFromClipboard();}
-				}
+				var text = searchbar.value || getBrowserSelection() || readFromClipboard();
 				setTimeout(function(selectedEngine) {
 					if (event.ctrlKey) {
 						var open = 'tabshifted';
 					}
 					else {
-						open = 'tab';
+						var open = 'tab';
 					}
 					searchbar.doSearch(text, open);
 //					searchPopup.querySelectorAll("#" + selectedEngine.id)[0].click();
@@ -218,16 +211,8 @@ SearchEngine-button
 			searchPopup.addEventListener("popuphidden", closeES, false)
 		},
 		onClick: function(event) {
-			var selected = getBrowserSelection();
-			var copied = readFromClipboard();
-			if (!searchbar.value == "") {
-				var x = searchbar.value;
-				searchbar.value = "";
-			}
-			else {
-				if (selected) {var x = selected;}
-				else {var x = copied;}
-			}
+			var x = searchbar.value || getBrowserSelection() || readFromClipboard();
+			searchbar.value = "";
 			event.preventDefault();
 			switch(event.button) {
 				case 0:
@@ -242,22 +227,11 @@ SearchEngine-button
 			}
 		},
 		onScroll: function(event) {
-			var selected = getBrowserSelection();
-			var copied = readFromClipboard();
-			if (!searchbar.value == "") {
-				var x = searchbar.value;
-				searchbar.value = "";
-			}
-			else {
-				if (selected) {var x = selected;}
-				else {var x = copied;}
-			}
-			if (event.detail > 0) {
-				$ST(SE[3] + encodeURIComponent(x));
-			}
-			else {
-				$ST(SE[4] + encodeURIComponent(x));
-			}
+			var x = searchbar.value || getBrowserSelection() || readFromClipboard();
+			searchbar.value = "";
+			if (event.detail > 0) {var n = 3;}
+			else {var n = 4;}
+			$ST(SE[n] + encodeURIComponent(x));
 			return;
 		}
 	};
