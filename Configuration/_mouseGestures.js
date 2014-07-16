@@ -135,9 +135,14 @@ GESTURES = {
 				return;
 			}
 			else {
-				document.getElementById("searchbar").value = "";
+				gFindBar.toggleHighlight(0);
+				gFindBar.getElement('highlight').setAttribute("checked", "false");
+//				gFindBar.getElement('highlight').setAttribute("checkState", "0");
+				document.getElementById("searchbar").value = '';
+				gFindBar._findField.value = '';
 				gFindBar._foundMatches.hidden = true;
-				gFindBar._foundMatches.value = "";
+				gFindBar._foundMatches.value = '';
+				gWHT.destroyToolbar();
 			}
 			return;
 		}
@@ -177,12 +182,12 @@ GESTURES = {
 		}
 	},
 	'RL': {
-		name: '轉簡體 / 彈出搜索框(新分頁前景)',
+		name: '轉簡體',
 		cmd: function() {
 			document.getElementById("tongwen-context-text-sim-item").doCommand();
 			document.getElementById("tongwen-context-clip-simplified-item").doCommand();
 			document.getElementById("tongwen-context-simplified-item").doCommand();
-			document.getAnonymousElementByAttribute(document.querySelector('#searchbar').searchButton, 'anonid', 'searchbar-popup').openPopup(null, null, 640, 369);
+//彈出搜索框(新分頁前景)			document.getAnonymousElementByAttribute(document.querySelector('#searchbar').searchButton, 'anonid', 'searchbar-popup').openPopup(null, null, 640, 369);
 		}
 	},
 	'UL': {
