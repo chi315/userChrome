@@ -1,41 +1,79 @@
 GESTURES = {
 	'U': {
-		name: '復原已關閉分頁',
+		name: '上一頁(後退) / 滾動到頁面頂部',
 		cmd: function() {
-			undoCloseTab();
-//			document.getElementById('History:UndoCloseTab').doCommand();
+			var nav = gBrowser.webNavigation;
+			if (nav.canGoBack) {nav.goBack();}
+			else {content.scrollTo(0, 0);}
 		}
 	},
 	'D': {
-		name: '關閉分頁',
+		name: '下一頁(前進) / 滾動到頁面底部',
 		cmd: function() {
-			gBrowser.removeCurrentTab();
+			var nav = gBrowser.webNavigation;
+			if (nav.canGoForward) {nav.goForward();}
+			else {content.scrollTo(0, 1e10);}
 		}
 	},
 	'L': {
-		name: '後退/上一頁',
-		cmd: function() {
-			var nav = gBrowser.webNavigation;
-			if (nav.canGoBack) nav.goBack();
-			else nextPage.next();
+		name: '上一頁',
+		cmd: function(gestures, event) {
+			var url = content.location.href;
+			if (url.startsWith("file://")) {
+				MGs.goNumericURL(-1);
+			}
+			else {
+				var srcNode = window.FireGestures ? FireGestures.sourceNode : event.target,
+					doc = srcNode.ownerDocument;
+				var dispatchEvent = function (eventName) {
+					var evt = doc.createEvent('HTMLEvents');
+					evt.initEvent(eventName, true, false);
+					doc.dispatchEvent(evt);
+				};
+				dispatchEvent('nextpage.back');
+			}
 		}
 	},
 	'R': {
-		name: '前進/下一頁',
-		cmd: function() {
-			var nav = gBrowser.webNavigation;
-			if (nav.canGoForward) nav.goForward();
-			else nextPage.next(true);
+		name: '下一頁',
+		cmd: function(gestures, event) {
+			var url = content.location.href;
+			if (url.startsWith("file://")) {
+				MGs.goNumericURL(+1);
+			}
+			else {
+				var srcNode = window.FireGestures ? FireGestures.sourceNode : event.target,
+					doc = srcNode.ownerDocument;
+				var dispatchEvent = function (eventName) {
+					var evt = doc.createEvent('HTMLEvents');
+					evt.initEvent(eventName, true, false);
+					doc.dispatchEvent(evt);
+				};
+				dispatchEvent('nextpage.go');
+			}
 		}
 	},
 	'W-': {
 		name: '後退 / 上一頁 / 尋找上一筆',
-		cmd: function() {
+		cmd: function(gestures, event) {
 			var txt = document.getElementById("searchbar").value;
 			if (txt == "") {
 				var nav = gBrowser.webNavigation;
-				if (nav.canGoBack) nav.goBack();
-				else nextPage.next();
+				var url = content.location.href;
+				if (nav.canGoBack) {nav.goBack();}
+				else if (url.startsWith("file://")) {
+					MGs.goNumericURL(-1);
+				}
+				else {
+					var srcNode = window.FireGestures ? FireGestures.sourceNode : event.target,
+						doc = srcNode.ownerDocument;
+					var dispatchEvent = function (eventName) {
+						var evt = doc.createEvent('HTMLEvents');
+						evt.initEvent(eventName, true, false);
+						doc.dispatchEvent(evt);
+					};
+					dispatchEvent('nextpage.back');
+				}
 			}
 			else {
 //				gFindBar.open();
@@ -52,12 +90,25 @@ GESTURES = {
 	},
 	'W+': {
 		name: '前進 / 下一頁 / 尋找下一筆',
-		cmd: function() {
+		cmd: function(gestures, event) {
 			var txt = document.getElementById("searchbar").value;
 			if (txt == "") {
 				var nav = gBrowser.webNavigation;
-				if (nav.canGoForward) nav.goForward();
-				else nextPage.next(true);
+				var url = content.location.href;
+				if (nav.canGoForward) {nav.goForward();}
+				else if (url.startsWith("file://")) {
+					MGs.goNumericURL(+1);
+				}
+				else {
+					var srcNode = window.FireGestures ? FireGestures.sourceNode : event.target,
+						doc = srcNode.ownerDocument;
+					var dispatchEvent = function (eventName) {
+						var evt = doc.createEvent('HTMLEvents');
+						evt.initEvent(eventName, true, false);
+						doc.dispatchEvent(evt);
+					};
+					dispatchEvent('nextpage.go');
+				}
 			}
 			else {
 //				gFindBar.open();
@@ -95,7 +146,7 @@ GESTURES = {
 		name: '全選 & 複製頁面全部文字',
 		cmd: function() {
 			var focused = document.commandDispatcher.focusedElement;
-//			document.getElementById("context-selectall").doCommand(); 全選
+//			document.getElementById("context-selectall").doCommand();
 			goDoCommand("cmd_selectAll");
 			if (focused) {goDoCommand("cmd_copy");}
 			else {Components.classes['@mozilla.org/widget/clipboardhelper;1'].getService(Components.interfaces.nsIClipboardHelper).copyString(content.document.documentElement.textContent);}
@@ -103,15 +154,18 @@ GESTURES = {
 		}
 	},
 	'UD': {
-		name: 'Snaplinks批量操作模式',
+		name: '跳過緩存重新載入此分頁',
 		cmd: function() {
-			snapLinks.init();
+			BrowserReloadSkipCache();
 		}
 	},
 	'DU': {
-		name: '啟用 / 關閉自動翻頁',
+		name: '停止載入此分頁 & 切換油猴腳本、用戶樣式及UC腳本管理器顯示',
 		cmd: function() {
-			uAutoPagerize.toggle();
+			BrowserStop();
+			UCL.toggleUI(1);
+			USL.toggleUI(1);
+			userChromejs.toggleUI(1);
 		}
 	},
 	'LR': {
@@ -123,100 +177,46 @@ GESTURES = {
 		}
 	},
 	'RL': {
-		name: '轉簡體',
+		name: '轉簡體 / 彈出搜索框(新分頁前景)',
 		cmd: function() {
 			document.getElementById("tongwen-context-text-sim-item").doCommand();
 			document.getElementById("tongwen-context-clip-simplified-item").doCommand();
 			document.getElementById("tongwen-context-simplified-item").doCommand();
+			document.getAnonymousElementByAttribute(document.querySelector('#searchbar').searchButton, 'anonid', 'searchbar-popup').openPopup(null, null, 640, 369);
 		}
 	},
 	'UL': {
-		name: 'Adblock Plus 條件偏好設定',
+		name: '啟用 / 停用 dTa 單鍵下載選擇器',
 		cmd: function() {
-			document.getElementById("abp-menuitem-filters").doCommand();
+			dTaTurboSelect.Toggle();
 		}
 	},
 	'UR': {
-		name: '清除復原分頁列表',
+		name: '啟用 / 停用DOM Inspector & Element Inspector(重新啟動瀏覽器)',
 		cmd: function() {
-			var Setting = "browser.sessionstore.max_tabs_undo";
-			gPrefService.setIntPref(Setting, 0);
-			gPrefService.setIntPref(Setting, 50);
+			var { AddonManager } = Components.utils.import("resource://gre/modules/AddonManager.jsm", {});
+			var AddonIDs = [
+				'inspector@mozilla.org',
+				'InspectElement@zbinlin',
+				]
+			for(n=0; n<AddonIDs.length; n++) {
+			AddonManager.getAddonByID(AddonIDs[n], function(addon) {
+				addon.userDisabled = addon.userDisabled ? false : true;
+			});
+			}
+			Application.restart();
 		}
 	},
 	'DL': {
-		name: '關閉其他分頁',
+		name: '啟用 / 停用自動翻頁',
 		cmd: function() {
-			gBrowser.removeAllTabsBut(gBrowser.mCurrentTab);
+			uAutoPagerize.toggle();
 		}
 	},
 	'DR': {
-		name: '關閉重複分頁',
+		name: 'Snaplinks 批量操作模式',
 		cmd: function() {
-			CloseRepeatedTabs();
-		}
-	},
-	'LU': {
-		name: '彈出搜索框(新分頁背景)',
-		cmd: function(event) {
-			var popup = document.getAnonymousElementByAttribute(document.querySelector("#searchbar").searchButton, "anonid", "searchbar-popup"),
-				searchbar = document.getElementById("searchbar"),
-				selected = getBrowserSelection();
-			if (!searchbar.value == "") {
-				var TXT = searchbar.value;
-				searchbar.value = "";
-			}
-			else {
-				if (selected) {var TXT = selected;}
-				else {var TXT = readFromClipboard();}
-			}
-			var EngineSearch = function() {
-				popup.removeEventListener("command", EngineSearch, false);
-				popup.removeEventListener("popuphidden", closeSerach, false)
-				setTimeout(function(selectedEngine) {
-					BrowserSearch.loadSearch(TXT, true);
-					popup.querySelectorAll("#" + selectedEngine.id)[0].click();
-				}, 10, popup.querySelector("*[selected=true]"))
-			}
-			var closeSerach = function() {
-				popup.removeEventListener("command", EngineSearch, false);
-				popup.removeEventListener("popuphidden", closeSerach, false)
-			}
-			popup.addEventListener("command", EngineSearch, false)
-			popup.addEventListener("popuphidden", closeSerach, false)
-			popup.openPopup(null, null, 640, 369);
-		}
-	},
-	'LD': {
-		name: '彈出搜索框(新分頁前景)',
-		cmd: function(event) {
-			var popup = document.getAnonymousElementByAttribute(document.querySelector("#searchbar").searchButton, "anonid", "searchbar-popup"),
-				searchbar = document.getElementById("searchbar"),
-				selected = getBrowserSelection();
-			if (!searchbar.value == "") {
-				var TXT = searchbar.value;
-				searchbar.value = "";
-			}
-			else {
-				if (selected) {var TXT = selected;}
-				else {var TXT = readFromClipboard();}
-			}
-			var EngineSearch = function() {
-				popup.removeEventListener("command", EngineSearch, false);
-				popup.removeEventListener("popuphidden", closeSerach, false)
-				setTimeout(function(selectedEngine) {
-					gBrowser.selectedTab = gBrowser.addTab();
-					BrowserSearch.loadSearch(TXT, false);
-					popup.querySelectorAll("#" + selectedEngine.id)[0].click();
-				}, 10, popup.querySelector("*[selected=true]"))
-			}
-			var closeSerach = function() {
-				popup.removeEventListener("command", EngineSearch, false);
-				popup.removeEventListener("popuphidden", closeSerach, false)
-			}
-			popup.addEventListener("command", EngineSearch, false)
-			popup.addEventListener("popuphidden", closeSerach, false)
-			popup.openPopup(null, null, 640, 369);
+			snapLinks.init();
 		}
 	},
 	'RU': {
@@ -235,67 +235,16 @@ GESTURES = {
 			})
 		}
 	},
-	'ULU': {
-		name: '',
-		cmd: function() {
-		}
-	},
-	'URU': {
-		name: '啟用 / 停用DOM Inspector & Element Inspector(重新啟動瀏覽器)',
-		cmd: function() {
-			var { AddonManager } = Components.utils.import("resource://gre/modules/AddonManager.jsm", {});
-			var AddonIDs = [
-				'inspector@mozilla.org',
-				'InspectElement@zbinlin',
-				]
-			for(n=0; n<AddonIDs.length; n++) {
-			AddonManager.getAddonByID(AddonIDs[n], function(addon) {
-				addon.userDisabled = addon.userDisabled ? false : true;
-			});
-			}
-			Application.restart();
-		}
-	},
-	'DLD': {
-		name: '',
-		cmd: function() {
-		}
-	},
-	'DRD': {
-		name: 'ScreenCapture',
-		cmd: function() {
-			var file = Cc['@mozilla.org/file/local;1'].createInstance(Ci.nsILocalFile);file.initWithPath("D:\\Program Files\\ScreenCapture\\screencapture.exe");file.launch();
-		}
-	},
-	'UDU': {
+	'LU': {
 		name: '暫時允許此頁面的所有物件',
 		cmd: function() {
 			noscriptOverlay.allowPage();
 		}
 	},
-	'DUD': {
+	'LD': {
 		name: '取消暫時許可',
 		cmd: function() {
 			noscriptOverlay.revokeTemp();
-		}
-	},
-	'LRL': {
-		name: '重新載入 & 頁面重置',
-		cmd: function() {
-			UCL.rebuild();
-			USL.rebuild();
-			ucjsMouseGestures.reload(true);
-			addMenu.rebuild(true);
-			uAutoPagerize.loadSetting(true);
-			refererChanger.reload(true);
-			KeyChanger.makeKeyset(true);
-			FullZoom.reset(); setTimeout (function() {FullZoom.enlarge();}, 0);
-		}
-	},
-	'RLR': {
-		name: 'dTa 單鍵下載選擇器',
-		cmd: function() {
-			dTaTurboSelect.Toggle();
 		}
 	},
 	'URDL': {
@@ -306,6 +255,12 @@ GESTURES = {
 			BrowserFullScreen();
 			FullScreen.setAutohide();
 //			UCL.toggle('ToggleToolbar.css');
+		}
+	},
+	'RULD': {
+		name: 'ScreenCapture',
+		cmd: function() {
+			var file = Cc['@mozilla.org/file/local;1'].createInstance(Ci.nsILocalFile);file.initWithPath("D:\\Program Files\\ScreenCapture\\screencapture.exe");file.launch();
 		}
 	},
 }
