@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name			RightClickPlus.uc.js
 // @description		按住右鍵新分頁打開鏈結，如果 link 的 target="_blank" 前景打開，否則後景打開，雙擊左鍵復原關閉分頁，雙擊右鍵關閉分頁
-// @homepageURL		https://github.com/Drager-oos/userChrome/blob/master/SubScript/RightClickPlus.uc.js
+// @homepageURL		https://github.com/Drager-oos/userChrome/blob/master/SubScript/Backups/RightClickPlus.uc.js
 // ==/UserScript==
 (function() {
 	function findLink(element) {
