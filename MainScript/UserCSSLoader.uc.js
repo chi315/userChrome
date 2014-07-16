@@ -115,7 +115,8 @@ window.UCL = {
 								   image="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAARklEQVQ4jWNgYGD4TyFm+L/uaBJezMDA8H+vgyEGHk4GEIPxGnBhdikKZmBg+P/vEyscjxrASjglEmPAvBMPMPBwMoASDADElRSk+LLlQAAAAABJRU5ErkJggg=="\
 								   tooltiptext="用戶樣式管理器已啟用 (中鍵：重新加載 | 右鍵：啟用 / 禁用)"\
 								   onclick="UCL.iconClick(event);" >\
-						<menupopup id="usercssloader-menupopup">\
+						<menupopup id="usercssloader-menupopup"\
+								   onclick="event.preventDefault(); event.stopPropagation();" >\
 							<menuitem label="打開樣式目錄"\
 									  accesskey="O"\
 									  oncommand="UCL.openFolder();" />\
@@ -469,8 +470,6 @@ window.UCL = {
 				UCL.reloadUserCSS(str);
 			} else if (event.button == 2) {
 				UCL.editUserCSS(str);
-				event.preventDefault();
-				event.stopPropagation();
 			}
 		},
 		reloadUserCSS: function(str) {
