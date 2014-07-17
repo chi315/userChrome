@@ -4,7 +4,7 @@
 	var loadingStat = true;
 
 	var Bar = $('urlbar'),
-		stxt = XULBrowserWindow.statusTextField;
+		sTxt = XULBrowserWindow.statusTextField;
 	var additionBar = $C('label', {
 		id: 'addtion-link',
 		value: '',
