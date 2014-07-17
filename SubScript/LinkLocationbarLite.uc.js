@@ -3,33 +3,35 @@
 
 	var loadingStat = true;
 
-	var urlbarIcons = document.getElementById('urlbar');
-	var additionBar = document.createElement('label');
-	additionBar.setAttribute('id','addtion-link');
-	additionBar.setAttribute('value','');
-//	additionBar.setAttribute('crop','center');
-//	additionBar.setAttribute('text-align','right');
-	additionBar.style.color = 'green';
-	additionBar.style.margin = "0px 0px 0px 0px";
-	urlbarIcons.appendChild(additionBar);
-//	urlbarIcons.insertBefore(additionBar, urlbarIcons.firstChild);
+	var Bar = $('urlbar'),
+		stxt = XULBrowserWindow.statusTextField;
+	var additionBar = $C('label', {
+		id: 'addtion-link',
+		value: '',
+//		crop: 'center',
+//		flex: '1',
+		style: "color: green; margin: 0px 0px 0px 1px; -moz-box-ordinal-group: 0;"
+	});
+	Bar.appendChild(additionBar);
+//	Bar.insertBefore(additionBar, Bar.firstChild);
 
-	XULBrowserWindow.statusTextField.__defineGetter__('label', function() {
+	sTxt.__defineGetter__('label', function() {
 		return this.getAttribute("label");
 	});
-	XULBrowserWindow.statusTextField.__defineSetter__('label', function(str) {
+	sTxt.__defineSetter__('label', function(str) {
 		if (str) {
 			this.setAttribute('label', str);
+			var txt = str.substr(0, 39) + '...' + str.substr(str.length - 39, 39) + ' ';
 			if (this.getAttribute('type') == 'overLink') {
 				if (str.length > 80) {
-					additionBar.value = '➥ ' + str.substr(0, 39) + '...' + str.substr(str.length - 39, 39) + ' ';
+					additionBar.value = '➥ ' + txt;
 				} else {
 					additionBar.value = '➥ ' + str + ' ';
 				}
 			} else {
 				if (loadingStat == true) {
 					if (str.length > 80) {
-						additionBar.value = str.substr(0, 39) + '...' + str.substr(str.length - 39, 39) + ' ';
+						additionBar.value = txt;
 					} else {
 						additionBar.value = str + ' ';
 					}
@@ -43,8 +45,15 @@
 			additionBar.value = '';
 		}
 		if (this.style.opacity == 0) {
-			XULBrowserWindow.statusTextField.removeAttribute('mirror');
+			sTxt.removeAttribute('mirror');
 		}
 		return str;
 	});
+
+	function $(id) document.getElementById(id);
+	function $C(name, attr) {
+		var el = document.createElement(name);
+		if (attr) Object.keys(attr).forEach(function(n) el.setAttribute(n, attr[n]));
+		return el;
+	}
 })();
