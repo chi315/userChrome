@@ -9,7 +9,6 @@
 searchbar-engine-button
 在按鈕上
 左鍵：搜尋選單
-雙擊左鍵：重設至默認搜索引擎
 滾動：切換搜索引擎
 中鍵：貼上就瀏覽 (新分頁背景)
 右鍵：貼上就瀏覽 (新分頁前景)
@@ -63,7 +62,7 @@ SearchEngine-button
 		//	清除搜索欄關鍵字
 		this.value = "";
 		//	重設至默認搜索引擎
-		this.currentEngine = this.engines ? this.engines[1] : this._engines[1];
+		this.currentEngine = this.engines[1];
 	};
 
 	var searchPopup = document.getAnonymousElementByAttribute(searchbar, "anonid", "searchbar-popup");
@@ -78,15 +77,9 @@ SearchEngine-button
 		searchbarEngineBtn.setAttribute("onclick", "if (event.button == 1) {gBrowser.addTab(readFromClipboard());} else if (event.button == 2) {gBrowser.selectedTab = gBrowser.addTab(readFromClipboard()); event.preventDefault();}");
 		searchbarEngineBtn.setAttribute("ondblclick", "if (event.button == 0) {Reset.onClick(event); event.preventDefault();}");
 		searchbarEngineBtn.setAttribute("onDOMMouseScroll", "EngineScroll.onScroll(event);");
-		searchbarEngineBtn.setAttribute("tooltiptext","在按鈕上\n左鍵：搜尋選單\n雙擊左鍵：清除搜索欄關鍵字\n　　　　　重設至默認搜索引擎\n滾動：切換搜索引擎\n中鍵：貼上就瀏覽 (新分頁背景)\n右鍵：貼上就瀏覽 (新分頁前景)\n\n在選單上\n選擇指定搜索引擎後即搜尋\n左鍵：新分頁前景\nCtrl + 左鍵：新分頁背景\n\n❖ 若搜索欄有關鍵字，便搜尋搜索欄關鍵字\n❖ 若搜索欄沒有關鍵字並選取了文字，便搜尋選取文字\n❖ 否則便貼上就搜尋");
+		searchbarEngineBtn.setAttribute("tooltiptext","在按鈕上\n左鍵：搜尋選單\n滾動：切換搜索引擎\n中鍵：貼上就瀏覽 (新分頁背景)\n右鍵：貼上就瀏覽 (新分頁前景)\n\n在選單上\n選擇指定搜索引擎後即搜尋\n左鍵：新分頁前景\nCtrl + 左鍵：新分頁背景\n\n❖ 若搜索欄有關鍵字，便搜尋搜索欄關鍵字\n❖ 若搜索欄沒有關鍵字並選取了文字，便搜尋選取文字\n❖ 否則便貼上就搜尋");
 	EngineScroll = {
 		onScroll: function(event) {searchbar.selectEngine(event, (event.detail > 0));}
-	};
-	Reset = {
-		onClick: function(event) {
-			searchbar.value = "";
-			searchbar.currentEngine = searchbar.engines ? searchbar.engines[1] : searchbar._engines[1];
-		}
 	};
 
 	var findMatchCase = searchInput.appendChild($C("checkbox", {
@@ -149,14 +142,8 @@ SearchEngine-button
 
 	gWHTFindBtn.addEventListener("click", function(event) {
 		if (event.button == 1) {
-			if (searchbar.value == "") {
-				gWHT.addWord(readFromClipboard());
-				searchbar.value = readFromClipboard();
-			}
-			else {
-				gWHT.addWord(searchbar.value);
-			}
-			return;
+			gWHT.addWord(readFromClipboard());
+			searchbar.value = readFromClipboard();
 		}
 		else if (event.button == 2) {
 			gWHT.destroyToolbar();
@@ -167,15 +154,20 @@ SearchEngine-button
 
 	gWHTFindScroll = {
 		onScroll: function(event) {
-			if (searchbar.value == "") return;
-			gWHT.addWord(searchbar.value);
-			if (event.detail > 0) {
-				gWHT.find(searchbar.value, false);
+			if (searchbar.value == "") {
+				gWHT.addWord(readFromClipboard());
+				searchbar.value = readFromClipboard();
 			}
 			else {
-				gWHT.find(searchbar.value, true);
+				gWHT.addWord(searchbar.value);
+				if (event.detail > 0) {
+					gWHT.find(searchbar.value, false);
+				}
+				else {
+					gWHT.find(searchbar.value, true);
+				}
+				return;
 			}
-			return;
 		}
 	};
 
