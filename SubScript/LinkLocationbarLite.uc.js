@@ -28,7 +28,11 @@
 				}
 			} else {
 				if (loadingStat == true) {
-					additionBar.value = str;
+					if (str.length > 80) {
+						additionBar.value = str.substr(0, 39) + '...' + str.substr(str.length - 39, 39) + ' ';
+					} else {
+						additionBar.value = str + ' ';
+					}
 				} else {
 					this.style.opacity = 1;
 					additionBar.value = '';
