@@ -1,14 +1,8 @@
 (function() {
-	$("tczoompanel", {
-		tooltiptext: "左鍵：快速縮放選單\n向上滾動：放大\n向下滾動：縮小",
-		onclick: "if (event.button == 2) {event.preventDefault();}",
-		onDOMMouseScroll: "if (event.detail > 0) {FullZoom.reduce();} else {FullZoom.enlarge();} return;",
-		style: "margin: 0px -3px;",
-	});
-
 	document.getAnonymousElementByAttribute($("urlbar"), "anonid", "textbox-input-box").appendChild($("alltabs-button", {
 		tooltiptext: "左鍵：所有分頁選單",
 		ordinal: "1",
+		style: "padding: 0px;"
 	}));
 
 	$("urlbar").appendChild($("PanelUI-button", {
@@ -24,54 +18,62 @@
 		if (event.detail > 0) {Services.appinfo.invalidateCachesOnRestart() || Application.restart();}\
 		else {HideFirefox();}\
 		return;\
-		"
+		",
+		onmouseover: "AnotherBrowser.openPanel(event); UCL.rebuild(); USL.rebuild(); ucjsMouseGestures.reload(true); addMenu.rebuild(true); uAutoPagerize.loadSetting(true); uAutoPagerize.loadSetting_CN(); refererChanger.reload(true); KeyChanger.makeKeyset(true);",
+		style: "margin: 0px -4px 0px -2px;"
 	}));
-
-//	document.querySelector("#nav-bar").removeAttribute("overflowable");
-
-	$("editBookmarkPanel", {position: "after_start"});
-
-	$("back-button" , {
-		onmouseover: "document.getElementById('backForwardMenu').openPopupAtScreen(event.screenX, event.screenY, true);"
-	});
-
-	$("forward-button" , {
-		onmouseover: "document.getElementById('backForwardMenu').openPopupAtScreen(event.screenX, event.screenY, true);"
-	});
-
-	$("urlbar-reload-button", {
-		tooltiptext: "左鍵：重新載入此分頁\n滾動：重新載入所有分頁",
-		onDOMMouseScroll: "gBrowser.reloadAllTabs();",
-		onmouseover: "document.getElementById('backForwardMenu').hidePopup();"
-	});
-
-	$("urlbar-stop-button", {
-		tooltiptext: "左鍵：停止載入此分頁\n滾動：停止載入所有分頁",
-		onDOMMouseScroll: "Array.map(gBrowser.browsers, function(browser) {browser.stop()});",
-		onmouseover: "document.getElementById('backForwardMenu').hidePopup();"
-	});
 
 	$("urlbar-icons").appendChild($("downloads-button" , {
 		onmouseover: "DownloadsIndicatorView.onCommand(event);",
 		style: "padding: 0px; margin-left: -1px;",
 	}));
 
-	$("identity-box", {
-		onmouseover: "document.getElementById('downloadsPanel').hidePopup(); document.getElementById('AnotherBrowser-panel').hidePopup();"
-	});
-	
+//	document.querySelector("#nav-bar").removeAttribute("overflowable");
 //	setTimeout (function() {$('PanelUI-popup').hidePopup();}, 4000);
-	setTimeout (function() {
+/*	setTimeout (function() {
 		$('PanelUI-menu-button').click();
 		setTimeout (function() {
 			$('PanelUI-menu-button').click();
 			$('AnotherBrowser').click();
 		}, 500);
-	}, 500);
+	}, 500);*/
+
+	function DelayStart() {
+		$("tczoompanel", {
+			tooltiptext: "左鍵：快速縮放選單\n向上滾動：放大\n向下滾動：縮小",
+			onclick: "if (event.button == 2) {event.preventDefault();}",
+			onDOMMouseScroll: "if (event.detail > 0) {FullZoom.reduce();} else {FullZoom.enlarge();} return;",
+			style: "margin: 0px -3px;",
+		});
+
+		$("urlbar-icons").appendChild($("clipple-statusbar-icon"));
+
+		$("abp-menuitem", {class: "menu-iconic"});
+
+		$("editBookmarkPanel", {position: "after_start"});
+
+		$("urlbar-reload-button", {
+			tooltiptext: "左鍵：重新載入此分頁\n滾動：重新載入所有分頁",
+			onDOMMouseScroll: "gBrowser.reloadAllTabs();",
+		});
+
+		$("urlbar-stop-button", {
+			tooltiptext: "左鍵：停止載入此分頁\n滾動：停止載入所有分頁",
+			onDOMMouseScroll: "Array.map(gBrowser.browsers, function(browser) {browser.stop()});",
+		});
+
+		$("uAutoPagerize-icon", { //identity-box
+			onmouseover: "document.getElementById('downloadsPanel').hidePopup();"
+		});
+
+		$('AnotherBrowser').click();
+	}
 
 	function $(id, attr) {
 		var el = document.getElementById(id);
 		if (attr) Object.keys(attr).forEach(function(n) el.setAttribute(n, attr[n]));
 		return el;
 	}
+
+	if (location == "chrome://browser/content/browser.xul") {setTimeout(DelayStart, 1000);}
 })();
