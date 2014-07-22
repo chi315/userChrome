@@ -1,3 +1,6 @@
+==========
+Firefox 介面
+==========
 按鈕模式<br>
 <img src="https://mozest.com/attachment/201407/20/100724_140586367245ti.png">
 工具選單模式<br>
