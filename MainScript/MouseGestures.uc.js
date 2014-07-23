@@ -5,11 +5,12 @@
 // @include      main
 // @author       Raqbgxue + Gomita
 // @version      10.1.17 (folk from original 9.5.18)
+// @downloadURL  https://github.com/feiruo/userChromeJS/tree/master/MouseGestures
 // @homepage     http://www.xuldev.org/misc/ucjs.php
 // @homepage     http://d.hatena.ne.jp/raqbgxue/20090624/1245848856
 // @note         Ctrl+(right-click-up) => Reset Gesture
 // @charset      utf-8
-//==/UserScript==
+// ==/UserScript==
 var ucjsMouseGestures = {
 	// options
 	enableWheelGestures: true,
@@ -28,8 +29,8 @@ var ucjsMouseGestures = {
 	createMenuitem: function() {
 		var menuitem = document.createElement('menuitem');
 		menuitem.setAttribute('id', 'ucjsMouseGestures');
-		menuitem.setAttribute('label', '鼠標手勢配置');
-		menuitem.setAttribute("tooltiptext", '左鍵：重新載入配置\r\n右鍵：打開文件編輯');
+		menuitem.setAttribute('label', '鼠標手勢');
+		menuitem.setAttribute("tooltiptext", '左鍵：重載配置\n右鍵：編輯配置');
 		menuitem.setAttribute('oncommand', 'ucjsMouseGestures.reload(true);');
 		menuitem.setAttribute('onclick', 'if (event.button == 2) { event.preventDefault(); closeMenus(event.currentTarget); ucjsMouseGestures.edit(ucjsMouseGestures.file); }');
 		var insPos = document.getElementById('devToolsSeparator');
@@ -72,7 +73,6 @@ var ucjsMouseGestures = {
 
 	getMouseGesturesFile: function() {
 		var aFile = Services.dirsvc.get("UChrm", Ci.nsILocalFile);
-//		aFile.appendRelativePath("lib");
 		aFile.appendRelativePath("local\\_mouseGestures.js");
 		if (!aFile.exists() || !aFile.isFile()) return null;
 		delete this.file;
@@ -158,7 +158,7 @@ var ucjsMouseGestures = {
 				this._hideFireContext = false;
 				this._directionChain = '';
 				event.preventDefault();
-				XULBrowserWindow.statusTextField.label = "Reset Gesture";
+				XULBrowserWindow.statusTextField.label = "重設手勢";
 				break;
 			}
 			if (this._isMouseDownR && event.button == 2) {
@@ -230,7 +230,7 @@ var ucjsMouseGestures = {
 			dChain += direction;
 			this._directionChain += direction;
 			var gesture = this.GESTURES[dChain];
-			XULBrowserWindow.statusTextField.label = "手勢: " + dChain + (gesture ? ' (' + gesture.name + ')' : '') + " ";
+			XULBrowserWindow.statusTextField.label = "手勢: " + dChain + (gesture ? ' (' + gesture.name + ')' : '');
 		}
 		this._lastX = x;
 		this._lastY = y;
@@ -244,7 +244,7 @@ var ucjsMouseGestures = {
 				XULBrowserWindow.statusTextField.label = "";
 			}
 		} catch (e) {
-			XULBrowserWindow.statusTextField.label = '手勢未定義或函數定義錯誤: ' + dChain + " ";
+			XULBrowserWindow.statusTextField.label = '手勢未定義或函數定義錯誤: ' + dChain;
 		}
 		this._directionChain = "";
 		this.eraseTrail();
