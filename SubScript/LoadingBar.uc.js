@@ -1,8 +1,9 @@
 (function(){
 //Location Bar Enhancer5.1;Loading Bar0.3.0
+//background-image: -moz-repeating-linear-gradient(top -45deg, rgba(255,255,255,0), rgba(255,255,255,0) 6px, rgba(255,255,255,1) 6px, rgba(255,255,255,1) 12px), -moz-linear-gradient(left, rgba(255,255,255,0) 0%, rgba(17,238,238,.7) 100%);
 	var cssStr = (function(){/*
 			#urlbar {
-				background-image: -moz-repeating-linear-gradient(top -45deg, rgba(255,255,255,0), rgba(255,255,255,0) 6px, rgba(255,255,255,1) 6px, rgba(255,255,255,1) 12px), -moz-linear-gradient(left, rgba(255,255,255,0) 0%, rgba(17,238,238,.7) 100%);
+				background-image: -moz-repeating-linear-gradient(left, rgba(255,255,255,0), rgba(255,255,255,0) 6px), -moz-linear-gradient(left, rgba(255,255,255,0) 0%, rgba(17,238,238,.7) 100%);
 				background-size:0 0;
 				background-repeat:repeat-x, no-repeat;
 				transition: background-size 350ms ease 0s !important;
@@ -19,7 +20,7 @@
 				}
 			}
 	*/}).toString().replace(/^.+\s|.+$/,"");
-	
+
 	var style = document.createProcessingInstruction("xml-stylesheet", "type=\"text/css\"" + " href=\"data:text/css;base64," + btoa(cssStr) + "\"");
 	var mainW = document.getElementById("main-window");
 	document.insertBefore(style, mainW);
@@ -70,8 +71,6 @@
 		gBrowser.removeTabsProgressListener(LoadingBar.listener);
 	  }, window);
 	}
-
-
 
 	watchWindows(main, "navigator:browser");
 
@@ -150,7 +149,6 @@
 	  }
 	  unloaders.push(unloader);
 
-
 	function removeUnloader() {
 		let index = unloaders.indexOf(unloader);
 		if (index != -1)
@@ -158,7 +156,7 @@
 	  }
 	  return removeUnloader;
 	}
-	
+
 	function makeWindowHelpers(window) {
 	  let {clearTimeout, setTimeout} = window;
 
@@ -181,5 +179,4 @@
 		async: async,
 	  };
 	}
-
 })();
