@@ -42,7 +42,7 @@ CTRL + 右鍵：移除擴展
 		SHOW_USERDISABLED:	true, // 顯示禁用的 (無効のアドオンを表示するか)
 		SHOW_APPDISABLED:	false, // 顯示不兼容的 (互換性のないアドオンを表示するか)
 		AUTO_RESTART:		false, // 啟用/停用擴展後立即重新啟動瀏覽器(無需重啟擴展除外) (アドオンの有効/無効時に自動で再起動するか(再起動不要アドオンは除外される))
-		ICON_URL:			'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAWklEQVQ4jWNgoANYyMDA8J+BgWEuuQb8R8JkgTNQzaeI1TAVzVZcuJ0YJxPCg8iA+VCB00Roqofqsaeqs+dAJfeT6wKqugaXjfXkGkCsHByg2wTzqz0Ol1EGAF7Adz+tGmdUAAAAAElFTkSuQmCC',
+		ICON_URL:			'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAADyUlEQVQ4jUXM/VMTdADA4a/kkM2Ul8GQgbyDkrzUpUZ2FqAwbGCXioaAdqPUAb4AzonGi4IDBk4EREYyUPBIPRB8yZdMJTyqS0NTBmF6liR3kgd2GqB3ffqh7nr+gEf07pI0D9Ur7g0edb812Oxx++FRz96hNp9bQ6d9f/rhE3lfj8qjve9DnxO9q7xPWpN82/rW+HX0afw7bq/1v3Y50k0lBgzSDi6GQtc86F4A1ih4FAejCVj1YdyNd+WpzpenO2bxrGgO42WhYJ7LRO1cvonx2Cj6CyWHJo76MPZFIC/PhzDSEsbPWh8GMwO5s8abHrUca4o7v6zz4sEmXx7qAnmyew7PDaF0LlKmiv4CiWWiQcl4izcvvnyNG4luXFRMwhoyhd4Ie27GO3MnwZWBFHcefDqTXzf58njnbP7MD/4vyLepHzc7M3FEydhxPzrfduScQnA1eDLfzpNyPdqBm3Fy+tRyBpbIub9GyaNtAYzmBNEZqdQIa65N/ViVPX+ZnXl5zIN7W9055yvj69en0x0t5/twGdZ3p3EmPZSGuniurQvi91R3RrIC/g0G84SFfTZQbcdYnTNjzR6MVHrzsjmA/hQXujwFv815hSbTInY+2c7pHeEMqu0Z1XpxY6H7x6Jnp8TCHsFwqZQR0zRe1Dvx7Lgn4ydmcDdK0K0UDPhP5lxqEOWnEuiOcuPuO68ysETBmUWKNBGs0RwIL62hzLiMCYOAQzKGa6ei/dxAZNMl0jPjOFIwHXNNMHvb1dQdVNFSq+ZwYxyaLU5bhEgyVIvSfkqNK6BYwH4bqBIsbTqB6AH/qt3MN28ioiaD/Ob3MHQlUNazDtPtVFR5julClqKvluS2otpTwOPCKVAk6CwOIKjhCp6nhvFrvY/ywt+4XJ0gtlKLseUtys8up+KrFSzfLs8QsuRtBxS6KqT5rcwvMpFUkkNgZTsKy48EHPmO2ef/IOTqc7yvQ6jJRL45CEObGuPZpf8HLpuNKPQ1SPJOMqn4Cg77LuNdcwk/SxeuhlZmHLqD095rxOa/z2f1weS1LKbopIplevlGIUvS1crT9uCSZcJVX4NbQSMzS47hVXUBj6YBQnRJxGQFEp8TxuYKLzLNb5JzOILCtmg+0DumC1my7rCDJhenDYU4ZZTgnFWBa85B3HY1IjXcIEy3kvU5As3uqaw1+JBqnEVG9RvoLOEszZ5mFHYfZS6Urd5aIE3culKanJ0oTcxOtF29Pcl21bZlnslq/YL1bhWxWmFYrJ1cEp0mKY9Jsy2O0doaVel2lpgNdlH/AMh2OJbhO5RfAAAAAElFTkSuQmCC',
 
 		sort: {
 			enabled: 0,
@@ -62,13 +62,13 @@ CTRL + 右鍵：移除擴展
 					image: this.ICON_URL,
 					tooltiptext: '左鍵：擴展及插件選單\n中鍵：開啟 / 關閉 dTa 單鍵下載選擇器\n右鍵：打開擴展管理員',
 					onclick: 'EOM.iconClick(event);',
-					style: 'padding: 0px; margin: 0px -1px 0px -4px;'
+					style: 'padding: 0px; margin: -1px -1px 0px -4px; -moz-transform: scale(0.875);'
 				}));
 			}
 			else if (EOM.BUTTON_TYPE == 2) {
 				var btn = $("menu_ToolsPopup").insertBefore($C('menu', {
 					id: 'eom-menu',
-					label: '擴展及插件選單',
+					label: '擴展及插件管理器',
 					class: 'menu-iconic',
 					image: this.ICON_URL,
 				}), $("menu_preferences"));
@@ -180,6 +180,7 @@ CTRL + 右鍵：移除擴展
 			var Fileitem = popup.insertBefore($C("menuitem", {
 				label: "打開擴展目錄",
 				class: "menuitem-iconic",
+				image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAADEElEQVQ4jY2RXUiTcRjF/9JFpBAapk5NnWzzI5vTbb5uuunrtFm5XCpi7tVEs0zU9aFFk6wmiV9RfrRqkRgZhVIZSjXUNDPCmaamlZQQ0gdFVxGFbu10paXzonN5Hs6P5zkPISsVniYjArXAzv8vceVyIi8A71g7hNW9k56eQsfFEYeQtUlOzqFJ69dzV4uuIbw4LxLB7CCyfNDGccgujcE9rqgvM4D6ZAjmvKjm+HYUbWShLYxn65Rsfro87iHwI9H5YBUYsankGqQXnkNycQyBlSaIK+7i6x4pblFBn/e6usMUswVP4vgzjKMr6y/ANYhFonIR1WxGTMsrSI2TEBnGwG8cgUjfjY+7JeiL5eM8zx/jieEYUYThPhVireP6Zi4iHEhk9im/Q20vvAuvQNBoRkjDMJry9mM0NRrv0yi8U0fgTZIIU4lCjNECm1kuQDXbh/m7RVzxARJ/pJLI8uF3oguc+iG0ZqSiR03jbbIYw2oRLhdSMCvCYIoIfqZycfH5twUHIs1d2LDXgI3F1+Bf8xjeVf1w1/fAu/QmprcJUX9UCk27EvcSQtEZHjRo94Z18qwPXsc64FczCK8zj+B2+iHoWiNS9BVo04hwSB+FlNZ45FRIoaigPtgBjuZtvlXZUIDx4cNIb2rGhvJOfDFrYOpVIePmVqS0JkBlVEDZSEN8Ujy7FExRurIMx0N0tdrA0S5jPKxzJdA0n4OHrg1fzAxeDqpxp0sJ7VUaygYa7JKA64SQNUuAg7t9yw06PoY7d+F1vwbWuRL8nNmHH1M5sEwzmJ9Ih2VUDX1LLGJrYsDRhsAjj3t7CcAkuYW2N9LfrF91sH4qg3VOC8tsAb5PZMMyzWDApMLOszLIqmQ2ySkZhMejEFAknFx2/8EsbtCD1sSpoY5kWOe0MF2NHzhTxPv9a1KD+907EK4T2/ilIoSWRdrc0tmMk8Rli12JRzTstK4rCfML74ttN+qo5NIstqq3ha46fThY4Ug7J7MY7rfgYspCBM7OduFFZW/34uWm+vivOgxw9HSiXPgr7T+DX3N5gyCN2AAAAABJRU5ErkJggg==",
 				accesskey: "O",
 				oncommand: "FileUtils.getFile('ProfD', ['extensions']).reveal();"
 			}), menusep);
