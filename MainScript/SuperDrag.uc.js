@@ -158,24 +158,9 @@ location == "chrome://browser/content/browser.xul" && (function(event) {
 				RL: {
 					name: "彈出搜索框(新分頁前景)",
 					cmd: function(event, self) {
-						var popup = document.getAnonymousElementByAttribute(document.querySelector("#searchbar").searchButton, "anonid", "searchbar-popup");
 						var linkTXT = event.dataTransfer.getData("text/x-moz-url").split("\n")[1];
-						var serach = function() {
-								popup.removeEventListener("command", serach, false);
-								popup.removeEventListener("popuphidden", closeSerach, false)
-								setTimeout(function(selectedEngine) {
-									gBrowser.selectedTab = gBrowser.addTab();
-									BrowserSearch.loadSearch(linkTXT, false);
-									popup.querySelectorAll("#" + selectedEngine.id)[0].click();
-								}, 10, popup.querySelector("*[selected=true]"))
-							}
-						var closeSerach = function() {
-								popup.removeEventListener("command", serach, false);
-								popup.removeEventListener("popuphidden", closeSerach, false)
-							}
-						popup.addEventListener("command", serach, false)
-						popup.addEventListener("popuphidden", closeSerach, false)
-						popup.openPopup(null, null, event.screenX - 100, event.screenY - 100);
+						Components.classes['@mozilla.org/widget/clipboardhelper;1'].createInstance(Components.interfaces.nsIClipboardHelper).copyString(linkTXT);
+						document.getAnonymousElementByAttribute(document.querySelector('#searchbar').searchButton, 'anonid', 'searchbar-popup').openPopup(null, null, event.screenX, event.screenY);
 					}
 				},
 				RU: {
@@ -184,28 +169,6 @@ location == "chrome://browser/content/browser.xul" && (function(event) {
 						var linkTXT = event.dataTransfer.getData("text/x-moz-url").split("\n")[1];
 						gBrowser.selectedTab = gBrowser.addTab('https://encrypted.google.com/#q=site:' + content.location.host + ' ' + encodeURIComponent(linkTXT));
 						Components.classes['@mozilla.org/widget/clipboardhelper;1'].createInstance(Components.interfaces.nsIClipboardHelper).copyString(linkTXT);
-					}
-				},
-				RD: {
-					name: "彈出搜索框(新分頁背景)",
-					cmd: function(event, self) {
-						var popup = document.getAnonymousElementByAttribute(document.querySelector("#searchbar").searchButton, "anonid", "searchbar-popup");
-						var linkTXT = event.dataTransfer.getData("text/x-moz-url").split("\n")[1];
-						var serach = function() {
-								popup.removeEventListener("command", serach, false);
-								popup.removeEventListener("popuphidden", closeSerach, false)
-								setTimeout(function(selectedEngine) {
-									BrowserSearch.loadSearch(linkTXT, true);
-									popup.querySelectorAll("#" + selectedEngine.id)[0].click();
-								}, 10, popup.querySelector("*[selected=true]"))
-							}
-						var closeSerach = function() {
-								popup.removeEventListener("command", serach, false);
-								popup.removeEventListener("popuphidden", closeSerach, false)
-							}
-						popup.addEventListener("command", serach, false)
-						popup.addEventListener("popuphidden", closeSerach, false)
-						popup.openPopup(null, null, event.screenX - 100, event.screenY - 100);
 					}
 				},
 			},
@@ -352,33 +315,7 @@ location == "chrome://browser/content/browser.xul" && (function(event) {
 				RL: {
 					name: "彈出搜索框(新分頁前景)",
 					cmd: function(event, self) {
-						var popup = document.getAnonymousElementByAttribute(document.querySelector("#searchbar").searchButton, "anonid", "searchbar-popup"),
-							searchbar = document.getElementById('searchbar'),
-							selected = event.dataTransfer.getData("text/unicode");
-						if (!searchbar.value == "") {
-							var TXT = searchbar.value;
-							searchbar.value = "";
-						}
-						else {
-							if (selected) {var TXT = selected;}
-							else {var TXT = readFromClipboard();}
-						}
-						var serach = function() {
-								popup.removeEventListener("command", serach, false);
-								popup.removeEventListener("popuphidden", closeSerach, false)
-								setTimeout(function(selectedEngine) {
-									gBrowser.selectedTab = gBrowser.addTab();
-									BrowserSearch.loadSearch(TXT, false);
-									popup.querySelectorAll("#" + selectedEngine.id)[0].click();
-								}, 10, popup.querySelector("*[selected=true]"))
-							}
-						var closeSerach = function() {
-								popup.removeEventListener("command", serach, false);
-								popup.removeEventListener("popuphidden", closeSerach, false)
-							}
-						popup.addEventListener("command", serach, false)
-						popup.addEventListener("popuphidden", closeSerach, false)
-						popup.openPopup(null, null, event.screenX - 100, event.screenY - 100);
+						document.getAnonymousElementByAttribute(document.querySelector('#searchbar').searchButton, 'anonid', 'searchbar-popup').openPopup(null, null, event.screenX, event.screenY);
 					}
 				},
 				RU: {
@@ -387,28 +324,6 @@ location == "chrome://browser/content/browser.xul" && (function(event) {
 						var TXT = event.dataTransfer.getData("text/unicode");
 						gBrowser.selectedTab = gBrowser.addTab('https://encrypted.google.com/#q=site:' + content.location.host + ' ' + encodeURIComponent(TXT));
 						Components.classes['@mozilla.org/widget/clipboardhelper;1'].createInstance(Components.interfaces.nsIClipboardHelper).copyString(TXT);
-					}
-				},
-				RD: {
-					name: "彈出搜索框(新分頁背景)",
-					cmd: function(event, self) {
-						var popup = document.getAnonymousElementByAttribute(document.querySelector("#searchbar").searchButton, "anonid", "searchbar-popup");
-						var TXT = event.dataTransfer.getData("text/unicode");
-						var serach = function() {
-								popup.removeEventListener("command", serach, false);
-								popup.removeEventListener("popuphidden", closeSerach, false)
-								setTimeout(function(selectedEngine) {
-									BrowserSearch.loadSearch(TXT, true);
-									popup.querySelectorAll("#" + selectedEngine.id)[0].click();
-								}, 10, popup.querySelector("*[selected=true]"))
-							}
-						var closeSerach = function() {
-								popup.removeEventListener("command", serach, false);
-								popup.removeEventListener("popuphidden", closeSerach, false)
-							}
-						popup.addEventListener("command", serach, false)
-						popup.addEventListener("popuphidden", closeSerach, false)
-						popup.openPopup(null, null, event.screenX - 100, event.screenY - 100);
 					}
 				},
 			},
@@ -451,7 +366,7 @@ location == "chrome://browser/content/browser.xul" && (function(event) {
 			else direction = subY < 0 ? "U" : "D";
 			if (direction != self.directionChain.charAt(self.directionChain.length - 1)) {
 				self.directionChain += direction;
-				XULBrowserWindow.statusTextField.label = self.GESTURES[self.type][self.directionChain] ? "手勢: " + self.directionChain + " " + self.GESTURES[self.type][self.directionChain].name + " " : "未知手勢:" + self.directionChain + " ";
+				XULBrowserWindow.statusTextField.label = self.GESTURES[self.type][self.directionChain] ? "手勢: " + self.directionChain + " " + self.GESTURES[self.type][self.directionChain].name : "未知手勢: " + self.directionChain;
 				self.cmd = self.GESTURES[self.type][self.directionChain] ? self.GESTURES[self.type][self.directionChain].cmd : "";
 			}
 			self.lastPoint = [event.screenX, event.screenY];
