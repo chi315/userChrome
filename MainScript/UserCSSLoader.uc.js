@@ -133,19 +133,19 @@ window.UCL = {
 									  hidden="false"\
 									  onclick="UCL.userC(event,\'userContent.css\');"/>\
 							<menuseparator />\
-							<menuitem label="新建用戶樣式 (外部編輯器)"\
+							<menuitem label="編寫新樣式 (外部編輯器)"\
 									  accesskey="N"\
 									  oncommand="UCL.create();" />\
-							<menuitem label="新建瀏覽器樣式 (Chrome)"\
+							<menuitem label="編寫瀏覽器的樣式 (Chrome)"\
 									  id="usercssloader-test-chrome"\
 									  accesskey="C"\
 									  oncommand="UCL.styleTest(window);" />\
-							<menuitem label="新建當前網頁樣式 (Web)"\
+							<menuitem label="編寫此網站的樣式 (Web)"\
 									  id="usercssloader-test-content"\
 									  accesskey="W"\
 									  oncommand="UCL.styleTest();" />\
-							<menuitem label="在userstyles.org檢索當前網頁樣式"\
-									  accesskey="S"\
+							<menuitem label="尋找此網站的樣式"\
+									  accesskey="F"\
 									  oncommand="UCL.searchStyle();" />\
 							<menu label=".uc.css" accesskey="U" hidden="'+ !UCL.USE_UC +'">\
 								<menupopup id="usercssloader-ucmenupopup">\
@@ -283,7 +283,7 @@ window.UCL = {
 			this.rebuildMenu(leafName);
 		}
 		if (this.initialized)
-			XULBrowserWindow.statusTextField.label = "重新加載 css 已完成 ";//Rebuild しました
+			XULBrowserWindow.statusTextField.label = "重新加載樣式已完成";//Rebuild しました
 	},
 	loadCSS: function(aFile) {
 		var CSS = this.readCSS[aFile.leafName];
@@ -344,7 +344,7 @@ window.UCL = {
 				var CSS = this.readCSS[label];
 				if (!CSS) return;
 				CSS.reloadCSS();
-				XULBrowserWindow.statusTextField.label = label + " 重新加載已完成! ";
+				XULBrowserWindow.statusTextField.label = label + " 重新加載已完成!";
 			}
 		}
 		else if (event.button == 2) {
@@ -465,20 +465,20 @@ window.UCL = {
 			this.edit(file);
 		}
 	},
-		userC:function(event,str) { //add by feiruo
-				if (event.button == 0) {
-				UCL.reloadUserCSS(str);
-			} else if (event.button == 2) {
-				UCL.editUserCSS(str);
-			}
-		},
-		reloadUserCSS: function(str) {
-			var aFile = Services.dirsvc.get("UChrm", Ci.nsILocalFile);
-			aFile.appendRelativePath(str);
-			var fileURL = Services.io.getProtocolHandler("file")
-				.QueryInterface(Ci.nsIFileProtocolHandler)
-				.getURLSpecFromFile(aFile);
-			if(str=="userChrome.css") {
+	userC:function(event,str) { //add by feiruo
+			if (event.button == 0) {
+			UCL.reloadUserCSS(str);
+		} else if (event.button == 2) {
+			UCL.editUserCSS(str);
+		}
+	},
+	reloadUserCSS: function(str) {
+		var aFile = Services.dirsvc.get("UChrm", Ci.nsILocalFile);
+		aFile.appendRelativePath(str);
+		var fileURL = Services.io.getProtocolHandler("file")
+			.QueryInterface(Ci.nsIFileProtocolHandler)
+			.getURLSpecFromFile(aFile);
+		if (str=="userChrome.css") {
 			var rule = UCL.getStyleSheet(document.documentElement, fileURL);
 			if (!rule) return;
 			inIDOMUtils.parseStyleSheet(rule, UCL.loadText(aFile));
@@ -486,7 +486,7 @@ window.UCL = {
 			var w = window.open("", "", "width=10, height=10");
 			w.close();
 		}
-		if(str=="userContent.css") {			
+		if (str=="userContent.css") {			
 			var rule = UCL.getStyleSheet(content.document.documentElement, fileURL);
 			if (!rule) return;
 			inIDOMUtils.parseStyleSheet(rule, UCL.loadText(aFile));
@@ -496,35 +496,34 @@ window.UCL = {
 			s.authorStyleDisabled = !s.authorStyleDisabled;
 			s.authorStyleDisabled = !s.authorStyleDisabled;
 		}
+		XULBrowserWindow.statusTextField.label = "重新加載 "+str+" 已完成";
+	},
+	getStyleSheet: function(aElement, cssURL) {
+		var rules = inIDOMUtils.getCSSStyleRules(aElement);
+		var count = rules.Count();
+		if (!count) return null;
 
-			XULBrowserWindow.statusTextField.label = "重新加載 "+str+" 已完成 ";
-		},
-		getStyleSheet: function(aElement, cssURL) {
-			var rules = inIDOMUtils.getCSSStyleRules(aElement);
-			var count = rules.Count();
-			if (!count) return null;
-
-			for (var i = 0; i < count; ++i) {
-				var rule = rules.GetElementAt(i).parentStyleSheet;
-				if (rule && rule.href === cssURL)
-					return rule;
-			};
-			return null;
-		},
-		loadText: function(aFile) {
-			if (!aFile.exists() || !aFile.isFile()) return null;
-			var fstream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
-			var sstream = Cc["@mozilla.org/scriptableinputstream;1"].createInstance(Ci.nsIScriptableInputStream);
-			fstream.init(aFile, -1, 0, 0);
-			sstream.init(fstream);
-			var data = sstream.read(sstream.available());
-			try {
-				data = decodeURIComponent(escape(data));
-			} catch (e) {}
-			sstream.close();
-			fstream.close();
-			return data;
-		}, //end by feiruo
+		for (var i = 0; i < count; ++i) {
+			var rule = rules.GetElementAt(i).parentStyleSheet;
+			if (rule && rule.href === cssURL)
+				return rule;
+		};
+		return null;
+	},
+	loadText: function(aFile) {
+		if (!aFile.exists() || !aFile.isFile()) return null;
+		var fstream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
+		var sstream = Cc["@mozilla.org/scriptableinputstream;1"].createInstance(Ci.nsIScriptableInputStream);
+		fstream.init(aFile, -1, 0, 0);
+		sstream.init(fstream);
+		var data = sstream.read(sstream.available());
+		try {
+			data = decodeURIComponent(escape(data));
+		} catch (e) {}
+		sstream.close();
+		fstream.close();
+		return data;
+	}, //end by feiruo
 };
 
 function CSSEntry(aFile) {
@@ -684,7 +683,7 @@ CSSTester.prototype = {
 		var uri = Services.io.newURI(code, null, null);
 		this.sss.loadAndRegisterSheet(uri, Ci.nsIStyleSheetService.AGENT_SHEET);
 		this.preview_code = code;
-		this.log("Preview");
+		this.log("預覽");
 	},
 	preview_end: function() {
 		if (this.preview_code) {
