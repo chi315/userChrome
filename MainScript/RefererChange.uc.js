@@ -4,11 +4,13 @@
 // @include     chrome://browser/content/browser.xul
 // @charset     utf-8
 // @version     1.0.3
+// @downloadURL https://github.com/feiruo/userChromeJS/tree/master/RefererChange
 // @description Refererの內容を柔軟に書き換えるUserScriptです。
 // ==/UserScript==
 var refererChanger = {};
 refererChanger.state = true; /* 啟動時是否啟用 */
-refererChanger.fileName = '_refererChange.js';
+refererChanger.type = 2; // 0:按鈕 2:菜單
+refererChanger.fileName = 'local\\_refererChange.js';
 refererChanger.enabledLab = "破解圖片外鏈已開啟";
 refererChanger.disabledLab = "破解圖片外鏈已關閉";
 refererChanger.enabledSrc = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAADHUlEQVQ4jX3T3U9bBRjH8ZN46d/BhTdk171TSGuTg6aTjHkhZqmF9bBkwY5RUAbtkI6W09EX6JDQClNejlJFNjZlHdIdVEIpzCbCDHUu01EcXU9L4cQs4euVM3PEX/K9/eS5eYTRmZQcnVnLDSgpTZ44ovHnCykpbejLlcvCP4vNrO083t093CuXKe/r/9vuns5OocTgdLrwDBhQUlppr8zAtYfI19bpuj7FaCqEcreb8XU34aQPe/RjHCN3aB35mcclnbCS1p4B/omUVt7XiVx/iOfGTUZXQkz+dI7hlUYiP1q5sizhm7+INPQZ7bENdrQjgNK+ztCN3+mau8rEupsryzYC37+DL/k2nsWT+JPNvBvso2PsHjntgLCy+jyg7esM3/yDztlRPlntoH+pHs93J3DdPs6FW8fxJM5Q39+L69Nf2C7svwgUyjoj3zzCMztHKHmJy0tWum6/Rfu3b9KZOMmHXzmRBq/SPbHF9pMjLniypxOb3yY0dxenEsPz9Vm8CRue+VN88HkT74UCdIwtcWkq+yIgT6S0fElnNJEjNr9NcHad8+56evzVeHyv0nXxBO7xH/DHf8P3xa88OgrYLeq0K2/QOiny/piZbkcNXo+baDSKu6OF0/1mGsKv0dbpIBqN0uPxHtrt9pbKysqXhb7xlJYv6iS3FljYvIXb7yIQCJDL5chmsywuLtIr99IX9LF5b5NsNouqqgQCAURR9AryeErLFw9Ibi0wOBnG2dZKOpPh/IUWxBoRm81GMBikra0Nm81GTU0Np886n6qqisPh0IRBJfUgXyhS3NPx+mQ+6ukhncnwZ17DZHqdRCJBOp0mmUwyPT2NyWQiPLWsqaqKy+XSheH4qncovnYnrKxqjed6D+zSmcN0JoPV7nhaVVWN0WjEYrFgsVgwGo1UVVVTf6rxgaqqNDQ0/PsTgiAIFRUVr4iiuCHLckFRlHw8HicSidDc3IzT6SQSiRCPx1EUJS/LckEUxQ3hP3vJYDAcM5vN961Wa1mSJL2pqemvurq6+tra2ipJkkqSJOlWq7VsNpvvGwyGY38DN9aNRVh5uVwAAAAASUVORK5CYII=";
@@ -22,20 +24,25 @@ refererChanger.init = function() {
 	var label = this.state ? this.enabledLab : this.disabledLab;
 //	var tooltiptext = this.state ? this.enabledTip : this.disabledTip;
 	var src = this.state ? this.enabledSrc : this.disabledSrc;
-	var menuitem = document.createElement('menuitem');
+	if (refererChanger.type == 0) {
+		var menuitem = document.getElementById('TabsToolbar').appendChild(document.createElement('toolbarbutton'));
+		menuitem.setAttribute('class', 'toolbarbutton-1');
+	}
+	else if (refererChanger.type == 2) {
+		var menuitem = document.createElement('menuitem');
+		menuitem.setAttribute('class', 'menuitem-iconic');
+		var insPos = document.getElementById('devToolsSeparator');
+		insPos.parentNode.insertBefore(menuitem, insPos);
+	}
 	menuitem.setAttribute('id', 'RefererChanger');
-	menuitem.setAttribute('class', 'menuitem-iconic');
 	menuitem.setAttribute('label', label);
-	menuitem.setAttribute("tooltiptext", '左鍵：重新載入配置\n中鍵：啟用/禁用\n右鍵：打開文件編輯');
-	menuitem.setAttribute('src', src);
+	menuitem.setAttribute("tooltiptext", '左鍵：重載配置\n中鍵：啟用 / 禁用\n右鍵：編輯配置');
+	menuitem.setAttribute('image', src);
 	menuitem.setAttribute('oncommand', 'refererChanger.reload(true);');
 	menuitem.setAttribute('onclick', 'if (event.button == 2) {event.preventDefault();closeMenus(event.currentTarget); refererChanger.edit();}else if(event.button == 1) { event.preventDefault(); refererChanger.RCToggle(); BrowserReloadSkipCache();}');
-	var insPos = document.getElementById('devToolsSeparator');
-	insPos.parentNode.insertBefore(menuitem, insPos);
 	var os = Cc['@mozilla.org/observer-service;1'].getService(
 	Ci.nsIObserverService);
 	os.addObserver(this, 'http-on-modify-request', false);
-
 };
 refererChanger.RCToggle = function() {
 	this.state = !this.state;
@@ -45,7 +52,7 @@ refererChanger.RCToggle = function() {
 //		var tooltiptext = this.state ? this.enabledTip : this.disabledTip;
 		var src = this.state ? this.enabledSrc : this.disabledSrc;
 		menuitem.setAttribute("label", label);
-		menuitem.setAttribute("src", src);
+		menuitem.setAttribute("image", src);
 	} catch (e) {}
 };
 
