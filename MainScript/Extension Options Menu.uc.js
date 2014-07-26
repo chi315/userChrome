@@ -184,17 +184,23 @@ CTRL + 右鍵：移除擴展
 				accesskey: "O",
 				oncommand: "FileUtils.getFile('ProfD', ['extensions']).reveal();"
 			}), menusep);
+
+			var Listitem = popup.insertBefore($C("menuitem", {
+				label: "複製擴展清單",
+				class: "menuitem-iconic",
+				oncommand: "EOM.CopyList(event);"
+			}), menusep);
 		},
 
-		iconClick: function(e) {
-			switch (e.button) {
+		iconClick: function(event) {
+			switch (event.button) {
 			case 1:
 				dTaTurboSelect.Toggle();
 				break;
 			case 2:
-				BrowserOpenAddonsMgr('addons://list/extension');
+				gBrowser.selectedTab = gBrowser.addTab('about:addons');
 				UCL.toggle('Piccsy - aboutaddons.css');
-				e.preventDefault();
+				event.preventDefault();
 				break;
 			}
 		},
@@ -211,6 +217,17 @@ CTRL + 右鍵：移除擴展
 			});
 			}
 			Application.restart();
+		},
+
+		CopyList: function(event) {
+			Application.extensions ? Components.classes['@mozilla.org/widget/clipboardhelper;1'].getService(Components.interfaces.nsIClipboardHelper).copyString(Application.extensions.all.map(function(item, id) {
+				return id + 1 + ". " + item._item.name + " [" + item._item.version + "]" + "\nID:" + item._item.id;
+			}).join("\n")) : Application.getExtensions(function(extensions) {
+				Components.classes['@mozilla.org/widget/clipboardhelper;1'].getService(Components.interfaces.nsIClipboardHelper).copyString(extensions.all.map(function(item, id) {
+					return id + 1 + ". " + item._item.name + " [" + item._item.version + "]" + "\nID:" + item._item.id;
+				}).join("\n"));
+			})
+			XULBrowserWindow.statusTextField.label = "擴展清單已複製";
 		},
 
 		itemClick: function(e, aAddon) {
