@@ -9,7 +9,6 @@
 /*
 按鈕圖標
 左鍵：擴展及插件選單
-中鍵：開啟 / 關閉 dTa 單鍵下載選擇器
 右鍵：打開擴展管理員
 
 擴展
@@ -60,7 +59,7 @@ CTRL + 右鍵：移除擴展
 					type: 'menu',
 					class: 'toolbarbutton-1',
 					image: this.ICON_URL,
-					tooltiptext: '左鍵：擴展及插件選單\n中鍵：開啟 / 關閉 dTa 單鍵下載選擇器\n右鍵：打開擴展管理員',
+					tooltiptext: '左鍵：擴展及插件選單\n右鍵：打開擴展管理員',
 					onclick: 'EOM.iconClick(event);',
 					style: 'padding: 0px; margin: -1px -1px 0px -4px; -moz-transform: scale(0.875);'
 				}));
@@ -194,12 +193,8 @@ CTRL + 右鍵：移除擴展
 
 		iconClick: function(event) {
 			switch (event.button) {
-			case 1:
-				dTaTurboSelect.Toggle();
-				break;
 			case 2:
 				gBrowser.selectedTab = gBrowser.addTab('about:addons');
-				UCL.toggle('Piccsy - aboutaddons.css');
 				event.preventDefault();
 				break;
 			}
