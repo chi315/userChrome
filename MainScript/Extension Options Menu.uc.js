@@ -19,19 +19,6 @@ CTRL + 左鍵：打開擴展的安裝文件夾
 CTRL + 中鍵：複製擴展 ID 和圖標地址（如果可用）到剪貼板
 CTRL + 右鍵：移除擴展
 */
-/*
-
-#eom-button > .toolbarbutton-icon {
-    width: 16px;
-    height: 16px;
-}
-.addon-disabled > .menu-iconic-left { filter: url('chrome://mozapps/skin/extensions/extensions.svg#greyscale') }
-.addon-disabled label { opacity: 0.8; }
-.addon-disabled label:after { content: "*"; }
-.addon-uninstall label { font-weight: bold !important; }
-.addon-uninstall label:after { content: "-"; }
-
-*/
 (function() {
 	EOM = {
 		BUTTON_TYPE:		0, // 0:按鈕 2:菜單
@@ -76,7 +63,8 @@ CTRL + 右鍵：移除擴展
 			var mp = btn.appendChild($C('menupopup', {
 				id: 'eom-button-popup',
 				onpopupshowing: 'EOM.populateMenu(event.currentTarget)',
-				onclick: 'event.preventDefault(); event.stopPropagation();'
+				onclick: 'event.preventDefault(); event.stopPropagation();',
+				style: "max-width: 420px;"
 			}));
 			mp.addEventListener("mouseover", function (event) {event.originalTarget.setAttribute('closemenu', "none")}, true);
 		},
@@ -326,11 +314,27 @@ CTRL + 右鍵：移除擴展
 			oncommand: "EOM.CopyList(event);"
 		}
 	];
+	var css = '\
+		#eom-button dropmarker {display:none;}\
+		.addon-disabled > .menu-iconic-left {filter:url("chrome://mozapps/skin/extensions/extensions.svg#greyscale")}\
+		.addon-disabled label {opacity:0.8;}\
+		.addon-disabled label:after {content:"*";}\
+		.addon-uninstall label {font-weight:bold!important;}\
+		.addon-uninstall label:after {content:"-";}\
+		'.replace(/[\r\n\t]/g, '');;
+	EOM.style = addStyle(css);
 	EOM.init();
 	function $(id) document.getElementById(id);
 	function $C(name, attr) {
 		var el = document.createElement(name);
 		if (attr) Object.keys(attr).forEach(function(n) el.setAttribute(n, attr[n]));
 		return el;
+	}
+	function addStyle(css) {
+		var pi = document.createProcessingInstruction(
+			'xml-stylesheet',
+			'type="text/css" href="data:text/css;utf-8,' + encodeURIComponent(css) + '"'
+		);
+		return document.insertBefore(pi, document.documentElement);
 	}
 })();
